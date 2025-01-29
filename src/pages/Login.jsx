@@ -24,9 +24,7 @@ export default function LoginPage() {
         <Stack spacing={4} w={"full"}>
           <Input placeholder="Имя пользователя" size="lg" />
           <Input placeholder="Пароль" type="password" size="lg" />
-          <Button colorScheme="cyan" size="lg" textColor={"white"}>
-            Login
-          </Button>
+          <Button size="lg">Login</Button>
         </Stack>
       </VStack>
     </Container>

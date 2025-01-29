@@ -12,6 +12,7 @@
   "dependencies": {
     "@chakra-ui/react": "^2.10.5",
     "@emotion/react": "^11.14.0",
+    "@fontsource/lato": "^5.1.1",
     "@tanstack/react-router": "^1.98.0",
     "axios": "^1.7.9",
     "react": "^18.3.1",
