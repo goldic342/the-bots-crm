@@ -23,6 +23,10 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!formData.username || !formData.password) {
+      setError("Заполните все поля.");
+      return;
+    }
     try {
       const { access_token } = await login(
         formData.username,
