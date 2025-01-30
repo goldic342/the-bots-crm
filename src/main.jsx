@@ -4,18 +4,36 @@ import { ChakraProvider } from "@chakra-ui/react";
 import Login from "./pages/Login.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import theme from "./theme/theme.js";
+import { AuthProvider, AuthInterceptor } from "./contexts/auth.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Login />,
+    element: (
+      <AuthInterceptor>
+        <Login />
+      </AuthInterceptor>
+    ),
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <AuthInterceptor>
+        <Dashboard />
+      </AuthInterceptor>
+    ),
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <ChakraProvider theme={theme}>
-      <RouterProvider router={router} />
-    </ChakraProvider>
-  </StrictMode>,
+  //<StrictMode>
+  <ChakraProvider theme={theme}>
+    <AuthProvider>
+      <RouterProvider router={router}>
+        <AuthInterceptor></AuthInterceptor>
+      </RouterProvider>
+    </AuthProvider>
+  </ChakraProvider>,
+  //</StrictMode>,
 );
