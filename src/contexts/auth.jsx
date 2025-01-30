@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useEffect,
-  useState,
-  useContext,
-  useLayoutEffect,
-} from "react";
+import { createContext, useState, useContext, useLayoutEffect } from "react";
 import { api } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { UnauthorizedMessage } from "../config";
@@ -25,7 +19,7 @@ export const AuthProvider = ({ children }) => {
   useLayoutEffect(() => {
     const authInterceptor = api.interceptors.request.use((config) => {
       config.headers.Authorization =
-        !config._retry && token
+        !config._retry && token // !config._retry to avoid multiple requests
           ? `Bearer ${token}`
           : config.headers.Authorization; // keep the same headers
       return config;

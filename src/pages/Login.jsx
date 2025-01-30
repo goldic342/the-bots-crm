@@ -1,19 +1,23 @@
 import {
   Button,
+  Box,
   Container,
+  Heading,
   Input,
   Stack,
   Text,
   VStack,
-  Heading,
+  Fade,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { login } from "../api/auth";
 import { useAuth } from "../contexts/auth";
-import { useNavigate } from "react-router-dom";
+import PasswordInput from "../components/ui/PasswordInput";
 
 const Login = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
+  const [error, setError] = useState("");
   const { setToken } = useAuth();
   const navigate = useNavigate();
 
@@ -27,7 +31,7 @@ const Login = () => {
       setToken(access_token);
       navigate("/dashboard");
     } catch (error) {
-      console.error("Login failed", error);
+      setError(error.response?.data?.detail || "Unexpected error");
     }
   };
 
@@ -52,18 +56,20 @@ const Login = () => {
             placeholder="Имя пользователя"
             size="lg"
           />
-          <Input
+          <PasswordInput
             onChange={(e) =>
               setFormData({ ...formData, password: e.target.value })
             }
-            placeholder="Пароль"
-            type="password"
-            size="lg"
           />
           <Button size="lg" onClick={handleLogin}>
             Войти
           </Button>
         </Stack>
+        <Box h="20px">
+          <Fade in={error}>
+            <Text color={"red.500"}>{error}</Text>
+          </Fade>
+        </Box>
       </VStack>
     </Container>
   );
