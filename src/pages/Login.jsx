@@ -33,7 +33,7 @@ const Login = () => {
         formData.password,
       );
       setToken(access_token);
-      navigate("/dashboard");
+      navigate("/dashboard/bots");
     } catch (error) {
       setError(error.response?.data?.detail || "Unexpected error");
     }
