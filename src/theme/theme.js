@@ -57,6 +57,26 @@ const theme = extendTheme({
       },
     },
   },
+  Input: {
+    variants: {
+      standard: {
+        field: {
+          borderColor: "gray.300",
+          _focus: { borderColor: "primary.500", boxShadow: "outline" },
+        },
+      },
+      blackBorder: {
+        field: {
+          borderColor: "black",
+          borderWidth: "2px",
+          _focus: { borderColor: "primary.500", boxShadow: "outline" },
+        },
+      },
+    },
+    defaultProps: {
+      variant: "standard",
+    },
+  },
 });
 
 export default theme;

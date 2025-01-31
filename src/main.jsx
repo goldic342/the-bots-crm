@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import theme from "./theme/theme.js";
 import { AuthProvider, AuthInterceptor } from "./contexts/auth.jsx";
 import DashboardRoot from "./components/DashboardRoot.jsx";
+import Bots from "./pages/Bots.jsx";
 
 const router = createBrowserRouter([
   {
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
         path: "/dashboard/bots",
         element: (
           <AuthInterceptor>
-            <h1>Bots list</h1>
+            <Bots />
           </AuthInterceptor>
         ),
       },

@@ -15,8 +15,8 @@ const DashboardRoot = () => {
         top="0"
         left="0"
       >
-        <VStack spacing={3} align="flex-start">
-          <Box p={6} pr={20}>
+        <VStack spacing={6} align="flex-start">
+          <Box px={6} pt={4} pr={20}>
             <Heading size="md">Bots Dashboard</Heading>
           </Box>
           <Flex
