@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, VStack } from "@chakra-ui/react";
+import { Box, Flex, Heading, Icon, VStack } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
 import SidebarItem from "./ui/SidebarItem";
 import { Bot, Users } from "lucide-react";
@@ -27,12 +27,12 @@ const DashboardRoot = () => {
           >
             <SidebarItem
               name="Боты"
-              icon={<Bot size="22px" />}
+              icon={<Icon as={Bot} w={6} h={6} />}
               link="/dashboard/bots"
             />
             <SidebarItem
               name="Пользователи"
-              icon={<Users size="22px" />}
+              icon={<Icon as={Users} w={6} h={6} />}
               link="/dashboard/users"
             />
           </Flex>

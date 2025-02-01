@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Icon, Text } from "@chakra-ui/react";
 import { Bot, ChevronRight } from "lucide-react";
 
 const BotsListItem = ({ name, active }) => {
@@ -12,7 +12,7 @@ const BotsListItem = ({ name, active }) => {
       _hover={{ bg: "gray.100", cursor: "pointer" }}
     >
       <Flex justify={"center"} align={"center"} gap={2}>
-        <Bot size={"20px"} />
+        <Icon as={Bot} w={5} h={5} />
         <Text fontWeight={"semibold"}>{name}</Text>
       </Flex>
       <Flex justify={"center"} align={"center"} gap={1}>
