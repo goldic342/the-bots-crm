@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import BotsSidebarList from "../components/BotsSidebarList";
+import BotsSidebarList from "../components/Bots/BotsSidebarList";
 
 const Bots = () => {
   const navigate = useNavigate();
