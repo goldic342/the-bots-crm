@@ -6,7 +6,11 @@ import { Bot, Users } from "lucide-react";
 
 const DashboardRoot = () => {
   const location = useLocation();
-  const isBotOrChatSelected = location.pathname.startsWith("/dashboard/chats/");
+  const pathname = location.pathname;
+  const chatSelected =
+    (pathname.startsWith("/dashboard/bots") ||
+      pathname.startsWith("/dashboard/chats")) &&
+    !pathname.includes("/chat/");
 
   return (
     <Flex height="100vh" overflow="hidden">
@@ -45,7 +49,7 @@ const DashboardRoot = () => {
 
       <Flex flex="1" overflowY="auto">
         <Outlet />
-        {!isBotOrChatSelected && <NoChatSelected />}
+        {chatSelected && <NoChatSelected />}
         {/* Show only if no bot is selected */}
       </Flex>
     </Flex>
