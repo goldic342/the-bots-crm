@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/auth";
-import { useAuth } from "../contexts/auth";
+import { useAuth } from "../contexts/AuthContext";
 import PasswordInput from "../components/ui/PasswordInput";
 
 const Login = () => {

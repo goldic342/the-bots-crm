@@ -4,7 +4,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import Login from "./pages/Login.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import theme from "./theme/theme.js";
-import { AuthProvider, AuthInterceptor } from "./contexts/auth.jsx";
+import { AuthProvider, AuthInterceptor } from "./contexts/AuthContext";
 import DashboardRoot from "./components/DashboardRoot.jsx";
 import Bots from "./pages/Bots.jsx";
 
