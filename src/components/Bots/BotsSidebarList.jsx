@@ -3,10 +3,11 @@ import BotsListItem from "./BotsListItem";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 
-const BotsSidebarList = ({ bots, onSelectBot }) => {
+const BotsSidebarList = ({ bots, onSelectBot, isLoading, error }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResult, setSearchResult] = useState(bots);
 
+  console.log(bots);
   useEffect(() => {
     if (!searchQuery.trim()) {
       setSearchResult(bots);
@@ -48,7 +49,17 @@ const BotsSidebarList = ({ bots, onSelectBot }) => {
       </Flex>
 
       <VStack>
-        {searchResult.length > 0 ? (
+        {isLoading && <Text mt={4}>Загружаем...</Text>}
+        {error && (
+          <Text color={"red.500"} mt={4}>
+            Ошибка при загрузке ботов!
+          </Text>
+        )}
+        {!isLoading && !error && searchResult.length === 0 ? (
+          <Text mt={4} color="gray.500">
+            Ничего не найдено :(
+          </Text>
+        ) : (
           searchResult.map((b) => (
             <BotsListItem
               key={b.id}
@@ -57,10 +68,6 @@ const BotsSidebarList = ({ bots, onSelectBot }) => {
               onClick={() => onSelectBot(b.id)}
             />
           ))
-        ) : (
-          <Text mt={4} color="gray.500">
-            Ничего не найдено :(
-          </Text>
         )}
       </VStack>
     </Flex>
