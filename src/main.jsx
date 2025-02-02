@@ -26,7 +26,7 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: "/dashboard/bots",
+        path: "bots",
         element: (
           <AuthInterceptor>
             <Bots />
@@ -34,7 +34,25 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/dashboard/users",
+        path: "chats/:botId",
+        element: (
+          <AuthInterceptor>
+            <h1>Each bot chats here </h1>
+          </AuthInterceptor>
+        ),
+        children: [
+          {
+            path: "chat/:chatId",
+            element: (
+              <AuthInterceptor>
+                <h1>Current chat</h1>
+              </AuthInterceptor>
+            ),
+          },
+        ],
+      },
+      {
+        path: "users",
         element: (
           <AuthInterceptor>
             <h1>Users list</h1>

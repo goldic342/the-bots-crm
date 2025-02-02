@@ -7,6 +7,7 @@ const SidebarItem = ({ name, icon, link }) => {
       to={link}
       // There is not way to use internal chakra styles with NavLink
       // So I go dirty and write plain css but with chakra vars
+      // TODO: use useState for styles
       style={({ isActive }) => ({
         display: "flex",
         alignItems: "center",
