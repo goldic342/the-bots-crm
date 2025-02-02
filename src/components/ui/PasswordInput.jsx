@@ -20,6 +20,7 @@ const PasswordInput = ({ onChange }) => {
           size="sm"
           onClick={() => setShow(!show)}
           variant="link"
+          tabIndex={"-1"}
         >
           {show ? <EyeOff /> : <Eye />}
         </Button>
