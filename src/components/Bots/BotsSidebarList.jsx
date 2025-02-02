@@ -7,7 +7,6 @@ const BotsSidebarList = ({ bots, onSelectBot, isLoading, error }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResult, setSearchResult] = useState(bots);
 
-  console.log(bots);
   useEffect(() => {
     if (!searchQuery.trim()) {
       setSearchResult(bots);

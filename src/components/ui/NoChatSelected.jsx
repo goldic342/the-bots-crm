@@ -15,7 +15,7 @@ const NoChatSelected = () => {
       <Heading fontWeight={"normal"} size={"md"}>
         Чат не выбран...
       </Heading>
-      <Text color={"gray.600"} fontSize={"sm"}>
+      <Text color={"gray.600"} fontSize={"sm"} textAlign={"center"}>
         Выберите чат из списка чтобы начать общаться
       </Text>
     </Flex>

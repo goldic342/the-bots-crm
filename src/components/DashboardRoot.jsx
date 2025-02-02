@@ -1,9 +1,13 @@
 import { Box, Flex, Heading, Icon, VStack } from "@chakra-ui/react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import SidebarItem from "./ui/SidebarItem";
+import NoChatSelected from "./ui/NoChatSelected";
 import { Bot, Users } from "lucide-react";
 
 const DashboardRoot = () => {
+  const location = useLocation();
+  const isBotOrChatSelected = location.pathname.startsWith("/dashboard/chats/");
+
   return (
     <Flex height="100vh" overflow="hidden">
       <Flex
@@ -41,6 +45,8 @@ const DashboardRoot = () => {
 
       <Flex flex="1" overflowY="auto">
         <Outlet />
+        {!isBotOrChatSelected && <NoChatSelected />}
+        {/* Show only if no bot is selected */}
       </Flex>
     </Flex>
   );
