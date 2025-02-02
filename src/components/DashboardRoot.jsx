@@ -8,9 +8,7 @@ const DashboardRoot = () => {
   const location = useLocation();
   const pathname = location.pathname;
   const chatSelected =
-    (pathname.startsWith("/dashboard/bots") ||
-      pathname.startsWith("/dashboard/chats")) &&
-    !pathname.includes("/chat/");
+    pathname.startsWith("/dashboard/bots") && !pathname.includes("/chat/");
 
   return (
     <Flex height="100vh" overflow="hidden">

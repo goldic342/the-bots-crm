@@ -23,7 +23,7 @@ const Bots = () => {
   return (
     <BotsSidebarList
       bots={bots}
-      onSelectBot={(botId) => navigate(`/dashboard/chats/${botId}`)}
+      onSelectBot={(botId) => navigate(`/dashboard/bots/${botId}`)}
       isLoading={isLoading}
       error={error}
     />

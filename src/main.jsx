@@ -34,7 +34,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "chats/:botId",
+        path: "bots/:botId",
         element: (
           <AuthInterceptor>
             <h1>Each bot chats here </h1>
