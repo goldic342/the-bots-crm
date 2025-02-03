@@ -5,3 +5,9 @@ export const getUsers = async () => {
 
   return response.data;
 };
+
+export const createUser = async (username, password, role) => {
+  const response = await api.post("/createUser", { username, password, role });
+
+  return response.data;
+};
