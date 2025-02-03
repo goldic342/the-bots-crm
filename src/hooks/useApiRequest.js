@@ -12,7 +12,8 @@ const useApiRequest = (apiCall) => {
       const result = await apiCall(...args);
       return result;
     } catch (err) {
-      setError(err.message);
+      const error = err.response?.data?.detail || err.message;
+      setError(error);
       throw err;
     } finally {
       setIsLoading(false);

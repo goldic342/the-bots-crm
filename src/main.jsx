@@ -7,6 +7,7 @@ import theme from "./theme/theme.js";
 import { AuthProvider, AuthInterceptor } from "./contexts/AuthContext";
 import DashboardRoot from "./components/DashboardRoot.jsx";
 import Bots from "./pages/Bots.jsx";
+import Users from "./pages/Users.jsx";
 
 const router = createBrowserRouter([
   {
@@ -55,7 +56,7 @@ const router = createBrowserRouter([
         path: "users",
         element: (
           <AuthInterceptor>
-            <h1>Users list</h1>
+            <Users />
           </AuthInterceptor>
         ),
       },
