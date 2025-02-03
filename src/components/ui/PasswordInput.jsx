@@ -2,17 +2,23 @@ import { InputRightElement, InputGroup, Input, Button } from "@chakra-ui/react";
 import { EyeOff, Eye } from "lucide-react";
 import { useState } from "react";
 
-const PasswordInput = ({ onChange }) => {
-  const [show, setShow] = useState(false);
+const PasswordInput = ({
+  onChange,
+  deafultShow = false,
+  size = "lg",
+  ...props
+}) => {
+  const [show, setShow] = useState(deafultShow);
 
   return (
-    <InputGroup size="lg">
+    <InputGroup size={size}>
       <Input
         pr="4.5rem"
         type={show ? "text" : "password"}
         placeholder="Пароль"
-        size="lg"
+        size={size}
         onChange={(e) => onChange(e)}
+        {...props}
       />
       <InputRightElement width="4.5rem">
         <Button
