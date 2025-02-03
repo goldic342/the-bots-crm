@@ -4,16 +4,15 @@ import { useState } from "react";
 
 const PasswordInput = ({
   onChange,
-  deafultShow = false,
+  deafaultShow = false,
   size = "lg",
   ...props
 }) => {
-  const [show, setShow] = useState(deafultShow);
+  const [show, setShow] = useState(deafaultShow);
 
   return (
     <InputGroup size={size}>
       <Input
-        pr="4.5rem"
         type={show ? "text" : "password"}
         placeholder="Пароль"
         size={size}
