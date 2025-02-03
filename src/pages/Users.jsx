@@ -10,7 +10,7 @@ const Users = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    role: "",
+    role: "user",
   });
   const [fetchUsers, isLoading, error] = useApiRequest(async () => {
     return await getUsers();
@@ -28,7 +28,7 @@ const Users = () => {
 
   const handleCreateUser = async () => {
     await createUserRequest();
-    setFormData({ username: "", password: "", role: "" });
+    setFormData({ username: "", password: "", role: "user" });
     const usersData = await fetchUsers();
     setUsers(usersData);
   };
@@ -43,21 +43,30 @@ const Users = () => {
   }, []);
 
   return (
-    <Box w="full" minH="100vh" p={4} pt={20}>
-      <Flex direction="column" align="center" justify="center">
-        <Heading mb={2}>Управление пользователями</Heading>
-        <Text
-          fontSize="lg"
-          maxW={"4xl"}
-          color={"gray.600"}
-          mb={16}
-          textAlign="center"
-        >
-          Здесь вы можете создавать новых пользователей, а также просматривать и
-          управлять существующими. Используйте форму ниже для добавления нового
-          пользователя.
-        </Text>
-        <Box w="full" maxW="3xl" bg="white" p={8} mb={10}>
+    <Box w="full" minH="100vh" h="full" p={{ base: 2, lg: 4 }}>
+      <Flex
+        direction="column"
+        align="center"
+        justify="center"
+        pt={{ base: 10, md: 24 }}
+      >
+        <Flex direction={"column"} p={{ base: 1 }}>
+          <Heading mb={2} textAlign={"center"}>
+            Управление пользователями
+          </Heading>
+          <Text
+            fontSize="lg"
+            maxW={"4xl"}
+            color={"gray.600"}
+            mb={{ base: 10, md: 16 }}
+            textAlign="center"
+          >
+            Здесь вы можете создавать новых пользователей, а также просматривать
+            и управлять существующими. Используйте форму ниже для добавления
+            нового пользователя.
+          </Text>
+        </Flex>
+        <Box w="full" maxW="3xl" bg="white" p={{ base: 4, md: 8 }} mb={10}>
           <NewUserForm
             formData={formData}
             setFormData={setFormData}

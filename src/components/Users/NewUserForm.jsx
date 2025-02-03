@@ -49,12 +49,15 @@ const CreateUserForm = ({
 
   return (
     <Flex direction="column" gap={4}>
-      <Heading size="lg" textAlign={"center"} mb={2}>
-        Создать пользователя
-      </Heading>
-      <Text color="gray.600" mb={4} textAlign={"center"}>
-        Заполните все поля ниже, чтобы добавить нового пользователя в систему.
-      </Text>
+      <Flex direction={"column"} gap={{ base: 2, md: 4 }}>
+        <Heading size="lg" textAlign={"center"}>
+          Создать пользователя
+        </Heading>
+        <Text color="gray.600" mb={4} textAlign={"center"}>
+          Заполните все поля ниже, чтобы добавить нового пользователя в систему.
+        </Text>
+      </Flex>
+
       <VStack spacing={4}>
         <FormControl>
           <Input

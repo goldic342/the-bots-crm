@@ -9,8 +9,11 @@ import {
   Text,
   Spinner,
 } from "@chakra-ui/react";
+import { useBreakpointValue } from "@chakra-ui/react";
 
 const UserList = ({ users, isLoading, error }) => {
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
   if (isLoading) {
     return (
       <Box width="full" maxW="6xl" p={6} textAlign="center">
@@ -30,9 +33,15 @@ const UserList = ({ users, isLoading, error }) => {
     );
   }
   return (
-    <Box width="full" maxW="6xl" p={6}>
+    <Box
+      width="full"
+      maxW="6xl"
+      p={{ base: 1, md: 6 }}
+      overflowX={{ base: "scroll", md: "visible" }}
+      pb={{ base: 10, md: 16, lg: 20 }}
+    >
       <Table variant="simple" colorScheme="primary">
-        <Thead bg="primary.400">
+        <Thead bg="primary.500">
           <Tr>
             <Th color="white">ID</Th>
             <Th color="white">Username</Th>
@@ -42,7 +51,10 @@ const UserList = ({ users, isLoading, error }) => {
         <Tbody>
           {users.map((user) => (
             <Tr key={user.id}>
-              <Td color="gray.700">{user.id}</Td>
+              <Td color="gray.600">
+                {user.id.slice(0, isMobile ? 8 : -1)}
+                {isMobile && <>...</>}
+              </Td>
               <Td>{user.username}</Td>
               <Td>{user.role}</Td>
             </Tr>
