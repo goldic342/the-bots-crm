@@ -1,8 +1,8 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
-import UserList from "../components/Users/UserList";
+import UserList from "../components/User/UserList";
 import { useEffect, useState } from "react";
 import useApiRequest from "../hooks/useApiRequest";
-import NewUserForm from "../components/Users/NewUserForm";
+import NewUserForm from "../components/User/NewUserForm";
 import { getUsers, createUser } from "../api/users"; // Assuming createUser API is here
 
 const Users = () => {
