@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import BotsSidebarList from "../components/Bots/BotsSidebarList";
+import BotsSidebarList from "../components/Bot/BotSidebarList";
 import useApiRequest from "../hooks/useApiRequest";
 import { useEffect, useState } from "react";
 import { getBots } from "../api/bots";

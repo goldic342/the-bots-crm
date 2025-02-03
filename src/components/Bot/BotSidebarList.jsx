@@ -1,5 +1,5 @@
 import { Box, Flex, Input, VStack, Text } from "@chakra-ui/react";
-import BotsListItem from "./BotsListItem";
+import BotsListItem from "./BotListItem";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 
