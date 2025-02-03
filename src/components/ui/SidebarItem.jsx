@@ -1,32 +1,39 @@
 import { Link, Text } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
+import { useBreakpointValue } from "@chakra-ui/react";
 
-const SidebarItem = ({ name, icon, link, ...props }) => {
-  // Can't use useState here, forced to use vanilla css
+const SidebarItem = ({ name, icon, link, iconOnly = false, ...props }) => {
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
   return (
     <Link
       as={NavLink}
       to={link}
       {...props}
-      display={"flex"}
-      alignItems={"center"}
-      w={"full"}
+      display="flex"
+      alignItems="center"
+      w={{ base: 12, md: "full" }}
       gap={6}
-      padding={"12px 24px"}
-      textDecoration={"none"}
-      transition={"background .1s ease-in"}
+      textDecoration="none"
+      p={"12px 24px"}
       style={({ isActive }) => ({
+        // Fucking hate this styling.
+        // how I even supposed to style this shit
         color: isActive ? "var(--chakra-colors-primary-600)" : "inherit",
         background: isActive
           ? "var(--chakra-colors-primary-100)"
           : "transparent",
-        textDecoration: "none", // For some reason working only here
+
+        textDecoration: "none",
+        padding: isMobile && "var(--chakra-space-1)",
       })}
     >
       {icon}
-      <Text size="lg" color="inherit">
-        {name}
-      </Text>
+      {!iconOnly && (
+        <Text size="lg" color="inherit">
+          {name}
+        </Text>
+      )}
     </Link>
   );
 };
