@@ -22,6 +22,7 @@ const BotsSidebarList = ({ bots, onSelectBot, isLoading, error }) => {
   return (
     <Flex
       height={"100vh"}
+      w={{ base: "full", md: "md", lg: "lg" }}
       flexDir={"column"}
       borderRight={"1px"}
       borderColor={"gray.200"}
@@ -33,12 +34,12 @@ const BotsSidebarList = ({ bots, onSelectBot, isLoading, error }) => {
         gap={3}
         p={4}
       >
-        <Box>
+        <Box w={"full"}>
           <Text fontSize={"xl"} fontWeight={"bold"}>
             Ваши боты
           </Text>
         </Box>
-        <Box w={"xs"}>
+        <Box w={"full"}>
           <Input
             placeholder="Поиск ботов..."
             onChange={(e) => setSearchQuery(e.target.value)}

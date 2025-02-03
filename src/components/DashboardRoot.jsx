@@ -62,15 +62,10 @@ const DashboardRoot = () => {
 
   const MobileSidebar = () => (
     <Flex
-      position="fixed"
-      bottom="0"
-      left="0"
-      right="0"
       bg="white"
       borderTop="1px"
       borderColor="gray.200"
       justifyContent="space-around"
-      zIndex={10}
       p={2}
     >
       {sidebarItems.map((item) => (
@@ -97,12 +92,17 @@ const DashboardRoot = () => {
   );
 
   return (
-    <Flex height="100vh" overflow="hidden" position="relative">
+    <Flex
+      height="100vh"
+      overflow="hidden"
+      position="relative"
+      direction={{ base: "column", md: "row" }}
+    >
       {!isMobile && <DesktopSidebar />}
 
-      <Flex flex="1" overflowY="auto" pb={isMobile ? "60px" : "0"}>
+      <Flex flex="1" overflowY="auto">
         <Outlet />
-        {chatSelected && <NoChatSelected />}
+        {!isMobile && chatSelected && <NoChatSelected />}
       </Flex>
 
       {isMobile && <MobileSidebar />}
