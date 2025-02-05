@@ -3,7 +3,7 @@ import BotsListItem from "./BotListItem";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 
-const BotsSidebarList = ({ bots, onSelectBot, isLoading, error }) => {
+const BotsList = ({ bots, onSelectBot, isLoading, error }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResult, setSearchResult] = useState(bots);
 
@@ -26,6 +26,7 @@ const BotsSidebarList = ({ bots, onSelectBot, isLoading, error }) => {
       flexDir={"column"}
       borderRight={"1px"}
       borderColor={"gray.200"}
+      overflowY={"auto"}
     >
       <Flex
         borderBottom={"1px"}
@@ -74,7 +75,7 @@ const BotsSidebarList = ({ bots, onSelectBot, isLoading, error }) => {
   );
 };
 
-BotsSidebarList.propTypes = {
+BotsList.propTypes = {
   bots: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,
@@ -85,4 +86,4 @@ BotsSidebarList.propTypes = {
   onSelectBot: PropTypes.func.isRequired,
 };
 
-export default BotsSidebarList;
+export default BotsList;

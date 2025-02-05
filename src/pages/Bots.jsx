@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import BotsSidebarList from "../components/Bot/BotSidebarList";
+import BotsList from "../components/Bot/BotList";
 import useApiRequest from "../hooks/useApiRequest";
 import { useEffect, useState } from "react";
 import { getBots } from "../api/bots";
@@ -21,7 +21,7 @@ const Bots = () => {
   }, []);
 
   return (
-    <BotsSidebarList
+    <BotsList
       bots={bots}
       onSelectBot={(botId) => navigate(`/dashboard/bots/${botId}`)}
       isLoading={isLoading}
