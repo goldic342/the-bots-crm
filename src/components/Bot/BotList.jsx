@@ -22,7 +22,7 @@ const BotsList = ({ bots, onSelectBot, isLoading, error }) => {
   return (
     <Flex
       height={"100vh"}
-      w={{ base: "full", md: "md", lg: "lg" }}
+      w={{ base: "full", md: "lg", lg: "xl" }}
       flexDir={"column"}
       borderRight={"1px"}
       borderColor={"gray.200"}
@@ -37,7 +37,7 @@ const BotsList = ({ bots, onSelectBot, isLoading, error }) => {
       >
         <Box w={"full"}>
           <Text fontSize={"xl"} fontWeight={"bold"}>
-            Ваши боты
+            Боты
           </Text>
         </Box>
         <Box w={"full"}>

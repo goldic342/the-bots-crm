@@ -5,6 +5,7 @@ import Bots from "../pages/Bots.jsx";
 import Users from "../pages/Users.jsx";
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
 import AuthLayout from "../components/ui/layouts/AuthLayout.jsx";
+import Chats from "../pages/Chats.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -25,7 +26,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "bots/:botId",
-            element: <h1>Each bot chats here</h1>,
+            element: <Chats />,
             children: [
               {
                 path: "chat/:chatId",

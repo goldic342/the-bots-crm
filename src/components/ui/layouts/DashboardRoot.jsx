@@ -48,7 +48,7 @@ const DashboardRoot = () => {
       left="0"
     >
       <VStack spacing={6} align="flex-start">
-        <Box px={6} pt={4} pr={{ md: 16, lg: 20 }}>
+        <Box px={6} pt={4} pr={{ md: 14, lg: 20 }}>
           <Heading size="md">Bots Dashboard</Heading>
         </Box>
         <Flex align="flex-start" flexDir="column" justify="flex-start" w="full">
