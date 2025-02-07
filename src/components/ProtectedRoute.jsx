@@ -1,26 +1,33 @@
+import { Center, Spinner } from "@chakra-ui/react";
 import { useAuth } from "../contexts/AuthContext";
+import Forbidden from "../pages/Forbidden";
+import { PropTypes } from "prop-types";
 
 const ProtectedRoute = ({ children, allowedRoles = ["admin", "user"] }) => {
   const { user, userLoading } = useAuth();
 
-  // While waiting for user data (during token reinitialization), show a loading state
   if (userLoading) {
-    return <div>Loading user data...</div>;
-  }
-
-  // Redirect to login if user is not authenticated
-  if (!user) {
-    return <h1>Redirect to login</h1>;
-  }
-
-  // If allowedRoles is provided, ensure the user's role is permitted
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
     return (
-      <div>Unauthorized: You do not have permission to access this page.</div>
+      <Center h={"100vh"}>
+        <Spinner size={"xl"} color="primary.500" />
+      </Center>
     );
   }
 
+  // For a case when user loading is complete, but state is not updated yet
+  // Tested with low speed internet - works nice
+  if (!user) return;
+
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+    return <Forbidden />;
+  }
+
   return children;
+};
+
+ProtectedRoute.propTypes = {
+  allowedRoles: PropTypes.arrayOf(PropTypes.string).isRequired,
+  children: PropTypes.node,
 };
 
 export default ProtectedRoute;

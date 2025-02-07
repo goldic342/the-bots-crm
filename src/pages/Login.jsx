@@ -35,7 +35,7 @@ const Login = () => {
       setToken(access_token);
       navigate("/dashboard/bots");
     } catch (error) {
-      setError(error.response?.data?.detail || "Unexpected error");
+      setError(error.response?.data?.detail || "Неизвестная ошибка");
     }
   };
 
@@ -51,7 +51,9 @@ const Login = () => {
         <Heading as="h2" size="lg">
           Войти
         </Heading>
-        <Text color="gray.400">Введите данные чтобы авторизоваться</Text>
+        <Text color="gray.400" textAlign={"center"}>
+          Введите данные чтобы авторизоваться
+        </Text>
         <Stack spacing={4} w="full">
           <Input
             onChange={(e) =>

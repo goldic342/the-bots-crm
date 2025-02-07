@@ -28,42 +28,44 @@ export const AuthProvider = ({ children }) => {
 
   // On mount, attempt to fetch a token using refresh token (httpOnly cookie)
   useEffect(() => {
-    if (!token) {
-      getAccessToken()
-        .then((newAccessToken) => {
-          setToken(newAccessToken);
-        })
-        .catch((error) => {
-          // Can't get new access token. API is dead or user's refresh token is no longer valid
-          // Clear states; redirect to login
-          setToken(null);
-          setUser(null);
-          setUserLoading(false);
-          navigate("/");
-        });
-    }
+    if (token) return;
+
+    const getToken = async () => {
+      setUserLoading(true);
+      try {
+        const newToken = await getAccessToken();
+        setToken(newToken);
+      } catch {
+        // Can't get new access token. API is dead or user's refresh token is no longer valid
+        // Clear states; redirect to login
+        setToken(null);
+        setUser(null);
+        setUserLoading(false);
+        navigate("/");
+      }
+    };
+
+    getToken();
   }, [token, navigate]);
 
-  // When a token is available, fetch user details (including role)
+  // When a token is available, fetch user details
   useEffect(() => {
     const fetchUser = async () => {
-      if (token) {
-        setUserLoading(true);
-        try {
-          const userData = await getMe();
-          setUser(userData);
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          setToken(null);
-          setUser(null);
-          navigate("/");
-        } finally {
-          setUserLoading(false);
-        }
-      } else {
+      if (!token) return;
+
+      setUserLoading(true);
+      try {
+        const userData = await getMe();
+        setUser(userData);
+      } catch {
+        setToken(null);
+        setUser(null);
+        navigate("/");
+      } finally {
         setUserLoading(false);
       }
     };
+
     fetchUser();
   }, [token, navigate]);
 
@@ -132,7 +134,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ token, setToken, user, setUser, isUserLoading: userLoading }}
+      value={{ token, setToken, user, setUser, userLoading }}
     >
       {children}
     </AuthContext.Provider>
