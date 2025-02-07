@@ -1,8 +1,47 @@
-# React + Vite
+# TG bots crm
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+CRM for managing chats in one telegram account
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Prerequisites
+
+- [Node.js](https://nodejs.org/)
+- [npm](https://www.npmjs.com/)
+
+### Installation
+
+1. Clone the repository:
+
+   ```sh
+   git clone https://github.com/goldic342/the-bots-crm.git
+   cd the-bots-crm
+   ```
+
+2. Install dependencies:
+
+   ```sh
+   npm i
+   ```
+
+### Running the Development Server
+
+Start the development server:
+
+```sh
+npm run dev
+```
+
+Vite will start a local development server at `http://localhost:5173/`.
+
+### Building for Production
+
+To create an optimized production build:
+
+```sh
+npm run build
+```
+
+### API endpoints
+
+Make sure that all API endpoints available and returns valid data
