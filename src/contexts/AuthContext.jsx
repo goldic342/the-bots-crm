@@ -2,6 +2,7 @@ import { createContext, useState, useContext, useLayoutEffect } from "react";
 import { api } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { UnauthorizedMessage } from "../config";
+import { getAccessToken } from "../api/auth";
 
 const AuthContext = createContext(undefined);
 
@@ -54,8 +55,7 @@ export const AuthInterceptor = ({ children }) => {
           if (!isRefreshing) {
             isRefreshing = true;
             try {
-              const response = await api.get("/refreshToken");
-              const newAccessToken = response.data.access_token;
+              const newAccessToken = await getAccessToken();
               setToken(newAccessToken);
               error.config.headers.Authorization = `Bearer ${newAccessToken}`;
 
@@ -65,12 +65,14 @@ export const AuthInterceptor = ({ children }) => {
 
               return api(error.config);
             } catch {
+              // backend said that refresh token is not valid, navigate to login
               setToken(null);
               navigate("/");
             } finally {
               isRefreshing = false;
             }
           } else {
+            // If still refreshing token add request to the queue
             return new Promise((resolve) => {
               refreshQueue.push((newAccessToken) => {
                 error.config.headers.Authorization = `Bearer ${newAccessToken}`;
