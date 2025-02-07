@@ -7,8 +7,8 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { Outlet, useLocation } from "react-router-dom";
-import SidebarItem from "./ui/SidebarItem";
-import NoChatSelected from "./ui/NoChatSelected";
+import SidebarItem from "../SidebarItem";
+import NoChatSelected from "../NoChatSelected";
 import { Bot, Users } from "lucide-react";
 
 const DashboardRoot = () => {

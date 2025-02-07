@@ -1,8 +1,14 @@
-import { createContext, useState, useContext, useLayoutEffect } from "react";
+import {
+  createContext,
+  useState,
+  useContext,
+  useLayoutEffect,
+  useEffect,
+} from "react";
 import { api } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { UnauthorizedMessage } from "../config";
-import { getAccessToken } from "../api/auth";
+import { getMe, getAccessToken } from "../api/auth";
 
 const AuthContext = createContext(undefined);
 
@@ -16,13 +22,57 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
+  const [userLoading, setUserLoading] = useState(true);
+  const navigate = useNavigate();
 
+  // On mount, attempt to fetch a token using refresh token (httpOnly cookie)
+  useEffect(() => {
+    if (!token) {
+      getAccessToken()
+        .then((newAccessToken) => {
+          setToken(newAccessToken);
+        })
+        .catch((error) => {
+          // Can't get new access token. API is dead or user's refresh token is no longer valid
+          // Clear states; redirect to login
+          setToken(null);
+          setUser(null);
+          setUserLoading(false);
+          navigate("/");
+        });
+    }
+  }, [token, navigate]);
+
+  // When a token is available, fetch user details (including role)
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (token) {
+        setUserLoading(true);
+        try {
+          const userData = await getMe();
+          setUser(userData);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          setToken(null);
+          setUser(null);
+          navigate("/");
+        } finally {
+          setUserLoading(false);
+        }
+      } else {
+        setUserLoading(false);
+      }
+    };
+    fetchUser();
+  }, [token, navigate]);
+
+  // Attach the token to every outgoing API request
   useLayoutEffect(() => {
     const authInterceptor = api.interceptors.request.use((config) => {
-      config.headers.Authorization =
-        !config._retry && token // !config._retry to avoid multiple requests
-          ? `Bearer ${token}`
-          : config.headers.Authorization; // keep the same headers
+      if (token && !config._retry) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
       return config;
     });
     return () => {
@@ -30,17 +80,7 @@ export const AuthProvider = ({ children }) => {
     };
   }, [token]);
 
-  return (
-    <AuthContext.Provider value={{ token, setToken }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-export const AuthInterceptor = ({ children }) => {
-  const { setToken } = useAuth();
-  const navigate = useNavigate();
-
+  // Interceptor to handle token refresh on 403 errors
   useLayoutEffect(() => {
     let isRefreshing = false;
     let refreshQueue = [];
@@ -59,20 +99,20 @@ export const AuthInterceptor = ({ children }) => {
               setToken(newAccessToken);
               error.config.headers.Authorization = `Bearer ${newAccessToken}`;
 
-              // Process queued requests
+              // Process queued requests with the new token
               refreshQueue.forEach((cb) => cb(newAccessToken));
               refreshQueue = [];
 
               return api(error.config);
-            } catch {
-              // backend said that refresh token is not valid, navigate to login
+            } catch (err) {
               setToken(null);
+              setUser(null);
               navigate("/");
             } finally {
               isRefreshing = false;
             }
           } else {
-            // If still refreshing token add request to the queue
+            // Queue any API calls while token is refreshing
             return new Promise((resolve) => {
               refreshQueue.push((newAccessToken) => {
                 error.config.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -88,7 +128,13 @@ export const AuthInterceptor = ({ children }) => {
     return () => {
       api.interceptors.response.eject(refreshInterceptor);
     };
-  }, [navigate, setToken]);
+  }, [navigate]);
 
-  return children;
+  return (
+    <AuthContext.Provider
+      value={{ token, setToken, user, setUser, isUserLoading: userLoading }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
