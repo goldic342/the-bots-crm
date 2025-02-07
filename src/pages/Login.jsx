@@ -9,7 +9,7 @@ import {
   VStack,
   Fade,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/auth";
 import { useAuth } from "../contexts/AuthContext";
@@ -18,8 +18,13 @@ import PasswordInput from "../components/ui/PasswordInput";
 const Login = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
-  const { setToken } = useAuth();
+  const { token, setToken } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token) return;
+    navigate("/dashboard/bots");
+  }, [token, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
