@@ -10,6 +10,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import SidebarItem from "../SidebarItem";
 import NoChatSelected from "../NoChatSelected";
 import { Bot, Users } from "lucide-react";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const DashboardRoot = () => {
   const location = useLocation();
@@ -18,6 +19,7 @@ const DashboardRoot = () => {
     pathname.startsWith("/dashboard/bots") && !pathname.includes("/chat/");
 
   const isMobile = useBreakpointValue({ base: true, md: false });
+  const { user } = useAuth();
 
   const sidebarItems = [
     {
@@ -25,12 +27,15 @@ const DashboardRoot = () => {
       icon: <Icon as={Bot} w={6} h={6} />,
       link: "/dashboard/bots",
     },
-    {
+  ];
+
+  if (user.role === "admin") {
+    sidebarItems.push({
       name: "Пользователи",
       icon: <Icon as={Users} w={6} h={6} />,
       link: "/dashboard/users",
-    },
-  ];
+    });
+  }
 
   const DesktopSidebar = () => (
     <Flex
