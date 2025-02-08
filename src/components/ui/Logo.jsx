@@ -1,5 +1,5 @@
 import { Box, Icon } from "@chakra-ui/react";
-import { Bot } from "lucide-react";
+import { Activity } from "lucide-react";
 
 const Logo = ({ w = "48px", h = "48px" }) => {
   return (
@@ -13,7 +13,7 @@ const Logo = ({ w = "48px", h = "48px" }) => {
       justifyContent="center"
       boxShadow="md"
     >
-      <Icon as={Bot} w={6} h={6} color="white" />
+      <Icon as={Activity} w={6} h={6} color="white" />
     </Box>
   );
 };
