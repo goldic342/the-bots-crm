@@ -17,7 +17,7 @@ const UserList = ({ users, isLoading, error }) => {
   if (isLoading) {
     return (
       <Box width="full" maxW="6xl" p={6} textAlign="center">
-        <Spinner size="xl" color="primary.500" />
+        <Spinner size="xl" />
         <Text mt={4}>Загружаем пользователей...</Text>
       </Box>
     );

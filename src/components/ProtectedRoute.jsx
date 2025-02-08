@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children, allowedRoles = ["admin", "user"] }) => {
   if (userLoading) {
     return (
       <Center h={"100vh"}>
-        <Spinner size={"xl"} color="primary.500" />
+        <Spinner size={"xl"} />
       </Center>
     );
   }
