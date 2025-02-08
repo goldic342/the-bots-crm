@@ -6,6 +6,7 @@ import Users from "../pages/Users.jsx";
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
 import AuthLayout from "../components/ui/layouts/AuthLayout.jsx";
 import Chats from "../pages/Chats.jsx";
+import ChatInterface from "../components/Chat/ChatInterface.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -30,7 +31,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: "chat/:chatId",
-                element: <h1>Current chat</h1>,
+                element: <ChatInterface />,
               },
             ],
           },
