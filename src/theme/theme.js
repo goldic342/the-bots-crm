@@ -77,11 +77,6 @@ const theme = extendTheme({
       variant: "standard",
     },
   },
-  Spinner: {
-    defaultProps: {
-      color: "primary.500",
-    },
-  },
 });
 
 export default theme;
