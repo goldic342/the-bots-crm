@@ -47,7 +47,7 @@ const ChatList = ({ chats, isLoading, error, onSelectChat }) => {
       <VStack align="stretch" spacing={2}>
         {isLoading && <SpinnerLoader h={{ base: "20vh", md: "94vh" }} />}
         {error && (
-          <LoaderMessage h={{ base: "20vh", md: "94vh" }}>
+          <LoaderMessage h={{ base: "20vh", md: "94vh" }} isError={true}>
             Ошибка загрузки чатов :(
           </LoaderMessage>
         )}

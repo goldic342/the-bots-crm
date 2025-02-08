@@ -4,14 +4,14 @@ const LoaderMessage = ({
   isError = false,
   h = "100vh",
   w = "full",
-  children
+  children,
   ...props
 }) => {
   return (
     <Center h={h} w={w}>
       <Text
         fontSize={"lg"}
-        color={isError ? "red.500" : 'gray.700'}
+        color={isError ? "red.500" : "gray.700"}
         textAlign={"center"}
         p={12}
         {...props}
