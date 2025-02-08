@@ -1,9 +1,11 @@
-import { Flex, VStack, Text, Icon, Spinner, Center } from "@chakra-ui/react";
+import { Flex, VStack, Text, Icon, Center } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import ChatItem from "./ChatItem";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import SpinnerLoader from "../ui/SpinnerLoader";
 import { ArrowLeft } from "lucide-react";
+import LoaderMessage from "../ui/LoaderMessage";
 
 const ChatList = ({ chats, isLoading, error, onSelectChat }) => {
   const { botId } = useParams();
@@ -43,24 +45,16 @@ const ChatList = ({ chats, isLoading, error, onSelectChat }) => {
       </Flex>
 
       <VStack align="stretch" spacing={2}>
-        {isLoading && (
-          <Center h={{ base: "20vh", md: "94vh" }}>
-            <Spinner size={"xl"} color="primary.500" />
-          </Center>
-        )}
+        {isLoading && <SpinnerLoader h={{ base: "20vh", md: "94vh" }} />}
         {error && (
-          <Center h={{ base: "20vh", md: "94vh" }}>
-            <Text fontSize={"lg"} color={"red.500"} textAlign={"center"} p={12}>
-              Ошибка загрузки чатов :(
-            </Text>
-          </Center>
+          <LoaderMessage h={{ base: "20vh", md: "94vh" }}>
+            Ошибка загрузки чатов :(
+          </LoaderMessage>
         )}
         {!isLoading && !error && filteredChats.length === 0 && (
-          <Center h={{ base: "20vh", md: "94vh" }}>
-            <Text fontSize={"lg"} textAlign={"center"} p={12}>
-              Чатов пока нет...
-            </Text>
-          </Center>
+          <LoaderMessage h={{ base: "20vh", md: "94vh" }}>
+            Чатов пока нет...
+          </LoaderMessage>
         )}
 
         {!isLoading &&
