@@ -20,7 +20,7 @@ const ChatList = ({ chats, isLoading, error, onSelectChat }) => {
     <Flex
       h={{ base: "max-content", md: "100vh" }}
       overflowY={"auto"}
-      w={{ base: "full", md: "lg", lg: "xl" }}
+      w={{ base: "full", md: "xl", lg: "2xl" }}
       borderRight={"1px"}
       borderColor={"gray.200"}
       flexDir="column"

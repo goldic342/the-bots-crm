@@ -11,6 +11,7 @@ import SidebarItem from "../SidebarItem";
 import NoChatSelected from "../NoChatSelected";
 import { Bot, Users } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext";
+import Logo from "../Logo";
 
 const DashboardRoot = () => {
   const location = useLocation();
@@ -19,6 +20,8 @@ const DashboardRoot = () => {
     pathname.startsWith("/dashboard/bots") && !pathname.includes("/chat/");
 
   const isMobile = useBreakpointValue({ base: true, md: false });
+  const isTablet = useBreakpointValue({ base: false, md: true, lg: false });
+
   const { user } = useAuth();
 
   const sidebarItems = [
@@ -48,8 +51,15 @@ const DashboardRoot = () => {
       left="0"
     >
       <VStack spacing={6} align="flex-start">
-        <Box px={6} pt={4} pr={{ md: 14, lg: 20 }}>
-          <Heading size="md">Bots Dashboard</Heading>
+        <Box px={{ md: 3, lg: 6 }} pt={4} pr={{ md: 3, lg: 20 }}>
+          {isTablet ? (
+            <Logo />
+          ) : (
+            <Flex align={"center"} gap={3}>
+              <Logo w={"42px"} h={"42px"} />
+              <Heading size="md">BotsDash</Heading>
+            </Flex>
+          )}
         </Box>
         <Flex align="flex-start" flexDir="column" justify="flex-start" w="full">
           {sidebarItems.map((item) => (
@@ -58,6 +68,7 @@ const DashboardRoot = () => {
               name={item.name}
               icon={item.icon}
               link={item.link}
+              iconOnly={isTablet}
             />
           ))}
         </Flex>
@@ -86,7 +97,7 @@ const DashboardRoot = () => {
           py={1}
           fontSize="xs"
           textAlign="center"
-          borderRadius="full" // Rounded menu items
+          borderRadius="full"
           _hover={{
             bg: "gray.100",
           }}
