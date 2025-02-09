@@ -8,6 +8,7 @@ import {
   Text,
   VStack,
   Fade,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -44,6 +45,9 @@ const Login = () => {
     }
   };
 
+  const formBg = useColorModeValue("white", "gray.700");
+  const textColor = useColorModeValue("gray.400", "gray.200");
+
   return (
     <Container
       centerContent
@@ -52,11 +56,19 @@ const Login = () => {
       justifyContent="center"
       alignItems="center"
     >
-      <VStack spacing={8} w="full" maxW="md" p={8} borderRadius="md">
+      <VStack
+        spacing={8}
+        w="full"
+        maxW="md"
+        p={8}
+        bg={formBg}
+        borderRadius="md"
+        boxShadow="md"
+      >
         <Heading as="h2" size="lg">
           Войти
         </Heading>
-        <Text color="gray.400" textAlign={"center"}>
+        <Text color={textColor} textAlign="center">
           Введите данные чтобы авторизоваться
         </Text>
         <Stack spacing={4} w="full">
@@ -78,7 +90,7 @@ const Login = () => {
         </Stack>
         <Box h="20px">
           <Fade in={error}>
-            <Text color={"red.500"}>{error}</Text>
+            <Text color="red.500">{error}</Text>
           </Fade>
         </Box>
       </VStack>

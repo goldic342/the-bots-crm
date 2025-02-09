@@ -71,6 +71,7 @@ const theme = extendTheme({
         standard: (props) => ({
           field: {
             borderWidth: "1px",
+            bg: "gray.700",
             borderColor: mode("gray.300", "gray.600")(props),
             _focus: { borderColor: "primary.500", boxShadow: "outline" },
           },
