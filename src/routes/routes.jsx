@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Login from "../pages/Login.jsx";
 import DashboardRoot from "../components/ui/layouts/DashboardRoot.jsx";
 import Bots from "../pages/Bots.jsx";
@@ -21,6 +21,11 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
         children: [
+          {
+            // Auto redirect to /bots
+            index: true,
+            element: <Navigate to="bots" replace />,
+          },
           {
             path: "bots",
             element: <Bots />,
