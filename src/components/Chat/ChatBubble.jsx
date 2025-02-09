@@ -8,7 +8,11 @@ const ChatBubble = ({ message }) => {
   const textColor = isOwn ? "white" : "black";
 
   return (
-    <Flex justify={isOwn ? "flex-end" : "flex-start"} mb={2}>
+    <Flex
+      direction="column"
+      alignItems={isOwn ? "flex-end" : "flex-start"}
+      mb={2}
+    >
       <Flex
         bg={bgColor}
         color={textColor}
@@ -17,26 +21,21 @@ const ChatBubble = ({ message }) => {
         maxWidth="80%"
         boxShadow="sm"
         flexDirection="column"
-        borderTopLeftRadius={isOwn ? "20px" : "5px"}
-        borderTopRightRadius={isOwn ? "5px" : "20px"}
-        borderBottomLeftRadius="20px"
-        borderBottomRightRadius="20px"
+        borderBottomLeftRadius={isOwn ? "15px" : "5px"}
+        borderBottomRightRadius={isOwn ? "5px" : "15px"}
+        borderTopLeftRadius="15px"
+        borderTopRightRadius="15px"
       >
-        <Text whiteSpace="pre-wrap" wordBreak="break-word" color={"inherit"}>
+        <Text whiteSpace="pre-wrap" wordBreak="break-word" color="inherit">
           {text}
         </Text>
-        {time && (
-          <Text
-            fontSize="xs"
-            mt={1}
-            alignSelf="flex-end"
-            opacity={0.7}
-            color={"inherit"}
-          >
-            {time}
-          </Text>
-        )}
       </Flex>
+
+      {time && (
+        <Text fontSize="xs" mt={1} opacity={0.7}>
+          {time}
+        </Text>
+      )}
     </Flex>
   );
 };

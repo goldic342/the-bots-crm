@@ -41,7 +41,10 @@ const ChatInterface = () => {
     const newMessage = {
       id: Date.now().toString(),
       text: text.trim(),
-      time: new Date().toLocaleTimeString(),
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
       isOwn: Math.random() < 0.7,
     };
     setMessages((prev) => [...prev, newMessage]);
