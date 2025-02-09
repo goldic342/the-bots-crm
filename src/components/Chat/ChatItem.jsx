@@ -1,15 +1,30 @@
-import { Box, Text, Flex, Avatar, Spacer, Icon } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Flex,
+  Avatar,
+  Spacer,
+  Icon,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { Check, CheckCheck } from "lucide-react";
 import PropTypes from "prop-types";
 
 const ChatItem = ({ chat, isActive, onClick }) => {
+  const activeBg = useColorModeValue("blue.100", "blue.700");
+  const inactiveBg = useColorModeValue("white", "gray.800");
+  const hoverBg = useColorModeValue("gray.100", "gray.700");
+  const dateColor = useColorModeValue("gray.500", "gray.400");
+  const messageColor = useColorModeValue("gray.600", "gray.300");
+  const unreadIconColor = useColorModeValue("gray.400", "gray.500");
+
   return (
     <Box
       py={3}
       px={3}
-      bg={isActive ? "blue.100" : "white"}
-      transition={"background .1s ease-in"}
-      _hover={{ bg: "gray.100" }}
+      bg={isActive ? activeBg : inactiveBg}
+      transition="background .1s ease-in"
+      _hover={{ bg: hoverBg }}
       cursor="pointer"
       onClick={onClick}
     >
@@ -20,20 +35,20 @@ const ChatItem = ({ chat, isActive, onClick }) => {
           <Flex align="center">
             <Text fontWeight="bold">{chat.name}</Text>
             <Spacer />
-            <Text fontSize="xs" color="gray.500">
+            <Text fontSize="xs" color={dateColor}>
               {chat.lastMessageDate}
             </Text>
           </Flex>
 
           <Flex align="center">
-            <Text fontSize="sm" color="gray.600" noOfLines={1}>
+            <Text fontSize="sm" color={messageColor} noOfLines={1}>
               {chat.lastMessage || "Нет сообщений"}
             </Text>
             <Spacer />
             {chat.isRead ? (
-              <Icon as={CheckCheck} color={"primary.400"} />
+              <Icon as={CheckCheck} color="primary.400" />
             ) : (
-              <Icon as={Check} color={"gray.400"} />
+              <Icon as={Check} color={unreadIconColor} />
             )}
           </Flex>
         </Box>

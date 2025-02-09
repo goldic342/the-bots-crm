@@ -1,6 +1,14 @@
-import { color, extendTheme } from "@chakra-ui/react";
+import { extendTheme } from "@chakra-ui/react";
+import { mode } from "@chakra-ui/theme-tools";
+
+// Configure initial color mode and system preference
+const config = {
+  initialColorMode: "dark",
+  useSystemColorMode: false,
+};
 
 const theme = extendTheme({
+  config,
   colors: {
     primary: {
       100: "#D6EBFF",
@@ -22,60 +30,62 @@ const theme = extendTheme({
     body: "Lato, sans-serif",
     heading: "Lato, sans-serif",
   },
+
   components: {
     Button: {
-      baseStyle: {
+      baseStyle: (props) => ({
         fontWeight: "bold",
         borderRadius: "md",
-      },
+      }),
       variants: {
-        solid: {
-          bg: "primary.500",
+        solid: (props) => ({
+          bg: mode("primary.500", "primary.400")(props),
           color: "white",
-          _hover: { bg: "primary.600" },
-        },
-        outline: {
-          borderColor: "primary.300",
+          _hover: { bg: mode("primary.600", "primary.300")(props) },
+        }),
+        outline: (props) => ({
+          borderColor: mode("primary.300", "primary.200")(props),
           fontWeight: "semibold",
-          color: "primary.500",
+          color: mode("primary.500", "primary.400")(props),
           borderWidth: "1px",
-          _hover: { bg: "secondary" },
-        },
+          _hover: { bg: mode("secondary", "gray.700")(props) },
+        }),
       },
       defaultProps: {
         variant: "solid",
       },
     },
     Text: {
-      baseStyle: {
-        color: "gray.700",
-      },
+      baseStyle: (props) => ({
+        color: mode("gray.700", "gray.200")(props),
+      }),
     },
     Heading: {
-      baseStyle: {
+      baseStyle: (props) => ({
         fontWeight: "bold",
-        color: "gray.900",
-      },
+        color: mode("gray.900", "whiteAlpha.900")(props),
+      }),
     },
-  },
-  Input: {
-    variants: {
-      standard: {
-        field: {
-          borderColor: "gray.300",
-          _focus: { borderColor: "primary.500", boxShadow: "outline" },
-        },
+    Input: {
+      variants: {
+        standard: (props) => ({
+          field: {
+            borderWidth: "1px",
+            borderColor: mode("gray.300", "gray.600")(props),
+            _focus: { borderColor: "primary.500", boxShadow: "outline" },
+          },
+        }),
+        blackBorder: (props) => ({
+          field: {
+            borderColor: mode("black", "whiteAlpha.500")(props),
+            borderWidth: "2px",
+            _focus: { borderColor: "primary.500", boxShadow: "outline" },
+          },
+        }),
       },
-      blackBorder: {
-        field: {
-          borderColor: "black",
-          borderWidth: "2px",
-          _focus: { borderColor: "primary.500", boxShadow: "outline" },
-        },
+      defaultProps: {
+        variant: "standard",
       },
-    },
-    defaultProps: {
-      variant: "standard",
     },
   },
 });

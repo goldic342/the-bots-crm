@@ -1,4 +1,4 @@
-import { Flex, VStack, Text, Icon, Center } from "@chakra-ui/react";
+import { Flex, VStack, Text, Icon, useColorModeValue } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import ChatItem from "./ChatItem";
 import { useEffect, useState } from "react";
@@ -16,25 +16,27 @@ const ChatList = ({ chats, isLoading, error, onSelectChat }) => {
     setFilteredChats(chats);
   }, [chats]);
 
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+
   return (
     <Flex
       h={{ base: "max-content", md: "100vh" }}
-      overflowY={"auto"}
+      overflowY="auto"
       w={{ base: "full", md: "xl", lg: "2xl" }}
-      borderRight={"1px"}
-      borderColor={"gray.200"}
+      borderRight="1px"
+      borderColor={borderColor}
       flexDir="column"
     >
       <Flex
-        align={"center"}
+        align="center"
         gap={3}
         p={4}
         borderBottom="1px"
-        borderColor="gray.200"
+        borderColor={borderColor}
       >
         <Icon
           as={ArrowLeft}
-          boxSize={"5"}
+          boxSize="5"
           _hover={{ cursor: "pointer" }}
           onClick={() => navigate("/dashboard/bots")}
         />

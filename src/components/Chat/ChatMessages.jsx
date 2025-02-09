@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Box } from "@chakra-ui/react";
+import { Box, useColorModeValue } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import ChatBubble from "./ChatBubble";
 
@@ -12,8 +12,10 @@ const ChatMessages = ({ messages }) => {
     }
   }, [messages]);
 
+  const bg = useColorModeValue("gray.50", "gray.800");
+
   return (
-    <Box flex="1" p={4} overflowY="auto" bg="gray.50">
+    <Box flex="1" p={4} overflowY="auto" bg={bg}>
       {messages.map((msg) => (
         <ChatBubble key={msg.id} message={msg} />
       ))}

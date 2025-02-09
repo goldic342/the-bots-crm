@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, useBreakpointValue } from "@chakra-ui/react";
+import { Box, useBreakpointValue, useColorModeValue } from "@chakra-ui/react";
 import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
@@ -29,15 +29,10 @@ const ChatInterface = () => {
 
   useEffect(() => {
     // TODO: Setup subscription for new messages for chatId
-    // Example:
-    // const unsubscribe = subscribeToMessages(chat.id, (newMsg) => {
-    //   setMessages((prev) => [...prev, newMsg]);
-    // });
-    // return () => unsubscribe();
+    // Example: subscribeToMessages(chatId, (newMsg) => { ... });
   }, [chatId]);
 
   const handleSendMessage = (text) => {
-    // TODO: Implement sending message via API/websocket
     const newMessage = {
       id: Date.now().toString(),
       text: text.trim(),
@@ -54,15 +49,17 @@ const ChatInterface = () => {
     navigate(`/dashboard/bots/${botId}`);
   };
 
+  const bg = useColorModeValue("white", "gray.800");
+
   return (
     <Box
       position={isMobile ? "absolute" : "static"}
-      w={"full"}
+      w="full"
       top={0}
       left={0}
       right={0}
       bottom={0}
-      bg="white"
+      bg={bg}
       display="flex"
       flexDirection="column"
     >

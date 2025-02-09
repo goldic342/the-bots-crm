@@ -5,11 +5,12 @@ import {
   Icon,
   VStack,
   useBreakpointValue,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import SidebarItem from "../SidebarItem";
 import NoChatSelected from "../NoChatSelected";
-import { Bot, Users } from "lucide-react";
+import { Bot, Users, Settings } from "lucide-react"; // Added Settings icon
 import { useAuth } from "../../../contexts/AuthContext";
 import Logo from "../Logo";
 
@@ -24,7 +25,7 @@ const DashboardRoot = () => {
 
   const { user } = useAuth();
 
-  const sidebarItems = [
+  const primarySidebarItems = [
     {
       name: "Боты",
       icon: <Icon as={Bot} w={6} h={6} />,
@@ -33,58 +34,85 @@ const DashboardRoot = () => {
   ];
 
   if (user.role === "admin") {
-    sidebarItems.push({
+    primarySidebarItems.push({
       name: "Пользователи",
       icon: <Icon as={Users} w={6} h={6} />,
       link: "/dashboard/users",
     });
   }
 
+  const settingsSidebarItem = {
+    name: "Настройки",
+    icon: <Icon as={Settings} w={6} h={6} />,
+    link: "/dashboard/settings",
+  };
+
   const DesktopSidebar = () => (
     <Flex
       border="1px"
-      borderColor="gray.200"
+      borderColor={useColorModeValue("gray.200", "gray.700")}
       width="max-content"
       height="100vh"
       position="sticky"
       top="0"
       left="0"
     >
-      <VStack spacing={6} align="flex-start">
-        <Box px={{ md: 3, lg: 6 }} pt={4} pr={{ md: 3, lg: 20 }}>
-          {isTablet ? (
-            <Logo />
-          ) : (
-            <Flex align={"center"} gap={3}>
-              <Logo w={"42px"} h={"42px"} />
-              <Heading size="md">BotsDash</Heading>
-            </Flex>
-          )}
+      <VStack
+        spacing={6}
+        align="flex-start"
+        justify="space-between"
+        height="100vh"
+        w="full"
+        py={4}
+      >
+        <Box w="full">
+          <Box px={{ md: 3, lg: 6 }} pb={4}>
+            {isTablet ? (
+              <Logo />
+            ) : (
+              <Flex align="center" gap={3}>
+                <Logo w="42px" h="42px" />
+                <Heading size="md">BotsDash</Heading>
+              </Flex>
+            )}
+          </Box>
+          <Flex direction="column" gap={2}>
+            {primarySidebarItems.map((item) => (
+              <SidebarItem
+                key={item.link}
+                name={item.name}
+                icon={item.icon}
+                link={item.link}
+                iconOnly={isTablet}
+              />
+            ))}
+          </Flex>
         </Box>
-        <Flex align="flex-start" flexDir="column" justify="flex-start" w="full">
-          {sidebarItems.map((item) => (
-            <SidebarItem
-              key={item.link}
-              name={item.name}
-              icon={item.icon}
-              link={item.link}
-              iconOnly={isTablet}
-            />
-          ))}
-        </Flex>
+        <Box w="full">
+          <SidebarItem
+            key={settingsSidebarItem.link}
+            name={settingsSidebarItem.name}
+            icon={settingsSidebarItem.icon}
+            link={settingsSidebarItem.link}
+            iconOnly={isTablet}
+          />
+        </Box>
       </VStack>
     </Flex>
   );
 
+  // Mobile Sidebar: Combine primary and settings items in one bottom bar.
+  const mobileSidebarItems = [...primarySidebarItems, settingsSidebarItem];
+
   const MobileSidebar = () => (
     <Flex
-      bg="white"
+      bg={useColorModeValue("white", "gray.800")}
       borderTop="1px"
-      borderColor="gray.200"
+      borderColor={useColorModeValue("gray.200", "gray.700")}
       justifyContent="space-around"
       p={2}
     >
-      {sidebarItems.map((item) => (
+      {mobileSidebarItems.map((item) => (
         <SidebarItem
           key={item.link}
           name={item.name}
@@ -99,7 +127,7 @@ const DashboardRoot = () => {
           textAlign="center"
           borderRadius="full"
           _hover={{
-            bg: "gray.100",
+            bg: useColorModeValue("gray.100", "gray.700"),
           }}
           iconOnly
         />

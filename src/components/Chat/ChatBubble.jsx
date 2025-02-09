@@ -1,11 +1,15 @@
-import { Text, Flex } from "@chakra-ui/react";
+import { Text, Flex, useColorModeValue } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 
 const ChatBubble = ({ message }) => {
   const { isOwn, text, time } = message;
 
-  const bgColor = isOwn ? "primary.500" : "gray.100";
-  const textColor = isOwn ? "white" : "black";
+  const bgColor = isOwn
+    ? useColorModeValue("primary.500", "primary.400")
+    : useColorModeValue("gray.100", "gray.700");
+  const textColor = isOwn
+    ? "white"
+    : useColorModeValue("black", "whiteAlpha.900");
 
   return (
     <Flex
@@ -30,7 +34,6 @@ const ChatBubble = ({ message }) => {
           {text}
         </Text>
       </Flex>
-
       {time && (
         <Text fontSize="xs" mt={1} opacity={0.7}>
           {time}

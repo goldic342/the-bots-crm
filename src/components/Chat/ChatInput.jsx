@@ -1,5 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { Box, Textarea, IconButton, Flex } from "@chakra-ui/react";
+import {
+  Box,
+  Textarea,
+  IconButton,
+  Flex,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { ArrowUp } from "lucide-react";
 import PropTypes from "prop-types";
 
@@ -28,6 +34,9 @@ const ChatInput = ({ onSendMessage }) => {
     }
   };
 
+  const sendButtonBg = useColorModeValue("primary.500", "primary.400");
+  const sendButtonHoverBg = useColorModeValue("primary.600", "primary.300");
+
   return (
     <Box p={4}>
       <Flex alignItems="flex-end">
@@ -40,15 +49,17 @@ const ChatInput = ({ onSendMessage }) => {
           mr={2}
           resize="none"
           overflow="hidden"
-          overflowY={"auto"}
+          overflowY="auto"
           rows={1}
           maxH={48}
         />
         <IconButton
-          icon={<ArrowUp size={"24px"} />}
-          borderRadius={"full"}
-          size={"sm"}
-          color={"white"}
+          icon={<ArrowUp size="24px" />}
+          borderRadius="full"
+          size="sm"
+          color="white"
+          bg={sendButtonBg}
+          _hover={{ bg: sendButtonHoverBg }}
           onClick={handleSend}
           aria-label="Отправить"
         />

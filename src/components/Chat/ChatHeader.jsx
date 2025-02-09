@@ -4,6 +4,7 @@ import {
   Text,
   useBreakpointValue,
   useDisclosure,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { ArrowLeft, EllipsisVertical } from "lucide-react";
 import PropTypes from "prop-types";
@@ -13,14 +14,17 @@ const ChatHeader = ({ chat, onBack }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const headerBg = useColorModeValue("gray.100", "gray.700");
+  const iconColor = useColorModeValue("gray.500", "gray.300");
+
   return (
-    <Flex justify={"space-between"} align={"center"} p={4} bg="gray.100">
-      <Flex align={"center"}>
+    <Flex justify="space-between" align="center" p={4} bg={headerBg}>
+      <Flex align="center">
         {isMobile && (
           <Icon
             as={ArrowLeft}
             boxSize={6}
-            color={"gray.500"}
+            color={iconColor}
             mr={2}
             cursor="pointer"
             onClick={onBack}
@@ -33,9 +37,9 @@ const ChatHeader = ({ chat, onBack }) => {
       <Icon
         as={EllipsisVertical}
         boxSize={6}
-        cursor={"pointer"}
+        cursor="pointer"
         onClick={onOpen}
-        color={"gray.500"}
+        color={iconColor}
       />
       <ChatInfoModal open={isOpen} onClose={onClose} />
     </Flex>

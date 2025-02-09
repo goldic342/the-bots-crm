@@ -6,6 +6,7 @@ import Users from "../pages/Users.jsx";
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
 import AuthLayout from "../components/ui/layouts/AuthLayout.jsx";
 import Chats from "../pages/Chats.jsx";
+import Settings from "../pages/Settings.jsx";
 import ChatInterface from "../components/Chat/ChatInterface.jsx";
 
 export const router = createBrowserRouter([
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
             index: true,
             element: <Navigate to="bots" replace />,
           },
+          { path: "settings", element: <Settings /> },
           {
             path: "bots",
             element: <Bots />,

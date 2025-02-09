@@ -1,9 +1,21 @@
-import { Link, Text } from "@chakra-ui/react";
+import {
+  Link,
+  Text,
+  useColorModeValue,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
-import { useBreakpointValue } from "@chakra-ui/react";
 
 const SidebarItem = ({ name, icon, link, iconOnly = false, ...props }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
+  const activeColor = useColorModeValue(
+    "var(--chakra-colors-primary-600)",
+    "var(--chakra-colors-primary-300)",
+  );
+  const activeBg = useColorModeValue(
+    "var(--chakra-colors-primary-100)",
+    "var(--chakra-colors-primary-700)",
+  );
 
   return (
     <Link
@@ -15,17 +27,11 @@ const SidebarItem = ({ name, icon, link, iconOnly = false, ...props }) => {
       w={{ base: 12, md: "full" }}
       gap={6}
       textDecoration="none"
-      p={"12px 24px"}
       style={({ isActive }) => ({
-        // Fucking hate this styling.
-        // how I even supposed to style this shit
-        color: isActive ? "var(--chakra-colors-primary-600)" : "inherit",
-        background: isActive
-          ? "var(--chakra-colors-primary-100)"
-          : "transparent",
-
+        color: isActive ? activeColor : "inherit",
+        background: isActive ? activeBg : "transparent",
         textDecoration: "none",
-        padding: isMobile && "var(--chakra-space-1)",
+        padding: isMobile ? "var(--chakra-space-1)" : "12px 24px",
       })}
     >
       {icon}
