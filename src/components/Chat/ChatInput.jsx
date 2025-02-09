@@ -31,6 +31,7 @@ const ChatInput = ({ onSendMessage }) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+      textareaRef.current.style.height = "auto";
     }
   };
 
