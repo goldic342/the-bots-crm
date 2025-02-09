@@ -36,8 +36,9 @@ const theme = extendTheme({
         },
         outline: {
           borderColor: "primary.300",
+          fontWeight: "semibold",
           color: "primary.500",
-          borderWidth: "2px",
+          borderWidth: "1px",
           _hover: { bg: "secondary" },
         },
       },

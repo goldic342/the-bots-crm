@@ -11,6 +11,8 @@ import {
 import PasswordInput from "../ui/PasswordInput";
 import { useState } from "react";
 import { PropTypes } from "prop-types";
+import genPassowrd from "../../utils/genPassword";
+import genPassword from "../../utils/genPassword";
 
 const CreateUserForm = ({
   formData,
@@ -90,7 +92,7 @@ const CreateUserForm = ({
             </Text>
           )}
         </FormControl>
-        <FormControl>
+        <FormControl display={"flex"} gap={4}>
           <PasswordInput
             deafaultShow={true}
             size={"md"}
@@ -100,6 +102,14 @@ const CreateUserForm = ({
             }
             isInvalid={!!formErrors.password}
           />
+          <Button
+            variant={"outline"}
+            onClick={() =>
+              setFormData({ ...formData, password: genPassword() })
+            }
+          >
+            Сгенерировать
+          </Button>
           {formErrors.password && (
             <Text color="red.500" fontSize="sm">
               {formErrors.password}
