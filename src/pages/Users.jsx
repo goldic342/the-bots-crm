@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text, useColorModeValue } from "@chakra-ui/react";
 import UserList from "../components/User/UserList";
 import { useEffect, useState } from "react";
 import useApiRequest from "../hooks/useApiRequest";
@@ -42,6 +42,10 @@ const Users = () => {
     fetchData();
   }, []);
 
+  // Define dynamic values for dark/light mode.
+  const formBg = useColorModeValue("white", "gray.800");
+  const textColor = useColorModeValue("gray.600", "gray.300");
+
   return (
     <Box w="full" minH="100vh" h="full" p={{ base: 2, lg: 4 }}>
       <Flex
@@ -50,14 +54,14 @@ const Users = () => {
         justify="center"
         pt={{ base: 10, md: 24 }}
       >
-        <Flex direction={"column"} p={{ base: 1 }}>
-          <Heading mb={2} textAlign={"center"}>
+        <Flex direction="column" p={{ base: 1 }}>
+          <Heading mb={2} textAlign="center">
             Управление пользователями
           </Heading>
           <Text
             fontSize="lg"
-            maxW={"4xl"}
-            color={"gray.600"}
+            maxW="4xl"
+            color={textColor}
             mb={{ base: 10, md: 16 }}
             textAlign="center"
           >
@@ -66,7 +70,7 @@ const Users = () => {
             нового пользователя.
           </Text>
         </Flex>
-        <Box w="full" maxW="3xl" bg="white" p={{ base: 4, md: 8 }} mb={10}>
+        <Box w="full" maxW="3xl" bg={formBg} p={{ base: 4, md: 8 }} mb={10}>
           <NewUserForm
             formData={formData}
             setFormData={setFormData}

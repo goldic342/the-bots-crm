@@ -39,12 +39,12 @@ const theme = extendTheme({
       }),
       variants: {
         solid: (props) => ({
-          bg: mode("primary.500", "primary.400")(props),
+          bg: mode("primary.500", "primary.600")(props),
           color: "white",
           _hover: { bg: mode("primary.600", "primary.300")(props) },
         }),
         outline: (props) => ({
-          borderColor: mode("primary.300", "primary.200")(props),
+          borderColor: mode("primary.300", "primary.500")(props),
           fontWeight: "semibold",
           color: mode("primary.500", "primary.400")(props),
           borderWidth: "1px",

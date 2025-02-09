@@ -7,11 +7,11 @@ import {
   Text,
   Button,
   FormControl,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import PasswordInput from "../ui/PasswordInput";
 import { useState } from "react";
 import { PropTypes } from "prop-types";
-import genPassowrd from "../../utils/genPassword";
 import genPassword from "../../utils/genPassword";
 
 const CreateUserForm = ({
@@ -26,6 +26,9 @@ const CreateUserForm = ({
     password: "",
     role: "",
   });
+
+  // Set dynamic text color for explanatory text
+  const textColor = useColorModeValue("gray.600", "gray.300");
 
   const validateForm = () => {
     let errors = { username: "", password: "", role: "" };
@@ -51,11 +54,11 @@ const CreateUserForm = ({
 
   return (
     <Flex direction="column" gap={4}>
-      <Flex direction={"column"} gap={{ base: 2, md: 4 }}>
-        <Heading size="lg" textAlign={"center"}>
+      <Flex direction="column" gap={{ base: 2, md: 4 }}>
+        <Heading size="lg" textAlign="center">
           Создать пользователя
         </Heading>
-        <Text color="gray.600" mb={4} textAlign={"center"}>
+        <Text color={textColor} mb={4} textAlign="center">
           Заполните все поля ниже, чтобы добавить нового пользователя в систему.
         </Text>
       </Flex>
@@ -92,10 +95,10 @@ const CreateUserForm = ({
             </Text>
           )}
         </FormControl>
-        <FormControl display={"flex"} gap={4}>
+        <FormControl display="flex" gap={4}>
           <PasswordInput
             deafaultShow={true}
-            size={"md"}
+            size="md"
             value={formData.password}
             onChange={(e) =>
               setFormData({ ...formData, password: e.target.value })
@@ -103,7 +106,7 @@ const CreateUserForm = ({
             isInvalid={!!formErrors.password}
           />
           <Button
-            variant={"outline"}
+            variant="outline"
             onClick={() =>
               setFormData({ ...formData, password: genPassword() })
             }
@@ -116,12 +119,12 @@ const CreateUserForm = ({
             </Text>
           )}
         </FormControl>
-        <Button w="full" onClick={() => validateForm()} isLoading={isLoading}>
+        <Button w="full" onClick={validateForm} isLoading={isLoading}>
           Создать
         </Button>
 
         {error && (
-          <Text color={"red.500"} textAlign={"center"}>
+          <Text color="red.500" textAlign="center">
             Ошибка: {error}
           </Text>
         )}
@@ -141,4 +144,5 @@ CreateUserForm.propTypes = {
   error: PropTypes.string,
   onSubmit: PropTypes.func.isRequired,
 };
+
 export default CreateUserForm;

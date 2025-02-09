@@ -8,11 +8,15 @@ import {
   Td,
   Text,
   Spinner,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useBreakpointValue } from "@chakra-ui/react";
 
 const UserList = ({ users, isLoading, error }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
+  // Use different header and cell text colors for light/dark modes.
+  const headerBg = useColorModeValue("primary.500", "primary.700");
+  const cellTextColor = useColorModeValue("gray.600", "gray.300");
 
   if (isLoading) {
     return (
@@ -41,7 +45,7 @@ const UserList = ({ users, isLoading, error }) => {
       pb={{ base: 10, md: 16, lg: 20 }}
     >
       <Table variant="simple" colorScheme="primary">
-        <Thead bg="primary.500">
+        <Thead bg={headerBg}>
           <Tr>
             <Th color="white">ID</Th>
             <Th color="white">Username</Th>
@@ -51,12 +55,12 @@ const UserList = ({ users, isLoading, error }) => {
         <Tbody>
           {users.map((user) => (
             <Tr key={user.id}>
-              <Td color="gray.600">
+              <Td color={cellTextColor}>
                 {user.id.slice(0, isMobile ? 8 : -1)}
                 {isMobile && <>...</>}
               </Td>
-              <Td>{user.username}</Td>
-              <Td>{user.role}</Td>
+              <Td color={cellTextColor}>{user.username}</Td>
+              <Td color={cellTextColor}>{user.role}</Td>
             </Tr>
           ))}
         </Tbody>

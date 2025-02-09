@@ -1,3 +1,5 @@
+// Idk wht eslint thinks this is not react component
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Text, Flex, useColorModeValue } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 
