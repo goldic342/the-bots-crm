@@ -47,6 +47,7 @@ const ChatImageBubble = ({ message }) => {
           <Image
             src={url}
             alt="Media"
+            fallbackSrc="https://placehold.co/600x400?text=Loading..."
             objectFit="cover"
             {...imgSize}
             onLoad={handleImageLoad}
