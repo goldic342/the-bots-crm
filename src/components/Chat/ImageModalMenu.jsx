@@ -20,6 +20,7 @@ const ImageModalMenu = ({ onClose, imageUrl }) => {
         onClick={onClose}
         variant="ghost"
         color="white"
+        _hover={{ bg: "whiteAlpha.300" }}
         aria-label="Back"
         size={isMobile ? "lg" : "md"}
       />
@@ -28,6 +29,7 @@ const ImageModalMenu = ({ onClose, imageUrl }) => {
         onClick={() => console.log(`Download: ${imageUrl}`)}
         variant="ghost"
         color="white"
+        _hover={{ bg: "whiteAlpha.300" }}
         aria-label="Download"
         size={isMobile ? "lg" : "md"}
       />
