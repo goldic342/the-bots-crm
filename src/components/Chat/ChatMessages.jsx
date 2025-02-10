@@ -3,6 +3,7 @@ import { Box, useColorModeValue } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import ChatBubble from "./ChatBubble";
 import ChatImageBubble from "./ChatImageBubble";
+import ChatImageAlbumBubble from "./ChatImageAlbumBubble";
 
 const ChatMessages = ({ messages }) => {
   const messagesEndRef = useRef(null);
@@ -40,6 +41,18 @@ const ChatMessages = ({ messages }) => {
           url: "https://i.pinimg.com/736x/1d/c6/89/1dc689fa8634241600c58f83c3a4d840.jpg",
           id: "40ced9f0-3b82-4ad9-9198-c8e5ced4f7b0",
           isOwn: true,
+          time: new Date().toLocaleTimeString(),
+        }}
+      />
+      <ChatImageAlbumBubble
+        message={{
+          isOwn: false,
+          id: "5dfda440-c3b6-4f22-b495-e43fe3a1717c",
+          urls: [
+            "https://i.redd.it/azdlwaiataie1.jpeg",
+            "https://i.redd.it/blidiwlp2qhe1.jpeg",
+            "https://i.redd.it/12jrjjyj14ie1.jpeg",
+          ],
           time: new Date().toLocaleTimeString(),
         }}
       />

@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Flex, Image, Text, Box, useBreakpointValue } from "@chakra-ui/react";
+import { Flex, Image, Text, Box } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import ChatImageModal from "./ChatImageModal";
 
 const ChatImageBubble = ({ message }) => {
   const { url, isOwn, time } = message;
   const [imgSize, setImgSize] = useState({ width: "100%", height: "auto" });
-  const isMobile = useBreakpointValue({ base: true, md: false });
   const [isModalOpen, setModalOpen] = useState(false);
 
   const handleImageLoad = (event) => {
