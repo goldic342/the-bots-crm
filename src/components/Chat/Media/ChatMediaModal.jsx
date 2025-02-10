@@ -3,17 +3,22 @@ import {
   ModalOverlay,
   ModalContent,
   Flex,
-  Image,
   Text,
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
-import ImageModalMenu from "./ImageModalMenu";
+import ChatMediaTopModalMenu from "./ChatMediaTopModalMenu";
 
-const ChatImageModal = ({ isOpen, onClose, imageUrl, time, albumControls }) => {
+const ChatMediaModal = ({
+  isOpen,
+  onClose,
+  mediaUrl,
+  mediaType,
+  time,
+  children,
+}) => {
   const topMenuHeight = 60;
   const bottomFooterHeight = 60;
-
-  const imageContainerHeight = `calc(100vh - ${topMenuHeight + bottomFooterHeight}px)`;
+  const mediaContainerHeight = `calc(100vh - ${topMenuHeight + bottomFooterHeight}px)`;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="full">
@@ -28,31 +33,17 @@ const ChatImageModal = ({ isOpen, onClose, imageUrl, time, albumControls }) => {
       >
         <Flex direction="column" h="100vh">
           <Flex height={`${topMenuHeight}px`} flexShrink={0}>
-            <ImageModalMenu onClose={onClose} imageUrl={imageUrl} />
+            <ChatMediaTopModalMenu onClose={onClose} mediaUrl={mediaUrl} />
           </Flex>
-
-          {albumControls && (
-            <Flex p={2} bg="rgba(0, 0, 0, 0.6)" justifyContent="center">
-              {albumControls}
-            </Flex>
-          )}
-
           <Flex
-            height={imageContainerHeight}
+            height={mediaContainerHeight}
             flex="1"
             justifyContent="center"
             alignItems="center"
           >
-            <Image
-              src={imageUrl}
-              alt="Full view"
-              maxH="100%"
-              maxW="100%"
-              objectFit="contain"
-            />
+            {children}
           </Flex>
 
-          {/* Bottom additional data with fixed height */}
           <Flex
             height={`${bottomFooterHeight}px`}
             p={4}
@@ -70,12 +61,14 @@ const ChatImageModal = ({ isOpen, onClose, imageUrl, time, albumControls }) => {
   );
 };
 
-ChatImageModal.propTypes = {
+ChatMediaModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  imageUrl: PropTypes.string.isRequired,
+  mediaUrl: PropTypes.string.isRequired,
+  mediaType: PropTypes.oneOf(["image", "video"]).isRequired,
   time: PropTypes.string,
   albumControls: PropTypes.node,
+  children: PropTypes.node.isRequired,
 };
 
-export default ChatImageModal;
+export default ChatMediaModal;

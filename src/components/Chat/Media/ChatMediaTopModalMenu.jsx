@@ -2,7 +2,7 @@ import { Flex, IconButton, useBreakpointValue } from "@chakra-ui/react";
 import { ArrowLeft, Download } from "lucide-react";
 import PropTypes from "prop-types";
 
-const ImageModalMenu = ({ onClose, imageUrl }) => {
+const ChatMediaTopModalMenu = ({ onClose, mediaUrl }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   return (
@@ -26,7 +26,7 @@ const ImageModalMenu = ({ onClose, imageUrl }) => {
       />
       <IconButton
         icon={<Download size={"26px"} />}
-        onClick={() => console.log(`Download: ${imageUrl}`)}
+        onClick={() => console.log(`Download: ${mediaUrl}`)}
         variant="ghost"
         color="white"
         _hover={{ bg: "whiteAlpha.300" }}
@@ -37,9 +37,9 @@ const ImageModalMenu = ({ onClose, imageUrl }) => {
   );
 };
 
-ImageModalMenu.propTypes = {
+ChatMediaTopModalMenu.propTypes = {
   onClose: PropTypes.func.isRequired,
-  imageUrl: PropTypes.string.isRequired,
+  mediaUrl: PropTypes.string.isRequired,
 };
 
-export default ImageModalMenu;
+export default ChatMediaTopModalMenu;
