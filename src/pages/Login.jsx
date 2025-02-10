@@ -78,6 +78,11 @@ const Login = () => {
             }
             placeholder="Имя пользователя"
             size="lg"
+            type="text"
+            spellCheck={false}
+            autoCorrect={"off"}
+            autoCapitalize="off"
+            inputMode="text"
           />
           <PasswordInput
             onChange={(e) =>

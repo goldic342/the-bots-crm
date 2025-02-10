@@ -6,7 +6,7 @@ import {
   Flex,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, Paperclip } from "lucide-react";
 import PropTypes from "prop-types";
 
 const ChatInput = ({ onSendMessage }) => {
@@ -18,12 +18,20 @@ const ChatInput = ({ onSendMessage }) => {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
+    if (text.trim() == "") {
+      textareaRef.current.style.height = "auto";
+    }
   }, [text]);
 
-  const handleSend = () => {
+  const handleSend = (e) => {
     if (text.trim() !== "") {
       onSendMessage(text);
       setText("");
+
+      // Refocus the textarea
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
     }
   };
 
@@ -31,7 +39,6 @@ const ChatInput = ({ onSendMessage }) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
-      textareaRef.current.style.height = "auto";
     }
   };
 
@@ -39,15 +46,23 @@ const ChatInput = ({ onSendMessage }) => {
   const sendButtonHoverBg = useColorModeValue("primary.600", "primary.300");
 
   return (
-    <Box p={4}>
+    <Box py={4} px={1}>
       <Flex alignItems="flex-end">
+        <IconButton
+          icon={<Paperclip />}
+          bg={"transparent"}
+          size="sm"
+          _hover={{ bg: useColorModeValue("blackAlpha.300", "whiteAlpha.300") }}
+          color="white"
+        />
         <Textarea
           ref={textareaRef}
           placeholder="Написать сообщение..."
           value={text}
           onChange={(e) => setText(e.target.value)}
-          onKeyDown={handleKeyDown}
-          mr={2}
+          onKeyDown={(e) => handleKeyDown(e)}
+          autoFocus
+          mx={2}
           resize="none"
           overflow="hidden"
           overflowY="auto"
