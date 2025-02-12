@@ -125,7 +125,7 @@ const ChatAlbumModal = ({ isOpen, onClose, items, time }) => {
           >
             <HStack
               spacing={2}
-              justify="flex-start"
+              justify={{ base: "flex-start", md: "center" }}
               display="flex"
               overflowY="scroll"
               style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}
