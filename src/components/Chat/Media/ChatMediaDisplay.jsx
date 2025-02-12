@@ -8,7 +8,7 @@ const ChatMediaDisplay = ({ media }) => {
 
   return (
     <Box position="relative" width="full" height="auto" maxW={96}>
-      {!loaded && <Skeleton height="100%" width="100%" />}
+      {!loaded && <Skeleton height={64} width="100%" />}
       {media.type === "img" ? (
         <Image
           src={media.src}
