@@ -71,12 +71,19 @@ const ChatAudioBubble = ({ message }) => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.addEventListener("timeupdate", updateProgress);
-    audio.addEventListener("ended", () => setPlaying(false));
+    const handleUpdate = () => updateProgress();
+    const handleEnded = () => {
+      setPlaying(false);
+      setProgress(0);
+      setRemainingTime(audioRef.current?.duration || 0);
+    };
+
+    audio.addEventListener("timeupdate", handleUpdate);
+    audio.addEventListener("ended", handleEnded);
 
     return () => {
-      audio.removeEventListener("timeupdate", updateProgress);
-      audio.removeEventListener("ended", () => setPlaying(false));
+      audio.removeEventListener("timeupdate", handleUpdate);
+      audio.removeEventListener("ended", handleEnded);
     };
   }, [updateProgress]);
 
