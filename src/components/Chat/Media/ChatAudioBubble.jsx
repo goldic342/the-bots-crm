@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import ChatBubbleBase from "../ChatBubbleBase";
-import PropTypes from "prop-types";
+import { useEffect, useRef, useState, useCallback } from "react";
 import {
   IconButton,
   chakra,
@@ -10,28 +8,37 @@ import {
   SliderThumb,
   Flex,
   Text,
+  Tooltip,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { Pause, Play } from "lucide-react";
+import PropTypes from "prop-types";
+import ChatBubbleBase from "../ChatBubbleBase";
 import useColors from "../../../hooks/useColors";
 
 const ChatAudioBubble = ({ message }) => {
   const { src, time, isOwn } = message;
   const [playing, setPlaying] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const [progress, setProgress] = useState(0);
   const [remainingTime, setRemainingTime] = useState(0);
   const [isSeeking, setIsSeeking] = useState(false);
+
+  const isSeekingRef = useRef(isSeeking);
   const audioRef = useRef(null);
 
-  const { primary } = useColors();
-  const filledTrack = useColorModeValue("primary.600", "whiteAlpha.800");
-  const subText = useColorModeValue("blackAlpha.900", "whiteAlpha.700");
   const primaryRaw = useColorModeValue(
     "var(--chakra-colors-primary-500)",
     "var(--chakra-colors-primary-400)",
   );
-
+  const { primary } = useColors();
   const iconColor = isOwn ? primaryRaw : "white";
+  const filledTrack = useColorModeValue("primary.600", "whiteAlpha.800");
+  const subText = useColorModeValue("blackAlpha.900", "whiteAlpha.700");
+
+  useEffect(() => {
+    isSeekingRef.current = isSeeking;
+  }, [isSeeking]);
 
   const formatTime = (time) => {
     if (isNaN(time)) return "0:00";
@@ -42,7 +49,6 @@ const ChatAudioBubble = ({ message }) => {
 
   const togglePlayPause = () => {
     if (!audioRef.current) return;
-
     if (playing) {
       audioRef.current.pause();
     } else {
@@ -51,21 +57,28 @@ const ChatAudioBubble = ({ message }) => {
     setPlaying(!playing);
   };
 
-  const updateProgress = () => {
-    if (audioRef.current && !isSeeking) {
-      setProgress(
-        (audioRef.current.currentTime / audioRef.current.duration) * 100,
-      );
-      setRemainingTime(
-        audioRef.current.duration - audioRef.current.currentTime,
-      );
-    }
-  };
+  const updateProgress = useCallback(() => {
+    if (!audioRef.current) return;
+    if (isSeekingRef.current) return;
 
-  const handleSeekChange = (value) => {
-    setIsSeeking(true);
-    setProgress(value);
-  };
+    const currentTime = audioRef.current.currentTime;
+    const duration = audioRef.current.duration;
+    setProgress((currentTime / duration) * 100);
+    setRemainingTime(duration - currentTime);
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.addEventListener("timeupdate", updateProgress);
+    audio.addEventListener("ended", () => setPlaying(false));
+
+    return () => {
+      audio.removeEventListener("timeupdate", updateProgress);
+      audio.removeEventListener("ended", () => setPlaying(false));
+    };
+  }, [updateProgress]);
 
   const handleSeekCommit = (value) => {
     if (!audioRef.current) return;
@@ -74,18 +87,6 @@ const ChatAudioBubble = ({ message }) => {
     setRemainingTime(audioRef.current.duration - newTime);
     setIsSeeking(false);
   };
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.addEventListener("timeupdate", updateProgress);
-    audio.addEventListener("ended", () => setPlaying(false));
-
-    return () => {
-      audio.removeEventListener("timeupdate", updateProgress);
-      audio.removeEventListener("ended", () => setPlaying(false));
-    };
-  }, []);
 
   return (
     <ChatBubbleBase time={time} isOwn={isOwn}>
@@ -101,21 +102,36 @@ const ChatAudioBubble = ({ message }) => {
           _hover={{ opacity: "0.9" }}
           onClick={togglePlayPause}
         />
-        <Flex gap={1} direction={"column"}>
+        <Flex gap={1} direction="column">
           <Slider
             mt={2}
             value={progress}
             min={0}
             max={100}
             w={92}
-            onChange={handleSeekChange}
+            onChangeStart={() => setIsSeeking(true)}
+            onChange={(v) => setProgress(v)}
             onChangeEnd={handleSeekCommit}
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
           >
             <SliderTrack>
               <SliderFilledTrack bg={isOwn ? filledTrack : primary} />
             </SliderTrack>
-            <SliderThumb />
+            <Tooltip
+              hasArrow
+              bg={isOwn ? "gray.600" : primary}
+              color="white"
+              placement="top"
+              isOpen={showTooltip}
+              label={formatTime(
+                (progress / 100) * (audioRef.current?.duration || 0),
+              )}
+            >
+              <SliderThumb />
+            </Tooltip>
           </Slider>
+
           <Flex justify="space-between">
             <Text fontSize="xs" color={isOwn ? "whiteAlpha.700" : subText}>
               {formatTime(remainingTime)}
