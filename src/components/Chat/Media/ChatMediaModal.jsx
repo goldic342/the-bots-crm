@@ -1,3 +1,4 @@
+// Media/ChatMediaModal.jsx
 import {
   Modal,
   ModalOverlay,
@@ -8,17 +9,12 @@ import {
 import PropTypes from "prop-types";
 import ChatMediaTopModalMenu from "./ChatMediaTopModalMenu";
 
-const ChatMediaModal = ({
-  isOpen,
-  onClose,
-  mediaUrl,
-  mediaType,
-  time,
-  children,
-}) => {
+const ChatMediaModal = ({ isOpen, onClose, mediaUrl, time, children }) => {
   const topMenuHeight = 60;
   const bottomFooterHeight = 60;
-  const mediaContainerHeight = `calc(100vh - ${topMenuHeight + bottomFooterHeight}px)`;
+  const mediaContainerHeight = `calc(100vh - ${
+    topMenuHeight + bottomFooterHeight
+  }px)`;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="full">
@@ -32,9 +28,14 @@ const ChatMediaModal = ({
         h="100vh"
       >
         <Flex direction="column" h="100vh">
-          <Flex height={`${topMenuHeight}px`} flexShrink={0}>
+          <Flex
+            height={`${topMenuHeight}px`}
+            flexShrink={0}
+            alignItems="center"
+          >
             <ChatMediaTopModalMenu onClose={onClose} mediaUrl={mediaUrl} />
           </Flex>
+
           <Flex
             height={mediaContainerHeight}
             flex="1"
@@ -51,9 +52,11 @@ const ChatMediaModal = ({
             alignItems="center"
             flexShrink={0}
           >
-            <Text color="whiteAlpha.800" fontSize="sm">
-              {time}
-            </Text>
+            {time && (
+              <Text color="whiteAlpha.800" fontSize="sm">
+                {time}
+              </Text>
+            )}
           </Flex>
         </Flex>
       </ModalContent>
@@ -67,7 +70,6 @@ ChatMediaModal.propTypes = {
   mediaUrl: PropTypes.string.isRequired,
   mediaType: PropTypes.oneOf(["image", "video"]).isRequired,
   time: PropTypes.string,
-  albumControls: PropTypes.node,
   children: PropTypes.node.isRequired,
 };
 

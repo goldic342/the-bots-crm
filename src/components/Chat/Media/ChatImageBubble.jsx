@@ -1,34 +1,28 @@
 import { useState } from "react";
-import { Image } from "@chakra-ui/react";
 import PropTypes from "prop-types";
-import ChatImageModal from "./ChatImageModal";
-import ChatMediaWrapper from "./ChatSingleMediaWrapper";
+import ChatBubbleBase from "../ChatBubbleBase";
+import ChatAlbumModal from "./ChatAlbumModal";
+import ChatMediaDisplay from "./ChatMediaDisplay";
 
 const ChatImageBubble = ({ message }) => {
   const { src, isOwn, time } = message;
   const [isModalOpen, setModalOpen] = useState(false);
+
   return (
     <>
-      <ChatMediaWrapper
+      <ChatBubbleBase
         isOwn={isOwn}
+        includePadding={false}
         time={time}
-        onOpen={() => setModalOpen(true)}
+        onClick={() => setModalOpen(true)} // open the full-screen modal
       >
-        <Image
-          src={src}
-          alt="Media"
-          fallbackSrc="https://placehold.co/600x400?text=Loading..."
-          objectFit="cover"
-          width={"full"}
-          height={"auto"}
-          maxW={96}
-        />
-      </ChatMediaWrapper>
+        <ChatMediaDisplay media={{ type: "img", src }} />
+      </ChatBubbleBase>
 
-      <ChatImageModal
+      <ChatAlbumModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
-        src={src}
+        items={[{ type: "img", src }]}
         time={time}
       />
     </>

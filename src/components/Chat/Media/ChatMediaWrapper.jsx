@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 
-const ChatSingleMediaWrapper = ({ isOwn, time, onOpen, children }) => {
+const ChatMediaWrapper = ({ isOwn, time, onOpen, children }) => {
   return (
     <>
       <Flex
@@ -37,11 +37,11 @@ const ChatSingleMediaWrapper = ({ isOwn, time, onOpen, children }) => {
   );
 };
 
-ChatSingleMediaWrapper.propTypes = {
+ChatMediaWrapper.propTypes = {
   isOwn: PropTypes.bool.isRequired,
   time: PropTypes.string,
   onOpen: PropTypes.func,
   children: PropTypes.node.isRequired,
 };
 
-export default ChatSingleMediaWrapper;
+export default ChatMediaWrapper;

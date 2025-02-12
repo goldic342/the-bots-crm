@@ -3,7 +3,7 @@ import { Box, useColorModeValue } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import ChatBubble from "./ChatBubble";
 import ChatImageBubble from "./Media/ChatImageBubble";
-import ChatImageAlbumBubble from "./Media/ChatImageAlbumBubble";
+import ChatAlbumBubble from "./Media/ChatAlbumBubble";
 import ChatVideoBubble from "./Media/ChatVideoBubble";
 
 const ChatMessages = ({ messages }) => {
@@ -55,15 +55,45 @@ const ChatMessages = ({ messages }) => {
           time: new Date().toLocaleTimeString(),
         }}
       />
-      <ChatImageAlbumBubble
+
+      <ChatAlbumBubble
         message={{
           isOwn: false,
           id: "5dfda440-c3b6-4f22-b495-e43fe3a1717c",
+
           urls: [
-            "https://i.redd.it/azdlwaiataie1.jpeg",
-            "https://i.redd.it/blidiwlp2qhe1.jpeg",
-            "https://i.redd.it/12jrjjyj14ie1.jpeg",
+            { type: "img", src: "https://i.redd.it/12jrjjyj14ie1.jpeg" },
+            {
+              type: "video",
+              thumbnail: "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+              src: "https://videos.pexels.com/video-files/855282/855282-hd_1280_720_25fps.mp4",
+            },
+            { type: "img", src: "https://i.redd.it/blidiwlp2qhe1.jpeg" },
+            {
+              type: "img",
+              src: "https://api.slingacademy.com/public/sample-photos/1.jpeg",
+            },
+            {
+              type: "img",
+              src: "https://api.slingacademy.com/public/sample-photos/2.jpeg",
+            },
+            {
+              type: "img",
+              src: "https://api.slingacademy.com/public/sample-photos/3.jpeg",
+            },
+            { type: "img", src: "https://via.placeholder.com/600/92c952" },
+            { type: "img", src: "https://dummyjson.com/image/400x200" },
+            {
+              type: "img",
+              src: "https://api.slingacademy.com/public/sample-photos/4.jpeg",
+            },
+            {
+              type: "video",
+              thumbnail: "https://i.ytimg.com/vi/YlUKcNNmywk/maxresdefault.jpg",
+              src: "https://videos.pexels.com/video-files/3184339/3184339-hd_1280_720_25fps.mp4",
+            },
           ],
+
           time: new Date().toLocaleTimeString(),
         }}
       />

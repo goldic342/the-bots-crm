@@ -9,7 +9,7 @@ const ChatMediaTopModalMenu = ({ onClose, mediaUrl }) => {
     <Flex
       w="100%"
       px={{ base: 6, md: 12, lg: 16 }}
-      py={isMobile ? 4 : 8}
+      py={8}
       bg={"blackAlpha.900"}
       justifyContent="space-between"
       alignItems="center"
@@ -22,7 +22,7 @@ const ChatMediaTopModalMenu = ({ onClose, mediaUrl }) => {
         color="white"
         _hover={{ bg: "whiteAlpha.300" }}
         aria-label="Back"
-        size={isMobile ? "lg" : "md"}
+        size={isMobile ? "mg" : "lg"}
       />
       <IconButton
         icon={<Download size={"26px"} />}
@@ -31,7 +31,7 @@ const ChatMediaTopModalMenu = ({ onClose, mediaUrl }) => {
         color="white"
         _hover={{ bg: "whiteAlpha.300" }}
         aria-label="Download"
-        size={isMobile ? "lg" : "md"}
+        size={isMobile ? "mg" : "lg"}
       />
     </Flex>
   );
