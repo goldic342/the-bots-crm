@@ -1,10 +1,16 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import PropTypes from "prop-types";
 import { Flex, Box, Text, useColorModeValue } from "@chakra-ui/react";
-const ChatBubbleBase = ({ isOwn, time, onClick, includePadding, children }) => {
-  const bubbleBg = isOwn
-    ? useColorModeValue("primary.500", "primary.400")
-    : useColorModeValue("gray.100", "gray.700");
+import useColors from "../../hooks/useColors";
+const ChatBubbleBase = ({
+  isOwn,
+  time,
+  onClick,
+  includePadding = true,
+  children,
+}) => {
+  const { primary, text } = useColors();
+  const bubbleBg = isOwn ? primary : text;
 
   const textColor = isOwn
     ? "white"

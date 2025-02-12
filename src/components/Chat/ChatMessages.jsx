@@ -5,6 +5,7 @@ import ChatBubble from "./ChatBubble";
 import ChatImageBubble from "./Media/ChatImageBubble";
 import ChatAlbumBubble from "./Media/ChatAlbumBubble";
 import ChatVideoBubble from "./Media/ChatVideoBubble";
+import ChatAudioBubble from "./Media/ChatAudioBubble";
 
 const ChatMessages = ({ messages }) => {
   const messagesEndRef = useRef(null);
@@ -93,6 +94,23 @@ const ChatMessages = ({ messages }) => {
               src: "https://videos.pexels.com/video-files/3184339/3184339-hd_1280_720_25fps.mp4",
             },
           ],
+
+          time: new Date().toLocaleTimeString(),
+        }}
+      />
+      <ChatAudioBubble
+        message={{
+          id: "9f6137a5-3457-4693-b290-d58f99d1680e",
+          isOwn: true,
+          src: "https://roy31.oceansaver.in/pacific/?SfuRveHcsmjdi4fsLmTNTT4",
+          time: new Date().toLocaleTimeString(),
+        }}
+      />
+      <ChatAudioBubble
+        message={{
+          id: "bb96407d-82c0-4fae-aed4-870c893ecac4",
+          isOwn: false,
+          src: "https://frederick11.oceansaver.in/pacific/?jBDUFzEhTwgeeZoXfLTJGEe",
 
           time: new Date().toLocaleTimeString(),
         }}
