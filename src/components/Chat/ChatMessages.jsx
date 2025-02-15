@@ -72,7 +72,7 @@ const ChatMessages = ({ messages }) => {
             { type: "img", src: "https://i.redd.it/blidiwlp2qhe1.jpeg" },
             {
               type: "img",
-              src: "https://api.slingacademy.com/public/sample-photos/1.jpeg",
+              src: "https://api.slingacademy.com/public/sample-photos/1.jpega",
             },
             {
               type: "img",

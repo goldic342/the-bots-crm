@@ -50,6 +50,7 @@ const ChatAlbumBubble = ({ message }) => {
                   objectFit="cover"
                   fallbackSrc="https://placehold.co/300x300?text=Not+Found"
                   style={!loadedMedia[src] ? { display: "none" } : {}}
+                  onError={() => onMediaLoad(src)}
                   onLoad={() => onMediaLoad(src)}
                 />
               </Box>
@@ -84,6 +85,7 @@ const ChatAlbumBubble = ({ message }) => {
                     ? { display: "none" }
                     : {}
                 }
+                onError={() => onMediaLoad(urls[maxDisplayCount - 1].src)}
                 onLoad={() => onMediaLoad(urls[maxDisplayCount - 1].src)}
               />
               <Text
