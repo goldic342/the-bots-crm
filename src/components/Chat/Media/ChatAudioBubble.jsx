@@ -9,12 +9,15 @@ import {
   Flex,
   Text,
   Tooltip,
+  Spinner,
   useColorModeValue,
+  Icon,
 } from "@chakra-ui/react";
-import { Pause, Play } from "lucide-react";
+import { Pause, Play, AlertCircle } from "lucide-react";
 import PropTypes from "prop-types";
 import ChatBubbleBase from "../ChatBubbleBase";
 import useColors from "../../../hooks/useColors";
+import useMediaLoad from "../../../hooks/useMediaLoad";
 
 const ChatAudioBubble = ({ message }) => {
   const { src, time, isOwn } = message;
@@ -23,9 +26,9 @@ const ChatAudioBubble = ({ message }) => {
   const [progress, setProgress] = useState(0);
   const [remainingTime, setRemainingTime] = useState(0);
   const [isSeeking, setIsSeeking] = useState(false);
+  const { loaded, error, mediaRef: audioRef } = useMediaLoad(src);
 
   const isSeekingRef = useRef(isSeeking);
-  const audioRef = useRef(null);
 
   const primaryRaw = useColorModeValue(
     "var(--chakra-colors-primary-500)",
@@ -58,8 +61,7 @@ const ChatAudioBubble = ({ message }) => {
   };
 
   const updateProgress = useCallback(() => {
-    if (!audioRef.current) return;
-    if (isSeekingRef.current) return;
+    if (!audioRef.current || isSeekingRef.current) return;
 
     const currentTime = audioRef.current.currentTime;
     const duration = audioRef.current.duration;
@@ -108,6 +110,7 @@ const ChatAudioBubble = ({ message }) => {
           bg={isOwn ? "white" : primary}
           _hover={{ opacity: "0.9" }}
           onClick={togglePlayPause}
+          isDisabled={!loaded || error}
         />
         <Flex gap={1} direction="column">
           <Slider
@@ -121,6 +124,7 @@ const ChatAudioBubble = ({ message }) => {
             onChangeEnd={handleSeekCommit}
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
+            isDisabled={!loaded || error}
           >
             <SliderTrack>
               <SliderFilledTrack bg={isOwn ? filledTrack : primary} />
@@ -143,6 +147,10 @@ const ChatAudioBubble = ({ message }) => {
             <Text fontSize="xs" color={isOwn ? "whiteAlpha.700" : subText}>
               {formatTime(remainingTime)}
             </Text>
+            {!loaded && !error && (
+              <Spinner size="xs" color={isOwn ? "whiteAlpha.700" : primary} />
+            )}
+            {error && <Icon as={AlertCircle} color={"red.500"} size={16} />}
           </Flex>
         </Flex>
       </Flex>

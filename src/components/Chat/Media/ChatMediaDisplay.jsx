@@ -1,4 +1,4 @@
-import { Box, IconButton, Image, Skeleton } from "@chakra-ui/react";
+import { Box, IconButton, Image, Skeleton, Text } from "@chakra-ui/react";
 import { Play } from "lucide-react";
 import PropTypes from "prop-types";
 import { useState } from "react";
@@ -7,7 +7,12 @@ const ChatMediaDisplay = ({ media }) => {
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <Box position="relative" width="full" height="auto" maxW={96}>
+    <Box
+      position="relative"
+      width={loaded ? "full" : 96}
+      height={loaded ? "auto" : 64}
+      maxW={96}
+    >
       {!loaded && <Skeleton height={64} width="100%" />}
       {media.type === "img" ? (
         <Image
@@ -18,6 +23,7 @@ const ChatMediaDisplay = ({ media }) => {
           height="100%"
           fallbackSrc="https://placehold.co/600x400?text=Image+Not+Found"
           cursor="pointer"
+          onError={() => setLoaded(true)}
           style={!loaded ? { display: "none" } : {}}
           onLoad={() => setLoaded(true)}
         />
@@ -31,6 +37,7 @@ const ChatMediaDisplay = ({ media }) => {
             height="100%"
             fallbackSrc="https://placehold.co/600x400?text=Thumbnail+Not+Found"
             cursor="pointer"
+            onError={() => setLoaded(true)}
             style={!loaded ? { display: "none" } : {}}
             onLoad={() => setLoaded(true)}
           />
