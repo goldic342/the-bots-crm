@@ -1,12 +1,21 @@
 import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import { Box, Flex, IconButton, Image, chakra, HStack } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  IconButton,
+  Skeleton,
+  Image,
+  chakra,
+  HStack,
+} from "@chakra-ui/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ChatMediaModal from "./ChatMediaModal";
 
 const ChatAlbumModal = ({ isOpen, onClose, items, time }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const thumbnailRefs = useRef([]);
+  const [loadedThumbs, setLoadedThumbs] = useState({});
 
   const currentItem = items[currentIndex];
   const handleNext = () =>
@@ -132,6 +141,7 @@ const ChatAlbumModal = ({ isOpen, onClose, items, time }) => {
             >
               {items.map((item, idx) => {
                 const isActive = idx === currentIndex;
+                const src = item.type === "img" ? item.src : item.thumbnail;
                 return (
                   <Box
                     key={idx}
@@ -148,11 +158,26 @@ const ChatAlbumModal = ({ isOpen, onClose, items, time }) => {
                     filter={!isActive && "brightness(80%)"}
                     overflow="hidden"
                   >
+                    {!loadedThumbs[src] && (
+                      <Skeleton
+                        height="100%"
+                        width="100%"
+                        startColor="whiteAlpha.100"
+                        endColor="whiteAlpha.500"
+                      />
+                    )}
                     <Image
-                      src={item.type === "img" ? item.src : item.thumbnail}
+                      src={src}
                       alt="thumbnail"
                       boxSize="100%"
                       objectFit="cover"
+                      style={!loadedThumbs[src] ? { display: "none" } : {}}
+                      onLoad={() =>
+                        setLoadedThumbs((prev) => ({
+                          ...prev,
+                          [src]: true,
+                        }))
+                      }
                     />
                   </Box>
                 );
