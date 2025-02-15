@@ -8,6 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { ArrowUp, Paperclip } from "lucide-react";
 import PropTypes from "prop-types";
+import useColors from "../../hooks/useColors";
 
 const ChatInput = ({ onSendMessage }) => {
   const [text, setText] = useState("");
@@ -16,14 +17,15 @@ const ChatInput = ({ onSendMessage }) => {
   useEffect(() => {
     if (textareaRef.current && text.trim() !== "") {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      // Idk why but with 2 more pixels it same size as auto
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight + 2}px`;
     }
     if (text.trim() == "") {
       textareaRef.current.style.height = "auto";
     }
   }, [text]);
 
-  const handleSend = (e) => {
+  const handleSend = () => {
     if (text.trim() !== "") {
       onSendMessage(text);
       setText("");
@@ -42,17 +44,24 @@ const ChatInput = ({ onSendMessage }) => {
     }
   };
 
-  const sendButtonBg = useColorModeValue("primary.500", "primary.400");
+  const { primary } = useColors();
   const sendButtonHoverBg = useColorModeValue("primary.600", "primary.300");
 
   return (
     <Box py={4} px={1}>
       <Flex alignItems="flex-end">
         <IconButton
-          icon={<Paperclip />}
+          icon={
+            <Paperclip
+              color={useColorModeValue(
+                "var(--chakra-colors-blackAlpha-600)",
+                "var(--chakra-colors-whiteAlpha-900)",
+              )}
+            />
+          }
           bg={"transparent"}
           size="sm"
-          _hover={{ bg: useColorModeValue("blackAlpha.300", "whiteAlpha.300") }}
+          _hover={{ bg: useColorModeValue("blackAlpha.100", "whiteAlpha.300") }}
           color="white"
         />
         <Textarea
@@ -74,7 +83,7 @@ const ChatInput = ({ onSendMessage }) => {
           borderRadius="full"
           size="sm"
           color="white"
-          bg={sendButtonBg}
+          bg={primary}
           _hover={{ bg: sendButtonHoverBg }}
           onClick={handleSend}
           aria-label="Отправить"
