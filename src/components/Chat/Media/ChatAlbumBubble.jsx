@@ -76,6 +76,7 @@ const ChatAlbumBubble = ({ message }) => {
                 width="100%"
                 height="100%"
                 objectFit="cover"
+                fallbackSrc="https://placehold.co/300x300?text=Not+Found"
                 filter={"auto"}
                 brightness={"60%"}
                 style={
