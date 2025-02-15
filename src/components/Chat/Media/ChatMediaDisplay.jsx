@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const ChatMediaDisplay = ({ media }) => {
   const [loaded, setLoaded] = useState(false);
-
+  console.log(loaded, media.src);
   return (
     <Box position="relative" width="full" height="auto" maxW={96}>
       {!loaded && <Skeleton height={64} width="100%" />}
@@ -16,7 +16,6 @@ const ChatMediaDisplay = ({ media }) => {
           objectFit="cover"
           width="100%"
           height="100%"
-          fallbackSrc="https://placehold.co/600x400?text=Image+Not+Found"
           cursor="pointer"
           style={!loaded ? { display: "none" } : {}}
           onLoad={() => setLoaded(true)}
@@ -29,7 +28,6 @@ const ChatMediaDisplay = ({ media }) => {
             objectFit="cover"
             width="100%"
             height="100%"
-            fallbackSrc="https://placehold.co/600x400?text=Thumbnail+Not+Found"
             cursor="pointer"
             style={!loaded ? { display: "none" } : {}}
             onLoad={() => setLoaded(true)}

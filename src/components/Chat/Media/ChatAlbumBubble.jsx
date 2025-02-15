@@ -4,11 +4,12 @@ import { useState } from "react";
 import { Grid, Box, Image, Skeleton, Text } from "@chakra-ui/react";
 import ChatBubbleBase from "../ChatBubbleBase";
 import ChatAlbumModal from "./ChatAlbumModal";
+import useLoadedItems from "../../../hooks/useLoadedItems";
 
 const ChatAlbumBubble = ({ message }) => {
   const { urls, isOwn, time } = message;
   const [isModalOpen, setModalOpen] = useState(false);
-  const [loadedImages, setLoadedImages] = useState({});
+  const [loadedMedia, onMediaLoad] = useLoadedItems();
 
   // Decide how many images to show in the preview
   const maxDisplayCount = 4;
@@ -36,25 +37,24 @@ const ChatAlbumBubble = ({ message }) => {
           maxH={96}
           overflow="hidden"
         >
-          {visibleItems.map((item, idx) => (
-            <Box key={idx} position="relative">
-              {!loadedImages[item.src] && (
-                <Skeleton height="100%" width="100%" />
-              )}
-              <Image
-                src={item.type === "img" ? item.src : item.thumbnail}
-                alt="album-item"
-                width="100%"
-                height="100%"
-                objectFit="cover"
-                fallbackSrc="https://placehold.co/300x300?text=Not+Found"
-                style={!loadedImages[item.src] ? { display: "none" } : {}}
-                onLoad={() =>
-                  setLoadedImages((prev) => ({ ...prev, [item.src]: true }))
-                }
-              />
-            </Box>
-          ))}
+          {visibleItems.map((item, idx) => {
+            const src = item.type === "img" ? item.src : item.thumbnail;
+            return (
+              <Box key={idx} position="relative">
+                {!loadedMedia[src] && <Skeleton height="100%" width="100%" />}
+                <Image
+                  src={src}
+                  alt="album-item"
+                  width="100%"
+                  height="100%"
+                  objectFit="cover"
+                  fallbackSrc="https://placehold.co/300x300?text=Not+Found"
+                  style={!loadedMedia[src] ? { display: "none" } : {}}
+                  onLoad={() => onMediaLoad(src)}
+                />
+              </Box>
+            );
+          })}
 
           {hasMore && (
             <Box
@@ -63,7 +63,7 @@ const ChatAlbumBubble = ({ message }) => {
               alignItems="center"
               justifyContent="center"
             >
-              {!loadedImages[urls[maxDisplayCount - 1].src] && (
+              {!loadedMedia[urls[maxDisplayCount - 1].src] && (
                 <Skeleton height="100%" width="100%" />
               )}
               <Image
@@ -79,16 +79,11 @@ const ChatAlbumBubble = ({ message }) => {
                 filter={"auto"}
                 brightness={"60%"}
                 style={
-                  !loadedImages[urls[maxDisplayCount - 1].src]
+                  !loadedMedia[urls[maxDisplayCount - 1].src]
                     ? { display: "none" }
                     : {}
                 }
-                onLoad={() =>
-                  setLoadedImages((prev) => ({
-                    ...prev,
-                    [urls[maxDisplayCount - 1].src]: true,
-                  }))
-                }
+                onLoad={() => onMediaLoad(urls[maxDisplayCount - 1].src)}
               />
               <Text
                 position="absolute"

@@ -11,11 +11,12 @@ import {
 } from "@chakra-ui/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ChatMediaModal from "./ChatMediaModal";
+import useLoadedItems from "../../../hooks/useLoadedItems";
 
 const ChatAlbumModal = ({ isOpen, onClose, items, time }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const thumbnailRefs = useRef([]);
-  const [loadedThumbs, setLoadedThumbs] = useState({});
+  const [loadedThumbs, onThumbLoad] = useLoadedItems();
 
   const currentItem = items[currentIndex];
   const handleNext = () =>
@@ -79,7 +80,6 @@ const ChatAlbumModal = ({ isOpen, onClose, items, time }) => {
       isOpen={isOpen}
       onClose={onClose}
       mediaUrl={currentItem.src}
-      mediaType={currentItem.type === "video" ? "video" : "image"}
       time={time}
     >
       {items.length === 1 ? (
@@ -172,12 +172,7 @@ const ChatAlbumModal = ({ isOpen, onClose, items, time }) => {
                       boxSize="100%"
                       objectFit="cover"
                       style={!loadedThumbs[src] ? { display: "none" } : {}}
-                      onLoad={() =>
-                        setLoadedThumbs((prev) => ({
-                          ...prev,
-                          [src]: true,
-                        }))
-                      }
+                      onLoad={() => onThumbLoad(src)}
                     />
                   </Box>
                 );

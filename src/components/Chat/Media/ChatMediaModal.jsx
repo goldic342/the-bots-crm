@@ -68,7 +68,6 @@ ChatMediaModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   mediaUrl: PropTypes.string.isRequired,
-  mediaType: PropTypes.oneOf(["image", "video"]).isRequired,
   time: PropTypes.string,
   children: PropTypes.node.isRequired,
 };
