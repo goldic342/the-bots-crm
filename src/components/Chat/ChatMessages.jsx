@@ -108,20 +108,13 @@ const ChatMessages = ({ messages }) => {
       />
       <ChatAudioBubble
         message={{
-          id: "bb96407d-82c0-4fae-aed4-870c893ecac4",
+          id: "95617ae9-2e8e-4b48-8fe4-399ed3be1676",
           isOwn: false,
-          src: "https://frederick11.oceansaver.in/pacific/?jBDUFzEhTwgeeZoXfLTJGEe",
+          src: "https://ia600209.us.archive.org/8/items/MetallicaMasterOfPuppets_0/02__Master_Of_Puppets_64kb.mp3",
           time: new Date().toLocaleTimeString(),
         }}
       />
-      <ChatAudioBubble
-        message={{
-          id: "370a8dd4-b73d-4783-aaea-4490fee08bce",
-          isOwn: false,
-          src: "https://diana45.oceansaver.in/pacific/?Hy6Q7CJpuj673FWk3mwXRFy",
-          time: new Date().toLocaleTimeString(),
-        }}
-      />
+
       {messages.map((msg) => (
         <ChatBubble key={msg.id} message={msg} />
       ))}
