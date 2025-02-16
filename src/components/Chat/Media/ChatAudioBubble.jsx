@@ -18,10 +18,10 @@ import PropTypes from "prop-types";
 import ChatBubbleBase from "../ChatBubbleBase";
 import useColors from "../../../hooks/useColors";
 import useMediaLoad from "../../../hooks/useMediaLoad";
+import { useAudio } from "../../../contexts/AudioContext";
 
 const ChatAudioBubble = ({ message }) => {
   const { src, time, isOwn } = message;
-  const [playing, setPlaying] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [progress, setProgress] = useState(0);
   const [remainingTime, setRemainingTime] = useState(0);
@@ -29,6 +29,17 @@ const ChatAudioBubble = ({ message }) => {
   const { loaded, error, mediaRef: audioRef } = useMediaLoad(src);
 
   const isSeekingRef = useRef(isSeeking);
+  const { register, unregister, playAudio, pauseAudio, currentAudioId } =
+    useAudio();
+  const playing = currentAudioId === message.id;
+
+  useEffect(() => {
+    register(message.id, audioRef);
+    return () => {
+      unregister(message.id);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [message.id, register, unregister]);
 
   const primaryRaw = useColorModeValue(
     "var(--chakra-colors-primary-500)",
@@ -53,11 +64,10 @@ const ChatAudioBubble = ({ message }) => {
   const togglePlayPause = () => {
     if (!audioRef.current) return;
     if (playing) {
-      audioRef.current.pause();
+      pauseAudio(message.id);
     } else {
-      audioRef.current.play();
+      playAudio(message.id);
     }
-    setPlaying(!playing);
   };
 
   const updateProgress = useCallback(() => {
@@ -75,7 +85,6 @@ const ChatAudioBubble = ({ message }) => {
 
     const handleUpdate = () => updateProgress();
     const handleEnded = () => {
-      setPlaying(false);
       setProgress(0);
       setRemainingTime(audioRef.current?.duration || 0);
     };
