@@ -1,19 +1,18 @@
 import { useState } from "react";
-import PropTypes from "prop-types";
 import ChatBubbleBase from "../ChatBubbleBase";
 import ChatAlbumModal from "./ChatAlbumModal";
 import ChatMediaDisplay from "./ChatMediaDisplay";
+import { MediaMessage } from "../../../utils/types";
 
 const ChatImageBubble = ({ message }) => {
-  const { src, isOwn, time } = message;
+  const { src, time } = message;
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (
     <>
       <ChatBubbleBase
-        isOwn={isOwn}
+        {...message}
         includePadding={false}
-        time={time}
         onClick={() => setModalOpen(true)} // open the full-screen modal
       >
         <ChatMediaDisplay media={{ type: "img", src }} />
@@ -29,13 +28,5 @@ const ChatImageBubble = ({ message }) => {
   );
 };
 
-ChatImageBubble.propTypes = {
-  message: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    src: PropTypes.string.isRequired,
-    time: PropTypes.string,
-    isOwn: PropTypes.bool,
-  }).isRequired,
-};
-
+ChatImageBubble.propTypes = { message: MediaMessage };
 export default ChatImageBubble;

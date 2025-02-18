@@ -1,13 +1,13 @@
 // components/Media/ChatAlbumBubble.jsx
-import PropTypes from "prop-types";
 import { useState } from "react";
 import { Grid, Box, Image, Skeleton, Text } from "@chakra-ui/react";
 import ChatBubbleBase from "../ChatBubbleBase";
 import ChatAlbumModal from "./ChatAlbumModal";
 import useLoadedItems from "../../../hooks/useLoadedItems";
+import { AlbumMessage } from "../../../utils/types";
 
 const ChatAlbumBubble = ({ message }) => {
-  const { urls, isOwn, time } = message;
+  const { urls, time } = message;
   const [isModalOpen, setModalOpen] = useState(false);
   const [loadedMedia, onMediaLoad] = useLoadedItems();
 
@@ -25,12 +25,7 @@ const ChatAlbumBubble = ({ message }) => {
 
   return (
     <>
-      <ChatBubbleBase
-        isOwn={isOwn}
-        time={time}
-        onClick={handleClick}
-        includePadding={false}
-      >
+      <ChatBubbleBase {...message} onClick={handleClick} includePadding={false}>
         <Grid
           templateColumns="repeat(2, 1fr)"
           maxW={96}
@@ -112,19 +107,6 @@ const ChatAlbumBubble = ({ message }) => {
   );
 };
 
-ChatAlbumBubble.propTypes = {
-  message: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    urls: PropTypes.arrayOf(
-      PropTypes.shape({
-        type: PropTypes.oneOf(["img", "video"]).isRequired,
-        src: PropTypes.string.isRequired,
-        thumbnail: PropTypes.string,
-      }),
-    ).isRequired,
-    time: PropTypes.string,
-    isOwn: PropTypes.bool,
-  }).isRequired,
-};
+ChatAlbumBubble.propTypes = { message: AlbumMessage };
 
 export default ChatAlbumBubble;

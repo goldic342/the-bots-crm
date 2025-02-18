@@ -14,11 +14,11 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { Pause, Play, AlertCircle } from "lucide-react";
-import PropTypes from "prop-types";
 import ChatBubbleBase from "../ChatBubbleBase";
 import useColors from "../../../hooks/useColors";
 import useMediaLoad from "../../../hooks/useMediaLoad";
 import { useAudio } from "../../../contexts/AudioContext";
+import { MediaMessage } from "../../../utils/types";
 
 const ChatAudioBubble = ({ message }) => {
   const { src, time, isOwn } = message;
@@ -119,7 +119,7 @@ const ChatAudioBubble = ({ message }) => {
   };
 
   return (
-    <ChatBubbleBase time={time} isOwn={isOwn}>
+    <ChatBubbleBase {...message}>
       <chakra.audio src={src} ref={audioRef} display="none" />
 
       <Flex justify="space-between" gap={4}>
@@ -179,13 +179,6 @@ const ChatAudioBubble = ({ message }) => {
   );
 };
 
-ChatAudioBubble.propTypes = {
-  message: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    src: PropTypes.string.isRequired,
-    time: PropTypes.string,
-    isOwn: PropTypes.bool,
-  }).isRequired,
-};
+ChatAudioBubble.propTypes = { message: MediaMessage };
 
 export default ChatAudioBubble;
