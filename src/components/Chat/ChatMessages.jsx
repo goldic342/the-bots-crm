@@ -19,9 +19,21 @@ const ChatMessages = ({ messages }) => {
 
   const bg = useColorModeValue("gray.50", "gray.800");
 
+  // ONLY FOR TEST
+  const nt = new Date();
+  nt.setHours(12, 0, 0, 0);
+
   return (
     <Box flex="1" p={4} overflowY="auto" bg={bg}>
       <AudioProvider>
+        <ChatAudioBubble
+          message={{
+            id: "95617ae9-2e8e-4b48-8fe4-399ed3be1676",
+            isOwn: false,
+            src: "https://ia600209.us.archive.org/8/items/MetallicaMasterOfPuppets_0/02__Master_Of_Puppets_64kb.mp3",
+            time: new Date().toLocaleTimeString(),
+          }}
+        />
         <ChatImageBubble
           message={{
             src: "https://i.natgeofe.com/n/4cebbf38-5df4-4ed0-864a-4ebeb64d33a4/NationalGeographic_1468962.jpg",
@@ -109,14 +121,7 @@ const ChatMessages = ({ messages }) => {
             time: new Date().toLocaleTimeString(),
           }}
         />
-        <ChatAudioBubble
-          message={{
-            id: "95617ae9-2e8e-4b48-8fe4-399ed3be1676",
-            isOwn: false,
-            src: "https://ia600209.us.archive.org/8/items/MetallicaMasterOfPuppets_0/02__Master_Of_Puppets_64kb.mp3",
-            time: new Date().toLocaleTimeString(),
-          }}
-        />
+
         <ChatAudioBubble
           message={{
             id: "2eae95c5-e4b1-47fb-a9d1-0241d9b10225",
@@ -125,7 +130,15 @@ const ChatMessages = ({ messages }) => {
             time: new Date().toLocaleTimeString(),
           }}
         />
-
+        <ChatAudioBubble
+          // Older message loaded
+          message={{
+            id: "fc9feec0-6446-40a5-aac9-4e93e44c9dc9",
+            isOwn: true,
+            src: "https://ia904503.us.archive.org/30/items/soundcloud-165204531/165204531.mp3",
+            time: nt.toLocaleTimeString(),
+          }}
+        />
         {messages.map((msg) => (
           <ChatBubble key={msg.id} message={msg} />
         ))}

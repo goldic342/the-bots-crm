@@ -17,41 +17,39 @@ export const useAudio = () => {
 };
 
 export const AudioProvider = ({ children }) => {
-  const [queue, setQueue] = useState([]);
+  const [queue, setQueue] = useState([]); // Stores { id, time }
   const audioRefs = useRef({});
   const [currentAudioId, setCurrentAudioId] = useState(null);
 
-  const register = useCallback((id, ref) => {
+  const register = useCallback((id, ref, time) => {
     setQueue((prev) => {
-      if (prev.includes(id)) return prev;
-      return [...prev, id];
+      if (prev.some((item) => item.id === id)) return prev;
+      return [...prev, { id, time }].sort((a, b) => a.time - b.time);
     });
     audioRefs.current[id] = ref;
   }, []);
 
   const unregister = useCallback((id) => {
-    setQueue((prev) => prev.filter((item) => item !== id)); // Ensure removal
+    setQueue((prev) => prev.filter((item) => item.id !== id));
     delete audioRefs.current[id];
   }, []);
 
   const playAudio = useCallback(
     (id) => {
       if (currentAudioId !== null) {
-        // Pause and reset the old audio
+        // Pause and reset old audio ref
         const oldRef = audioRefs.current[currentAudioId]?.current;
         if (oldRef) {
           oldRef.pause();
           oldRef.currentTime = 0;
         }
-        setCurrentAudioId(null);
       }
 
       const ref = audioRefs.current[id]?.current;
       if (ref) {
         ref.play();
+        setCurrentAudioId(id);
       }
-
-      setCurrentAudioId(id);
     },
     [currentAudioId],
   );
@@ -63,6 +61,25 @@ export const AudioProvider = ({ children }) => {
     }
     setCurrentAudioId(null);
   }, []);
+
+  const playNext = useCallback(() => {
+    if (!queue.length) return;
+
+    const currentIndex = queue.findIndex((item) => item.id === currentAudioId);
+    setCurrentAudioId(null);
+    if (currentIndex === -1 || currentIndex === queue.length - 1) return;
+
+    const nextId = queue[currentIndex + 1]?.id;
+    if (!nextId) return;
+
+    const nextRef = audioRefs.current[nextId]?.current;
+    if (!nextRef) return;
+
+    nextRef.scrollIntoView({ behavior: "smooth" });
+    nextRef.play();
+    setCurrentAudioId(nextId);
+  }, [queue, currentAudioId]);
+
   return (
     <AudioContext.Provider
       value={{
@@ -72,6 +89,7 @@ export const AudioProvider = ({ children }) => {
         playAudio,
         pauseAudio,
         currentAudioId,
+        playNext,
       }}
     >
       {children}

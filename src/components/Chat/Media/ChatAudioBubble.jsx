@@ -29,17 +29,28 @@ const ChatAudioBubble = ({ message }) => {
   const { loaded, error, mediaRef: audioRef } = useMediaLoad(src);
 
   const isSeekingRef = useRef(isSeeking);
-  const { register, unregister, playAudio, pauseAudio, currentAudioId } =
-    useAudio();
+  const {
+    register,
+    unregister,
+    playAudio,
+    pauseAudio,
+    currentAudioId,
+    playNext,
+  } = useAudio();
   const playing = currentAudioId === message.id;
 
   useEffect(() => {
-    register(message.id, audioRef);
+    register(message.id, audioRef, time);
     return () => {
       unregister(message.id);
     };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [message.id, register, unregister]);
+  }, [message.id, register, unregister, time]);
+
+  useEffect(() => {
+    if (error) unregister(message.id);
+  }, [unregister, error, message.id]);
 
   const primaryRaw = useColorModeValue(
     "var(--chakra-colors-primary-500)",
@@ -77,7 +88,7 @@ const ChatAudioBubble = ({ message }) => {
     const duration = audioRef.current.duration;
     setProgress((currentTime / duration) * 100);
     setRemainingTime(duration - currentTime);
-  }, []);
+  }, [audioRef]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -87,6 +98,7 @@ const ChatAudioBubble = ({ message }) => {
     const handleEnded = () => {
       setProgress(0);
       setRemainingTime(audioRef.current?.duration || 0);
+      playNext(message.id);
     };
 
     audio.addEventListener("timeupdate", handleUpdate);
@@ -96,7 +108,7 @@ const ChatAudioBubble = ({ message }) => {
       audio.removeEventListener("timeupdate", handleUpdate);
       audio.removeEventListener("ended", handleEnded);
     };
-  }, [updateProgress]);
+  }, [updateProgress, message.id, audioRef, playNext]);
 
   const handleSeekCommit = (value) => {
     if (!audioRef.current) return;
