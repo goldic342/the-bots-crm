@@ -7,7 +7,7 @@ import {
 } from "react";
 import { api } from "../api/api";
 import { useNavigate } from "react-router-dom";
-import { UnauthorizedMessage } from "../config";
+import { UnauthorizedMessage, UnauthorizedStatusCode } from "../config";
 import { getMe, getAccessToken } from "../api/auth";
 
 const AuthContext = createContext(undefined);
@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }) => {
     };
   }, [token]);
 
-  // Interceptor to handle token refresh on 403 errors
+  // Interceptor to handle token refresh on 403/401 errors
   useLayoutEffect(() => {
     let isRefreshing = false;
     let refreshQueue = [];
@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }) => {
       (response) => response,
       async (error) => {
         if (
-          error.response?.status === 403 &&
+          error.response?.status === UnauthorizedStatusCode &&
           error.response?.data?.detail === UnauthorizedMessage
         ) {
           if (!isRefreshing) {
