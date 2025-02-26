@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import PropTypes from "prop-types";
-import { Flex, Box, Text, useColorModeValue, Icon } from "@chakra-ui/react";
+import { Flex, Box, Text, useColorModeValue } from "@chakra-ui/react";
 import useColors from "../../hooks/useColors";
 import { baseMessage } from "../../utils/types";
 
@@ -33,9 +33,9 @@ const ChatBubbleBase = ({
       alignItems={isOwn ? "flex-end" : "flex-start"}
       mb={2}
     >
+      {/* TODO: Make reply look good */}
       {replyTo && (
         <Box
-          mb={1}
           px={3}
           py={2}
           bg={useColorModeValue("gray.100", "gray.700")}
@@ -61,7 +61,7 @@ const ChatBubbleBase = ({
       <Box
         maxWidth={{ base: 72, md: 80, lg: 96 }}
         boxShadow="sm"
-        overflow="hidden" // For proper borders
+        overflow="hidden"
         borderBottomLeftRadius={isOwn ? "15px" : "5px"}
         borderBottomRightRadius={isOwn ? "5px" : "15px"}
         borderTopLeftRadius="15px"
@@ -85,8 +85,10 @@ const ChatBubbleBase = ({
   );
 };
 
-const newBaseMessage = baseMessage;
+// Remove the `id` field from baseMessage for propTypes
+const newBaseMessage = { ...baseMessage };
 delete newBaseMessage.id;
+
 ChatBubbleBase.propTypes = {
   ...newBaseMessage,
   onClick: PropTypes.func,
