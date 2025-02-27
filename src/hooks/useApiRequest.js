@@ -12,7 +12,10 @@ const useApiRequest = (apiCall) => {
       const result = await apiCall(...args);
       return result;
     } catch (err) {
-      const error = err.response?.data?.detail || err.message;
+      const error =
+        err.response?.data?.detail?.message ||
+        err.message ||
+        "Неизвестная ошибка";
       setError(error);
       throw err;
     } finally {

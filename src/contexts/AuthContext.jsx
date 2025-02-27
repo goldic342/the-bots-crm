@@ -7,7 +7,11 @@ import {
 } from "react";
 import { api } from "../api/api";
 import { useNavigate } from "react-router-dom";
-import { UnauthorizedMessage, UnauthorizedStatusCode } from "../config";
+import {
+  TokenType,
+  UnauthorizedMessage,
+  UnauthorizedStatusCode,
+} from "../config";
 import { getMe, getAccessToken } from "../api/auth";
 
 const AuthContext = createContext(undefined);
@@ -73,7 +77,7 @@ export const AuthProvider = ({ children }) => {
   useLayoutEffect(() => {
     const authInterceptor = api.interceptors.request.use((config) => {
       if (token && !config._retry) {
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers.Authorization = `${TokenType} ${token}`;
       }
       return config;
     });
@@ -99,7 +103,7 @@ export const AuthProvider = ({ children }) => {
             try {
               const newAccessToken = await getAccessToken();
               setToken(newAccessToken);
-              error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+              error.config.headers.Authorization = `${TokenType} ${newAccessToken}`;
 
               // Process queued requests with the new token
               refreshQueue.forEach((cb) => cb(newAccessToken));
@@ -117,7 +121,7 @@ export const AuthProvider = ({ children }) => {
             // Queue any API calls while token is refreshing
             return new Promise((resolve) => {
               refreshQueue.push((newAccessToken) => {
-                error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+                error.config.headers.Authorization = `${TokenType} ${newAccessToken}`;
                 resolve(api(error.config));
               });
             });

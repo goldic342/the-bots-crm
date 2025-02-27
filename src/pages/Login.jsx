@@ -41,7 +41,7 @@ const Login = () => {
       setToken(access_token);
       navigate("/dashboard/bots");
     } catch (error) {
-      setError(error.response?.data?.detail || "Неизвестная ошибка");
+      setError(error.response?.data?.detail?.message || "Неизвестная ошибка");
     }
   };
 

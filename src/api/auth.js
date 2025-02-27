@@ -5,16 +5,10 @@ export const login = async (username, password) => {
   return response.data;
 };
 
-// Not avaliable at the moment. Keep for later
-//export const logout = async () => {
-//  await api.post("/logout");
-//  return true;
-//};
-
 export const getAccessToken = async () => {
-  const response = await api.get("/refreshToken");
+  const response = await api.get("/token/refresh");
 
-  return response.data.access_token;
+  return response.data?.access_token;
 };
 
 export const getMe = async () => {
