@@ -1,4 +1,4 @@
-export const API_BASE_URL = "https://test-api.crmbots.webtm.ru";
+export const API_BASE_URL = "https://test-api.crmbots.webtm.ru/v1";
 export const API_TIMEOUT = 7000; // Milliseconds
 
 // Auth
