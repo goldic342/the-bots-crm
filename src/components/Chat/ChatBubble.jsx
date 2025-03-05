@@ -1,6 +1,6 @@
 import ChatBubbleBase from "./ChatBubbleBase";
 import { Text } from "@chakra-ui/react";
-import { Message } from "../../utils/types";
+import { Message } from "../../utils/types/chatTypes";
 
 const ChatBubble = ({ message }) => {
   return (

@@ -4,7 +4,7 @@ import { Grid, Box, Image, Skeleton, Text } from "@chakra-ui/react";
 import ChatBubbleBase from "../ChatBubbleBase";
 import ChatAlbumModal from "./ChatAlbumModal";
 import useLoadedItems from "../../../hooks/useLoadedItems";
-import { AlbumMessage } from "../../../utils/types";
+import { AlbumMessage } from "../../../utils/types/chatTypes";
 
 const ChatAlbumBubble = ({ message }) => {
   const { urls, time } = message;

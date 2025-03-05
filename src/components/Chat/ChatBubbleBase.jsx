@@ -2,7 +2,7 @@
 import PropTypes from "prop-types";
 import { Flex, Box, Text, useColorModeValue } from "@chakra-ui/react";
 import useColors from "../../hooks/useColors";
-import { baseMessage } from "../../utils/types";
+import { baseMessage } from "../../utils/types/chatTypes";
 
 const ChatBubbleBase = ({
   isOwn,

@@ -18,7 +18,7 @@ import ChatBubbleBase from "../ChatBubbleBase";
 import useColors from "../../../hooks/useColors";
 import useMediaLoad from "../../../hooks/useMediaLoad";
 import { useAudio } from "../../../contexts/AudioContext";
-import { MediaMessage } from "../../../utils/types";
+import { MediaMessage } from "../../../utils/types/chatTypes";
 
 const ChatAudioBubble = ({ message }) => {
   const { src, time, isOwn } = message;

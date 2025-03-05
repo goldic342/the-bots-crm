@@ -2,7 +2,7 @@ import { useState } from "react";
 import ChatBubbleBase from "../ChatBubbleBase";
 import ChatAlbumModal from "./ChatAlbumModal";
 import ChatMediaDisplay from "./ChatMediaDisplay";
-import { MediaMessage } from "../../../utils/types";
+import { MediaMessage } from "../../../utils/types/chatTypes";
 
 const ChatImageBubble = ({ message }) => {
   const { src, time } = message;

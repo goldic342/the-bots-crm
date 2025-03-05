@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { ChevronRight } from "lucide-react";
 import PropTypes from "prop-types";
-import { Bot } from "../../utils/botTypes";
+import { Bot } from "../../utils/types/botTypes";
 
 const BotsListItem = ({ bot, onClick }) => {
   const hoverBg = useColorModeValue("gray.100", "gray.700");

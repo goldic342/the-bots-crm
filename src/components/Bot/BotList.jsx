@@ -9,7 +9,7 @@ import {
 import BotsListItem from "./BotListItem";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { Bot } from "../../utils/botTypes";
+import { Bot } from "../../utils/types/botTypes";
 
 const BotsList = ({ bots, onSelectBot, isLoading, error }) => {
   const [searchQuery, setSearchQuery] = useState("");
