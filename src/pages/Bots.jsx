@@ -9,14 +9,13 @@ const Bots = () => {
   const [bots, setBots] = useState([]);
   const [fetchBots, isLoading, error] = useApiRequest(async () => {
     return await getBots();
-  });
+  }, true);
 
   useEffect(() => {
     const fetchData = async () => {
       const botsData = await fetchBots();
-      setBots(botsData);
+      setBots(botsData.bots || []);
     };
-
     fetchData();
   }, []);
 

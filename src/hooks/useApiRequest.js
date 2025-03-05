@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-const useApiRequest = (apiCall) => {
-  const [isLoading, setIsLoading] = useState(false);
+const useApiRequest = (apiCall, immideate = false) => {
+  const [isLoading, setIsLoading] = useState(immideate);
   const [error, setError] = useState(null);
 
   const fetchData = async (...args) => {

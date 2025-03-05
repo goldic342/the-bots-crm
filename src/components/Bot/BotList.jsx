@@ -9,6 +9,7 @@ import {
 import BotsListItem from "./BotListItem";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
+import { Bot } from "../../utils/botTypes";
 
 const BotsList = ({ bots, onSelectBot, isLoading, error }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -74,8 +75,7 @@ const BotsList = ({ bots, onSelectBot, isLoading, error }) => {
           searchResult.map((b) => (
             <BotsListItem
               key={b.id}
-              name={b.name}
-              active={b.active}
+              bot={b}
               onClick={() => onSelectBot(b.id)}
             />
           ))
@@ -86,14 +86,10 @@ const BotsList = ({ bots, onSelectBot, isLoading, error }) => {
 };
 
 BotsList.propTypes = {
-  bots: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      active: PropTypes.bool.isRequired,
-      id: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
+  bots: PropTypes.arrayOf(Bot).isRequired,
   onSelectBot: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  error: PropTypes.string,
 };
 
 export default BotsList;
