@@ -24,6 +24,13 @@ CRM for managing chats in one telegram account
    npm i
    ```
 
+3. Create config
+
+```bash
+cp .src/config.example.js ./src/config.js
+
+```
+
 ### Running the Development Server
 
 Start the development server:
