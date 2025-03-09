@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import Forbidden from "../pages/Forbidden";
 import { PropTypes } from "prop-types";
 
-const ProtectedRoute = ({ children, allowedRoles = ["admin", "user"] }) => {
+const ProtectedRoute = ({ children, allowedRoles = ["admin", "manager"] }) => {
   const { user, userLoading } = useAuth();
 
   if (userLoading) {
