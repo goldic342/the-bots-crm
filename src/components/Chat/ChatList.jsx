@@ -1,4 +1,12 @@
-import { Flex, VStack, Text, Icon, useColorModeValue } from "@chakra-ui/react";
+import {
+  Flex,
+  VStack,
+  Text,
+  Icon,
+  useColorModeValue,
+  Box,
+  Tooltip,
+} from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import ChatItem from "./ChatItem";
 import { useEffect, useState } from "react";
@@ -25,6 +33,7 @@ const ChatList = ({ isLoading, error, onSelectChat }) => {
   }, [botId]);
 
   const borderColor = useColorModeValue("gray.200", "gray.700");
+  const statusColor = isConnected ? "green.500" : "red.500";
 
   return (
     <Flex
@@ -49,9 +58,14 @@ const ChatList = ({ isLoading, error, onSelectChat }) => {
           onClick={() => navigate("/dashboard/bots")}
         />
 
-        <Text fontSize="xl" fontWeight="bold">
-          Чаты
-        </Text>
+        <Flex align="center" justify={"center"} gap={2}>
+          <Text fontSize="xl" fontWeight="bold">
+            Чаты
+          </Text>
+          <Tooltip label={"Статус подключения к Web Socket"}>
+            <Box w={2} h={2} borderRadius="full" bg={statusColor} />
+          </Tooltip>
+        </Flex>
       </Flex>
 
       <VStack align="stretch" spacing={2}>

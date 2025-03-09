@@ -1,7 +1,15 @@
-import { createContext, useEffect, useContext, useRef, useState } from "react";
+import {
+  createContext,
+  useEffect,
+  useContext,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import { useChats } from "./ChatContext";
-import camelcaseKeysDeep from "camelcase-keys-deep";
 import { useAuth } from "./AuthContext";
+import camelcaseKeysDeep from "camelcase-keys-deep";
 import { WS_BASE_URL } from "../config";
 
 const WSContext = createContext(undefined);
@@ -24,20 +32,15 @@ export const WSProvider = ({ children }) => {
   useEffect(() => {
     if (!botId || !token) return;
 
-    console.log("ws context", botId);
-
     const url = `${WS_BASE_URL}/v1/ws/${botId}?token=${token}`;
     const socket = new WebSocket(url);
-
     wsRef.current = socket;
 
     socket.onopen = () => {
-      console.log("WebSocket connected");
       setIsConnected(true);
     };
 
     socket.onclose = (event) => {
-      console.warn("WebSocket disconnected", event.reason);
       setIsConnected(false);
     };
 
@@ -47,22 +50,20 @@ export const WSProvider = ({ children }) => {
         try {
           data = JSON.parse(event.data);
         } catch {
-          //
+          // Fallback if data is already a string
         }
 
         if (data === "ping") {
-          console.log("Received ping, sending pong...");
           socket.send("pong");
           return;
         }
 
         if (data?.type === "new_message") {
-          console.log("New message received:", data);
           addMessage(data.lead?.id, camelcaseKeysDeep(data.message));
         }
       } catch (error) {
         console.error(
-          "Error handling WebSocket message:",
+          "WebSocket message error:",
           error,
           "Raw data:",
           event.data,
@@ -73,15 +74,21 @@ export const WSProvider = ({ children }) => {
     return () => {
       if (wsRef.current) {
         wsRef.current.close();
+        wsRef.current = null;
       }
     };
   }, [botId, token, addMessage]);
 
+  const contextValue = useMemo(
+    () => ({
+      isConnected,
+      socket: wsRef.current,
+      setBotId,
+    }),
+    [isConnected],
+  );
+
   return (
-    <WSContext.Provider
-      value={{ isConnected, socket: wsRef.current, setBotId }}
-    >
-      {children}
-    </WSContext.Provider>
+    <WSContext.Provider value={contextValue}>{children}</WSContext.Provider>
   );
 };
