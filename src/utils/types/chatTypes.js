@@ -10,22 +10,27 @@ export const ChatLead = PropTypes.shape({
 });
 
 export const MessageContent = PropTypes.shape({
-  fileType: PropTypes.oneOf(["image", "video", "file", "text"]),
-  url: PropTypes.string.isRequired,
+  fileType: PropTypes.oneOf(["image", "video", "file", "voice", "audio"]),
+  url: PropTypes.string,
 });
 
-export const ChatMessage = PropTypes.shape({
+export const ChatBaseMessageObject = {
+  direction: PropTypes.oneOf(["incoming", "outgoing"]).isRequired,
+  isRead: PropTypes.bool.isRequired,
+  replyMessageId: PropTypes.number,
+  createdAt: PropTypes.string.isRequired,
+  onReplyClick,
+};
+export const ChatMessageObject = {
   id: PropTypes.number.isRequired,
   botId: PropTypes.number.isRequired,
   leadId: PropTypes.number.isRequired,
-  direction: PropTypes.oneOf(["incoming", "outgoing"]).isRequired,
   content: MessageContent,
-  text: PropTypes.string.isRequired,
-  isRead: PropTypes.bool.isRequired,
-  repliedToMessageId: PropTypes.number,
-  createdAt: PropTypes.string.isRequired,
-  onReplyClick,
-});
+  text: PropTypes.string,
+  ...ChatBaseMessageObject,
+};
+
+export const ChatMessage = PropTypes.shape(ChatMessageObject);
 
 export const ChatItem = PropTypes.shape({
   botId: PropTypes.number.isRequired,

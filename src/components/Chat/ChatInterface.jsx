@@ -1,48 +1,59 @@
 import { useEffect, useState } from "react";
-import { Box, useBreakpointValue, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  useBreakpointValue,
+  useColorModeValue,
+  useToast,
+} from "@chakra-ui/react";
 import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import { useNavigate, useParams } from "react-router-dom";
-import useApiRequest from "../../hooks/useApiRequest";
-import { getChatInfo } from "../../api/chats";
+import { useChats } from "../../contexts/ChatContext";
 import SpinnerLoader from "../ui/SpinnerLoader";
-import LoaderMessage from "../ui/LoaderMessage";
+import { sendMessage } from "../../api/chats";
 
 const ChatInterface = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });
-  const { botId, chatId } = useParams();
+  const { botId, leadId } = useParams();
   const navigate = useNavigate();
-  const [messages, setMessages] = useState([]);
-  const [chatInfo, setChatInfo] = useState({});
-  const [fetchChatInfo, isLoading, error] = useApiRequest(async () => {
-    return await getChatInfo(chatId);
-  });
+  const { currentChat, selectChat, messages } = useChats();
+  const toast = useToast();
+
+  const [sendingMessages, setSendingMessages] = useState(new Set());
 
   useEffect(() => {
-    const fetchData = async () => {
-      const chatInfo = await fetchChatInfo();
-      setChatInfo(chatInfo);
-    };
-    fetchData();
-  }, [chatId]);
+    if (!currentChat || currentChat.lead?.id !== leadId) {
+      selectChat(leadId);
+    }
+  }, [leadId, currentChat, selectChat]);
 
   useEffect(() => {
-    // TODO: Setup subscription for new messages for chatId
-    // Example: subscribeToMessages(chatId, (newMsg) => { ... });
-  }, [chatId]);
+    // TODO: Setup real-time message subscription
+  }, [leadId]);
 
-  const handleSendMessage = (text) => {
-    const newMessage = {
-      id: Date.now().toString(),
-      text: text.trim(),
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      isOwn: Math.random() < 0.7,
-    };
-    setMessages((prev) => [...prev, newMessage]);
+  const handleSendMessage = async (text, file, replyMessageId = 0) => {
+    const tempId = Date.now(); // Temporary ID for UI tracking
+    setSendingMessages((prev) => new Set(prev).add(tempId));
+
+    try {
+      await sendMessage(leadId, botId, text, file, replyMessageId);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Ошибка отправки сообщения.",
+        description: `Не удалось отправить сообщение. Если ошибка повторяется обратитесь к администратору.`,
+        duration: 2000,
+        status: "error",
+        position: "bottom-right",
+      });
+    } finally {
+      setSendingMessages((prev) => {
+        const updated = new Set(prev);
+        updated.delete(tempId);
+        return updated;
+      });
+    }
   };
 
   const handleBack = () => {
@@ -50,6 +61,7 @@ const ChatInterface = () => {
   };
 
   const bg = useColorModeValue("white", "gray.800");
+  const isSending = sendingMessages.size > 0;
 
   return (
     <Box
@@ -63,17 +75,13 @@ const ChatInterface = () => {
       display="flex"
       flexDirection="column"
     >
-      {isLoading && <SpinnerLoader />}
-      {error && (
-        <LoaderMessage isError={true}>
-          {error || "Не удалось загрузить информацию о чате"}
-        </LoaderMessage>
-      )}
-      {!isLoading && !error && (
+      {!currentChat || currentChat.lead?.id !== Number(leadId) ? (
+        <SpinnerLoader />
+      ) : (
         <>
-          <ChatHeader chat={chatInfo} onBack={handleBack} />
-          <ChatMessages messages={messages} />
-          <ChatInput onSendMessage={handleSendMessage} />
+          <ChatHeader onBack={handleBack} />
+          <ChatMessages messages={messages[leadId]} />
+          <ChatInput onSendMessage={handleSendMessage} isSending={isSending} />
         </>
       )}
     </Box>

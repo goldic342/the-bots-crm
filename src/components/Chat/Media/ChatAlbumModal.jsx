@@ -13,7 +13,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import ChatMediaModal from "./ChatMediaModal";
 import useLoadedItems from "../../../hooks/useLoadedItems";
 
-const ChatAlbumModal = ({ isOpen, onClose, items, time }) => {
+const ChatAlbumModal = ({ isOpen, onClose, items, createdAt }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const thumbnailRefs = useRef([]);
   const [loadedThumbs, onThumbLoad] = useLoadedItems();
@@ -80,7 +80,7 @@ const ChatAlbumModal = ({ isOpen, onClose, items, time }) => {
       isOpen={isOpen}
       onClose={onClose}
       mediaUrl={currentItem.src}
-      time={time}
+      createdAt={createdAt}
     >
       {items.length === 1 ? (
         <Box position="relative" width="100%" height="100%" overflow="hidden">
@@ -141,7 +141,7 @@ const ChatAlbumModal = ({ isOpen, onClose, items, time }) => {
             >
               {items.map((item, idx) => {
                 const isActive = idx === currentIndex;
-                const src = item.type === "img" ? item.src : item.thumbnail;
+                const src = item.type === "image" ? item.src : item.thumbnail;
                 return (
                   <Box
                     key={idx}
@@ -190,11 +190,11 @@ ChatAlbumModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   items: PropTypes.arrayOf(
     PropTypes.shape({
-      type: PropTypes.oneOf(["img", "video"]).isRequired,
+      type: PropTypes.oneOf(["image", "video"]).isRequired,
       src: PropTypes.string.isRequired,
     }),
   ).isRequired,
-  time: PropTypes.string,
+  createdAt: PropTypes.string,
 };
 
 export default ChatAlbumModal;

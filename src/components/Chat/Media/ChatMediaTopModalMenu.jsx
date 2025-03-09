@@ -5,6 +5,17 @@ import PropTypes from "prop-types";
 const ChatMediaTopModalMenu = ({ onClose, mediaUrl }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
+  const handleDownload = () => {
+    if (!mediaUrl) return;
+
+    const link = document.createElement("a");
+    link.href = mediaUrl;
+    link.setAttribute("download", "media-file");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <Flex
       w="100%"
@@ -26,7 +37,7 @@ const ChatMediaTopModalMenu = ({ onClose, mediaUrl }) => {
       />
       <IconButton
         icon={<Download size={"26px"} />}
-        onClick={() => console.log(`Download: ${mediaUrl}`)}
+        onClick={handleDownload}
         variant="ghost"
         color="white"
         _hover={{ bg: "whiteAlpha.300" }}

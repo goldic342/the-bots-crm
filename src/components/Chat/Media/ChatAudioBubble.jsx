@@ -12,21 +12,23 @@ import {
   Spinner,
   useColorModeValue,
   Icon,
+  HStack,
 } from "@chakra-ui/react";
-import { Pause, Play, AlertCircle } from "lucide-react";
+import { Pause, Play, AlertCircle, Music } from "lucide-react";
 import ChatBubbleBase from "../ChatBubbleBase";
 import useColors from "../../../hooks/useColors";
 import useMediaLoad from "../../../hooks/useMediaLoad";
 import { useAudio } from "../../../contexts/AudioContext";
-import { MediaMessage } from "../../../utils/types/chatTypes";
+import { ChatMessage } from "../../../utils/types/chatTypes";
 
 const ChatAudioBubble = ({ message }) => {
-  const { src, time, isOwn } = message;
+  const { content, createdAt, direction } = message;
+  const isOwn = direction === "outgoing";
   const [showTooltip, setShowTooltip] = useState(false);
   const [progress, setProgress] = useState(0);
   const [remainingTime, setRemainingTime] = useState(0);
   const [isSeeking, setIsSeeking] = useState(false);
-  const { loaded, error, mediaRef: audioRef } = useMediaLoad(src);
+  const { loaded, error, mediaRef: audioRef } = useMediaLoad(content.url);
 
   const isSeekingRef = useRef(isSeeking);
   const {
@@ -40,13 +42,13 @@ const ChatAudioBubble = ({ message }) => {
   const playing = currentAudioId === message.id;
 
   useEffect(() => {
-    register(message.id, audioRef, time);
+    register(message.id, audioRef, createdAt);
     return () => {
       unregister(message.id);
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [message.id, register, unregister, time]);
+  }, [message.id, register, unregister, createdAt]);
 
   useEffect(() => {
     if (error) unregister(message.id);
@@ -120,7 +122,7 @@ const ChatAudioBubble = ({ message }) => {
 
   return (
     <ChatBubbleBase {...message}>
-      <chakra.audio src={src} ref={audioRef} display="none" />
+      <chakra.audio src={content.url} ref={audioRef} display="none" />
 
       <Flex justify="space-between" gap={4}>
         <IconButton
@@ -165,9 +167,14 @@ const ChatAudioBubble = ({ message }) => {
           </Slider>
 
           <Flex justify="space-between">
-            <Text fontSize="xs" color={isOwn ? "whiteAlpha.700" : subText}>
-              {formatTime(remainingTime)}
-            </Text>
+            <HStack>
+              {content.fileType === "audio" && (
+                <Icon as={Music} opacity={0.6} size={10} />
+              )}
+              <Text fontSize="xs" color={isOwn ? "whiteAlpha.700" : subText}>
+                {formatTime(remainingTime)}
+              </Text>
+            </HStack>
             {!loaded && !error && (
               <Spinner size="xs" color={isOwn ? "whiteAlpha.700" : primary} />
             )}
@@ -179,6 +186,6 @@ const ChatAudioBubble = ({ message }) => {
   );
 };
 
-ChatAudioBubble.propTypes = { message: MediaMessage };
+ChatAudioBubble.propTypes = { message: ChatMessage };
 
 export default ChatAudioBubble;

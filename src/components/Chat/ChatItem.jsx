@@ -7,49 +7,48 @@ import {
   Icon,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { Check, CheckCheck } from "lucide-react";
 import PropTypes from "prop-types";
+import useColors from "../../hooks/useColors";
+import { ChatItem as ChatItemType } from "../../utils/types/chatTypes";
+import { transformDateTime } from "../../utils/transformDateTime";
+import MessageRead from "../ui/MessageRead";
 
 const ChatItem = ({ chat, isActive, onClick }) => {
+  const colors = useColors();
   const activeBg = useColorModeValue("blue.100", "blue.700");
   const inactiveBg = useColorModeValue("white", "gray.800");
-  const hoverBg = useColorModeValue("gray.100", "gray.700");
+  const hoverBg = colors.text;
   const dateColor = useColorModeValue("gray.500", "gray.400");
   const messageColor = useColorModeValue("gray.600", "gray.300");
-  const unreadIconColor = useColorModeValue("gray.400", "gray.500");
 
   return (
     <Box
       py={3}
       px={3}
-      bg={isActive ? activeBg : inactiveBg}
+      bg={isActive ? activeBg : inactiveBg} // TODO: what is this??
       transition="background .1s ease-in"
       _hover={{ bg: hoverBg }}
       cursor="pointer"
       onClick={onClick}
     >
       <Flex align="center">
-        <Avatar name={chat.name} size="md" mr={3} />
+        <Avatar name={chat.lead.name} src={chat.lead.photo} size="md" mr={3} />
 
         <Box flex="1">
           <Flex align="center">
-            <Text fontWeight="bold">{chat.name}</Text>
+            <Text fontWeight="bold">{chat.lead.name}</Text>
             <Spacer />
             <Text fontSize="xs" color={dateColor}>
-              {chat.lastMessageDate}
+              {transformDateTime(chat.lastMessage.createdAt)}
             </Text>
           </Flex>
 
           <Flex align="center">
             <Text fontSize="sm" color={messageColor} noOfLines={1}>
-              {chat.lastMessage || "Нет сообщений"}
+              {chat.lastMessage.text || "Нет сообщений"}
             </Text>
             <Spacer />
-            {chat.isRead ? (
-              <Icon as={CheckCheck} color="primary.400" />
-            ) : (
-              <Icon as={Check} color={unreadIconColor} />
-            )}
+            <MessageRead isRead={chat.isRead} />
           </Flex>
         </Box>
       </Flex>
@@ -58,13 +57,7 @@ const ChatItem = ({ chat, isActive, onClick }) => {
 };
 
 ChatItem.propTypes = {
-  chat: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    lastMessage: PropTypes.string,
-    lastMessageDate: PropTypes.string.isRequired,
-    isRead: PropTypes.bool,
-  }).isRequired,
+  chat: ChatItemType.isRequired,
   isActive: PropTypes.bool,
   onClick: PropTypes.func.isRequired,
 };

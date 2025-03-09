@@ -2,36 +2,37 @@ import {
   Flex,
   Heading,
   Input,
-  Select,
   VStack,
   Text,
   Button,
   FormControl,
   useColorModeValue,
+  IconButton,
 } from "@chakra-ui/react";
 import PasswordInput from "../ui/PasswordInput";
 import { useState } from "react";
 import { PropTypes } from "prop-types";
 import genPassword from "../../utils/genPassword";
+import { Lock } from "lucide-react";
 
-const CreateUserForm = ({
+const UserForm = ({
   formData,
   setFormData,
   isLoading,
   error,
   onSubmit,
+  showHeader = true,
 }) => {
   const [formErrors, setFormErrors] = useState({
+    name: "",
     username: "",
     password: "",
-    role: "",
   });
 
-  // Set dynamic text color for explanatory text
   const textColor = useColorModeValue("gray.600", "gray.300");
 
   const validateForm = () => {
-    let errors = { username: "", password: "", role: "" };
+    let errors = { username: "", password: "", name: "" };
 
     if (!formData.username) {
       errors.username = "Username обязателен";
@@ -39,8 +40,8 @@ const CreateUserForm = ({
     if (!formData.password) {
       errors.password = "Пароль обязателен";
     }
-    if (!formData.role) {
-      errors.role = "Роль обязательна";
+    if (!formData.name) {
+      errors.name = "Имя обязательно";
     }
 
     setFormErrors(errors);
@@ -54,14 +55,17 @@ const CreateUserForm = ({
 
   return (
     <Flex direction="column" gap={4}>
-      <Flex direction="column" gap={{ base: 2, md: 4 }}>
-        <Heading size="lg" textAlign="center">
-          Создать пользователя
-        </Heading>
-        <Text color={textColor} mb={4} textAlign="center">
-          Заполните все поля ниже, чтобы добавить нового пользователя в систему.
-        </Text>
-      </Flex>
+      {showHeader && (
+        <Flex direction="column" gap={{ base: 2, md: 4 }}>
+          <Heading size="lg" textAlign="center">
+            Создать пользователя
+          </Heading>
+          <Text color={textColor} mb={4} textAlign="center">
+            Заполните все поля ниже, чтобы добавить нового пользователя в
+            систему.
+          </Text>
+        </Flex>
+      )}
 
       <VStack spacing={4}>
         <FormControl>
@@ -80,18 +84,15 @@ const CreateUserForm = ({
           )}
         </FormControl>
         <FormControl>
-          <Select
-            placeholder="Роль пользователя"
-            onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-            value={formData.role}
-            isInvalid={!!formErrors.role}
-          >
-            <option value="user">Менеджер</option>
-            <option value="admin">Админ</option>
-          </Select>
-          {formErrors.role && (
+          <Input
+            placeholder="Имя"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            isInvalid={!!formErrors.name}
+          />
+          {formErrors.name && (
             <Text color="red.500" fontSize="sm">
-              {formErrors.role}
+              {formErrors.name}
             </Text>
           )}
         </FormControl>
@@ -105,14 +106,13 @@ const CreateUserForm = ({
             }
             isInvalid={!!formErrors.password}
           />
-          <Button
+          <IconButton
             variant="outline"
+            icon={<Lock />}
             onClick={() =>
               setFormData({ ...formData, password: genPassword() })
             }
-          >
-            Сгенерировать
-          </Button>
+          ></IconButton>
           {formErrors.password && (
             <Text color="red.500" fontSize="sm">
               {formErrors.password}
@@ -133,16 +133,17 @@ const CreateUserForm = ({
   );
 };
 
-CreateUserForm.propTypes = {
+UserForm.propTypes = {
   formData: PropTypes.shape({
     username: PropTypes.string.isRequired,
     password: PropTypes.string.isRequired,
-    role: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
   }).isRequired,
   setFormData: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   error: PropTypes.string,
   onSubmit: PropTypes.func.isRequired,
+  showHeader: PropTypes.bool,
 };
 
-export default CreateUserForm;
+export default UserForm;

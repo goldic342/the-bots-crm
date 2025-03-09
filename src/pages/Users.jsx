@@ -2,15 +2,15 @@ import { Box, Flex, Heading, Text, useColorModeValue } from "@chakra-ui/react";
 import UserList from "../components/User/UserList";
 import { useEffect, useState } from "react";
 import useApiRequest from "../hooks/useApiRequest";
-import NewUserForm from "../components/User/NewUserForm";
-import { getUsers, createUser } from "../api/users"; // Assuming createUser API is here
+import UserForm from "../components/User/UserForm";
+import { getUsers, createUser } from "../api/users";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    role: "user",
+    name: "",
   });
   const [fetchUsers, isLoading, error] = useApiRequest(async () => {
     return await getUsers();
@@ -21,14 +21,14 @@ const Users = () => {
       return await createUser(
         formData.username,
         formData.password,
-        formData.role,
+        formData.name,
       );
     },
   );
 
   const handleCreateUser = async () => {
     await createUserRequest();
-    setFormData({ username: "", password: "", role: "user" });
+    setFormData({ username: "", password: "", name: "" });
     const usersData = await fetchUsers();
     setUsers(usersData);
   };
@@ -42,7 +42,6 @@ const Users = () => {
     fetchData();
   }, []);
 
-  // Define dynamic values for dark/light mode.
   const formBg = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.600", "gray.300");
 
@@ -71,7 +70,7 @@ const Users = () => {
           </Text>
         </Flex>
         <Box w="full" maxW="3xl" bg={formBg} p={{ base: 4, md: 8 }} mb={10}>
-          <NewUserForm
+          <UserForm
             formData={formData}
             setFormData={setFormData}
             onSubmit={handleCreateUser}
@@ -82,7 +81,7 @@ const Users = () => {
         <Heading size="xl" mb={4}>
           Пользователи
         </Heading>
-        <UserList users={users} isLoading={isLoading} error={error} />
+        <UserList usersData={users} isLoading={isLoading} error={error} />
       </Flex>
     </Box>
   );

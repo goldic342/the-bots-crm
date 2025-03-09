@@ -6,11 +6,11 @@ import {
   useColorModeValue,
   VStack,
   HStack,
-  Badge,
+  Icon,
 } from "@chakra-ui/react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Bot } from "lucide-react";
 import PropTypes from "prop-types";
-import { Bot } from "../../utils/types/botTypes";
+import { Bot as BotType } from "../../utils/types/botTypes";
 
 const BotsListItem = ({ bot, onClick }) => {
   const hoverBg = useColorModeValue("gray.100", "gray.700");
@@ -38,13 +38,11 @@ const BotsListItem = ({ bot, onClick }) => {
       <HStack spacing={4}>
         <Avatar size="md" src={bot.photo} />
         <VStack align="start" spacing={0}>
-          <HStack justify={"space-between"} spacing={4} overflow={"hidden"}>
+          <HStack spacing={1} overflow={"hidden"}>
+            {bot.type === "bot" && <Icon as={Bot} color={"gray.400"} />}
             <Text fontWeight="bold" fontSize="lg" isTruncated maxW={"3xs"}>
               {bot.name}
             </Text>
-            <Badge colorScheme={bot.type === "bot" ? "blue" : "cyan"}>
-              {bot.type}
-            </Badge>
           </HStack>
           <Text fontSize="sm" color="gray.500" isTruncated maxW={"3xs"}>
             @{bot.username}
@@ -65,7 +63,7 @@ const BotsListItem = ({ bot, onClick }) => {
 };
 
 BotsListItem.propTypes = {
-  bot: Bot.isRequired,
+  bot: BotType.isRequired,
   onClick: PropTypes.func.isRequired,
 };
 

@@ -8,7 +8,7 @@ export const login = async (username, password) => {
 export const getAccessToken = async () => {
   const response = await api.post("/token/refresh");
 
-  return response.data?.access_token;
+  return response.data?.accessToken;
 };
 
 export const getMe = async () => {

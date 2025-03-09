@@ -6,15 +6,23 @@ import PropTypes from "prop-types";
 import SpinnerLoader from "../ui/SpinnerLoader";
 import { ArrowLeft } from "lucide-react";
 import LoaderMessage from "../ui/LoaderMessage";
+import { useChats } from "../../contexts/ChatContext";
+import { useWS } from "../../contexts/WSContext";
 
-const ChatList = ({ chats, isLoading, error, onSelectChat }) => {
-  const { botId } = useParams();
+const ChatList = ({ isLoading, error, onSelectChat }) => {
+  const { leadId, botId } = useParams();
+  const { isConnected, setBotId } = useWS();
+  const { chats } = useChats();
   const [filteredChats, setFilteredChats] = useState(chats);
   const navigate = useNavigate();
 
   useEffect(() => {
     setFilteredChats(chats);
   }, [chats]);
+
+  useEffect(() => {
+    setBotId(botId);
+  }, [botId]);
 
   const borderColor = useColorModeValue("gray.200", "gray.700");
 
@@ -63,10 +71,10 @@ const ChatList = ({ chats, isLoading, error, onSelectChat }) => {
           !error &&
           filteredChats.map((chat) => (
             <ChatItem
-              key={chat.id}
+              key={chat.lead.id}
               chat={chat}
-              isActive={chat.id === botId}
-              onClick={() => onSelectChat(chat.id)}
+              isActive={chat.lead.id === Number(leadId)}
+              onClick={() => onSelectChat(chat.lead.id)}
             />
           ))}
       </VStack>
@@ -75,14 +83,7 @@ const ChatList = ({ chats, isLoading, error, onSelectChat }) => {
 };
 
 ChatList.propTypes = {
-  chats: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      lastMessage: PropTypes.string,
-    }),
-  ).isRequired,
-  isLoading: PropTypes.bool,
+  isLoading: PropTypes.bool.isRequired,
   error: PropTypes.string,
   onSelectChat: PropTypes.func.isRequired,
 };

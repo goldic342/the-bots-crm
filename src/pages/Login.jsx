@@ -34,11 +34,8 @@ const Login = () => {
       return;
     }
     try {
-      const { access_token } = await login(
-        formData.username,
-        formData.password,
-      );
-      setToken(access_token);
+      const { accessToken } = await login(formData.username, formData.password);
+      setToken(accessToken);
       navigate("/dashboard/bots");
     } catch (error) {
       setError(error.response?.data?.detail?.message || "Неизвестная ошибка");

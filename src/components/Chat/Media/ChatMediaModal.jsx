@@ -8,8 +8,9 @@ import {
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import ChatMediaTopModalMenu from "./ChatMediaTopModalMenu";
+import { transformDateTime } from "../../../utils/transformDateTime";
 
-const ChatMediaModal = ({ isOpen, onClose, mediaUrl, time, children }) => {
+const ChatMediaModal = ({ isOpen, onClose, mediaUrl, createdAt, children }) => {
   const topMenuHeight = 60;
   const bottomFooterHeight = 60;
   const mediaContainerHeight = `calc(100vh - ${
@@ -52,9 +53,9 @@ const ChatMediaModal = ({ isOpen, onClose, mediaUrl, time, children }) => {
             alignItems="center"
             flexShrink={0}
           >
-            {time && (
+            {createdAt && (
               <Text color="whiteAlpha.800" fontSize="sm">
-                {time}
+                {transformDateTime(createdAt)}
               </Text>
             )}
           </Flex>
@@ -68,7 +69,7 @@ ChatMediaModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   mediaUrl: PropTypes.string.isRequired,
-  time: PropTypes.string,
+  createdAt: PropTypes.string,
   children: PropTypes.node.isRequired,
 };
 
