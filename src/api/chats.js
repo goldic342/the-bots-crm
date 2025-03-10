@@ -16,7 +16,7 @@ export const getChatInfo = async (leadId, botId) => {
   return response.data;
 };
 
-export const fetchMessages = async (leadId, botId, offset = 1, limit = 50) => {
+export const fetchMessages = async (leadId, botId, offset = 1, limit = 250) => {
   const response = await api.get(`/message/${botId}/${leadId}`, {
     params: {
       offset,
