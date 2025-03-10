@@ -19,6 +19,7 @@ import DetermineChatBubble from "./DetermineChatBubble";
 import useColors from "../../hooks/useColors";
 import { ChatMessageObject } from "../../utils/types/chatTypes";
 import { transformDateTime } from "../../utils/transformDateTime";
+import { messageToString } from "../../utils/messageToString";
 import MessageRead from "../ui/MessageRead";
 import { fetchMessage } from "../../api/chats";
 import { useChats } from "../../contexts/ChatContext";
@@ -203,9 +204,8 @@ const ChatBubbleBase = ({
                     {replyMessage?.content?.url && (
                       <Icon as={File} boxSize={4} />
                     )}
-                    <Text noOfLines={1} isTruncated fontSize="sm">
-                      {replyMessage?.text ||
-                        (replyMessage?.content?.url && "Медиа")}
+                    <Text maxW={40} fontSize="sm" isTruncated>
+                      {messageToString(replyMessage) || "Сообщение"}
                     </Text>
                     {isOwn && (
                       <Box
