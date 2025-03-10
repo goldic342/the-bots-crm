@@ -32,9 +32,23 @@ const ChatBubbleBase = ({
 }) => {
   const { primary, text } = useColors();
   const { currentChat } = useChats();
+
   const bubbleRef = useRef(null);
+
+  const [dateTime, setDateTime] = useState({
+    formatted: transformDateTime(createdAt, true),
+    isFull: false,
+  });
+
+  const toggleDateTime = () => {
+    setDateTime((prev) => ({
+      formatted: transformDateTime(createdAt, prev.isFull, !prev.isFull),
+      isFull: !prev.isFull,
+    }));
+  };
   const [isVisible, setIsVisible] = useState(false);
   const [replyMessage, setReplyMessage] = useState(null);
+
   const [fetchReplyMessage, isLoading, error] = useApiRequest(async () => {
     if (!replyMessageId || !currentChat?.lead?.id || !currentChat?.botId)
       return null;
@@ -152,9 +166,16 @@ const ChatBubbleBase = ({
 
       <HStack spacing={1} justify={"center"} mt={1}>
         {!isOwn && <MessageRead isRead={isRead} />}
-        <Text fontSize="xs" opacity={0.7}>
-          {transformDateTime(createdAt, true)}
+
+        <Text
+          fontSize="xs"
+          opacity={0.7}
+          cursor="pointer"
+          onClick={toggleDateTime}
+        >
+          {dateTime.formatted}
         </Text>
+
         {isOwn && <MessageRead isRead={isRead} />}
       </HStack>
     </Flex>
