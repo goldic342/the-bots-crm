@@ -7,7 +7,6 @@ import {
   VStack,
   HStack,
   Icon,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { ChevronRight, Bot } from "lucide-react";
 import PropTypes from "prop-types";

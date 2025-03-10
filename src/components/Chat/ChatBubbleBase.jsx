@@ -7,8 +7,16 @@ import {
   useColorModeValue,
   HStack,
   Skeleton,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
   Icon,
+  useDisclosure,
 } from "@chakra-ui/react";
+import DetermineChatBubble from "./DetermineChatBubble";
 import useColors from "../../hooks/useColors";
 import { ChatBaseMessageObject } from "../../utils/types/chatTypes";
 import { transformDateTime } from "../../utils/transformDateTime";
@@ -23,7 +31,6 @@ const ChatBubbleBase = ({
   direction,
   isRead,
   createdAt,
-  onReplyClick,
   replyMessageId,
   includePadding = true,
   children,
@@ -46,6 +53,8 @@ const ChatBubbleBase = ({
   };
   const [isVisible, setIsVisible] = useState(false);
   const [replyMessage, setReplyMessage] = useState(null);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [fetchReplyMessage, isLoading, error] = useApiRequest(async () => {
     if (!replyMessageId || !currentChat?.lead?.id || !currentChat?.botId)
@@ -90,8 +99,8 @@ const ChatBubbleBase = ({
 
   const handleReplyClick = (event) => {
     event.stopPropagation();
-    if (onReplyClick && replyMessageId) {
-      onReplyClick(replyMessageId);
+    if (replyMessageId) {
+      onOpen();
     }
   };
 
@@ -103,45 +112,63 @@ const ChatBubbleBase = ({
       mb={2}
     >
       {replyMessageId !== 0 && replyMessageId ? (
-        <Box
-          px={2}
-          py={1}
-          bg={bubbleBg}
-          mb={1}
-          borderBottomLeftRadius={isOwn ? "2xl" : "0"}
-          borderBottomRightRadius={isOwn ? "0" : "2xl"}
-          borderTopLeftRadius={isOwn ? "2xl" : "md"}
-          borderTopRightRadius={isOwn ? "md" : "2xl"}
-          transition={"opacity .2s ease-in"}
-          _hover={{ opacity: 0.7 }}
-          opacity={0.9}
-          color={textColor}
-          cursor="pointer"
-          onClick={handleReplyClick}
-          maxW={{ base: 72, md: 80, lg: 96 }}
-        >
-          {isLoading ? (
-            <Skeleton w={"full"} h={2} />
-          ) : (
-            <HStack>
-              {!isOwn && (
-                <Box w={"2px"} bg={primary} borderRadius="full" h={"20px"} />
+        <Popover isOpen={isOpen} onClose={onClose}>
+          <PopoverTrigger>
+            <Box
+              px={2}
+              py={1}
+              bg={bubbleBg}
+              mb={1}
+              borderBottomLeftRadius={isOwn ? "2xl" : "0"}
+              borderBottomRightRadius={isOwn ? "0" : "2xl"}
+              borderTopLeftRadius={isOwn ? "2xl" : "md"}
+              borderTopRightRadius={isOwn ? "md" : "2xl"}
+              transition={"opacity .2s ease-in"}
+              _hover={{ opacity: 0.7 }}
+              opacity={0.9}
+              color={textColor}
+              cursor="pointer"
+              onClick={handleReplyClick}
+              maxW={{ base: 72, md: 80, lg: 96 }}
+            >
+              {isLoading ? (
+                <Skeleton w={"full"} h={2} />
+              ) : (
+                <HStack>
+                  <HStack>
+                    {!isOwn && (
+                      <Box w="2px" h="20px" bg={primary} borderRadius="full" />
+                    )}
+                    {replyMessage.content?.url && (
+                      <Icon as={File} boxSize={4} />
+                    )}
+                    <Text noOfLines={1} isTruncated fontSize="sm">
+                      {replyMessage.text ||
+                        (replyMessage.content?.url && "Медиа")}
+                    </Text>
+                    {isOwn && (
+                      <Box
+                        w="2px"
+                        h="20px"
+                        bg={textColor}
+                        borderRadius="full"
+                      />
+                    )}
+                  </HStack>
+                </HStack>
               )}
-              {!isOwn && replyMessage.content?.url && (
-                <Icon as={File} size={16} />
+            </Box>
+          </PopoverTrigger>
+          <PopoverContent>
+            <PopoverBody>
+              {isLoading ? (
+                <Skeleton w="full" h={4} isLoaded={false} />
+              ) : (
+                <DetermineChatBubble message={replyMessage} />
               )}
-              <Text noOfLines={1} isTruncated fontSize={"sm"}>
-                {replyMessage.text || (replyMessage.content?.url && "Медиа")}
-              </Text>
-              {isOwn && replyMessage.content?.url && (
-                <Icon as={File} size={16} />
-              )}
-              {isOwn && (
-                <Box w={"2px"} bg={textColor} borderRadius="full" h={"20px"} />
-              )}
-            </HStack>
-          )}
-        </Box>
+            </PopoverBody>
+          </PopoverContent>
+        </Popover>
       ) : null}
 
       <Box
