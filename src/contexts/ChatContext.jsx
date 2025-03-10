@@ -15,6 +15,7 @@ export const ChatProvider = ({ children }) => {
   const [chats, setChats] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState({});
+  const [replyToMessage, setReplyToMessage] = useState(null);
 
   const addChats = useCallback((newChats) => {
     setChats((prevChats) => [...prevChats, ...newChats]);
@@ -82,6 +83,8 @@ export const ChatProvider = ({ children }) => {
         selectChat,
         addMessage,
         addMessages,
+        replyToMessage,
+        setReplyToMessage,
       }}
     >
       {children}

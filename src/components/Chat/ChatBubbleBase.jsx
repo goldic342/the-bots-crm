@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/rules-of-hooks */
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import {
   Flex,
@@ -10,33 +10,36 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-  PopoverHeader,
   PopoverBody,
-  PopoverFooter,
   Icon,
   useDisclosure,
 } from "@chakra-ui/react";
+import { File } from "lucide-react";
 import DetermineChatBubble from "./DetermineChatBubble";
 import useColors from "../../hooks/useColors";
-import { ChatBaseMessageObject } from "../../utils/types/chatTypes";
+import { ChatMessageObject } from "../../utils/types/chatTypes";
 import { transformDateTime } from "../../utils/transformDateTime";
 import MessageRead from "../ui/MessageRead";
 import { fetchMessage } from "../../api/chats";
 import { useChats } from "../../contexts/ChatContext";
 import useApiRequest from "../../hooks/useApiRequest";
-import { useEffect, useRef, useState } from "react";
-import { File } from "lucide-react";
+
+const SWIPE_THRESHOLD = 50;
+const MAX_TRANSLATION = 100;
 
 const ChatBubbleBase = ({
   direction,
   isRead,
   createdAt,
   replyMessageId,
+  id,
   includePadding = true,
   children,
 }) => {
   const { primary, text } = useColors();
-  const { currentChat } = useChats();
+  const { currentChat, setReplyToMessage, messages } = useChats();
+
+  const currentMessage = messages[currentChat.lead.id].find((m) => m.id === id);
 
   const bubbleRef = useRef(null);
 
@@ -51,12 +54,12 @@ const ChatBubbleBase = ({
       isFull: !prev.isFull,
     }));
   };
+
   const [isVisible, setIsVisible] = useState(false);
   const [replyMessage, setReplyMessage] = useState(null);
-
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [fetchReplyMessage, isLoading, error] = useApiRequest(async () => {
+  const [fetchReplyMessage, isLoading] = useApiRequest(async () => {
     if (!replyMessageId || !currentChat?.lead?.id || !currentChat?.botId)
       return null;
     return await fetchMessage(
@@ -65,6 +68,7 @@ const ChatBubbleBase = ({
       replyMessageId,
     );
   }, true);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -91,7 +95,8 @@ const ChatBubbleBase = ({
   }, [replyMessageId, isVisible]);
 
   const isOwn = direction === "outgoing";
-  const replyIdValid = replyMessageId && replyMessageId !== 0;
+  const replyIdValid = !!replyMessageId && replyMessageId !== 0;
+
   const bubbleBg = isOwn ? primary : text;
   const textColor = isOwn
     ? "white"
@@ -104,6 +109,62 @@ const ChatBubbleBase = ({
     }
   };
 
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchStartY, setTouchStartY] = useState(null);
+  const [translateX, setTranslateX] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
+
+  const handleTouchStart = (e) => {
+    setIsSwiping(true);
+    setTouchStartX(e.targetTouches[0].clientX);
+    setTouchStartY(e.targetTouches[0].clientY);
+    setTranslateX(0); // reset any leftover movement
+  };
+
+  const handleTouchMove = (e) => {
+    if (touchStartX === null) return;
+
+    const currentX = e.targetTouches[0].clientX;
+    const currentY = e.targetTouches[0].clientY;
+    const diffX = currentX - touchStartX;
+    const diffY = currentY - touchStartY;
+
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      if (isOwn) {
+        // For outgoing messages => move bubble right -> left (negative X)
+        // Clamp between -MAX_TRANSLATION and 0
+        const clampedDiffX = Math.min(0, Math.max(diffX, -MAX_TRANSLATION));
+        setTranslateX(clampedDiffX);
+      } else {
+        // For incoming messages => move bubble left -> right (positive X)
+        // Clamp between 0 and MAX_TRANSLATION
+        const clampedDiffX = Math.max(0, Math.min(diffX, MAX_TRANSLATION));
+        setTranslateX(clampedDiffX);
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsSwiping(false);
+
+    if (isOwn) {
+      if (translateX < -SWIPE_THRESHOLD) {
+        // left -> reply
+        setReplyToMessage(currentMessage);
+      }
+    } else {
+      if (translateX > SWIPE_THRESHOLD) {
+        // right -> reply
+        setReplyToMessage(currentMessage);
+      }
+    }
+
+    // Reset position
+    setTranslateX(0);
+    setTouchStartX(null);
+    setTouchStartY(null);
+  };
+
   return (
     <Flex
       ref={bubbleRef}
@@ -111,7 +172,7 @@ const ChatBubbleBase = ({
       alignItems={isOwn ? "flex-end" : "flex-start"}
       mb={2}
     >
-      {replyMessageId !== 0 && replyMessageId ? (
+      {replyIdValid && (
         <Popover isOpen={isOpen} onClose={onClose}>
           <PopoverTrigger>
             <Box
@@ -139,12 +200,12 @@ const ChatBubbleBase = ({
                     {!isOwn && (
                       <Box w="2px" h="20px" bg={primary} borderRadius="full" />
                     )}
-                    {replyMessage.content?.url && (
+                    {replyMessage?.content?.url && (
                       <Icon as={File} boxSize={4} />
                     )}
                     <Text noOfLines={1} isTruncated fontSize="sm">
-                      {replyMessage.text ||
-                        (replyMessage.content?.url && "Медиа")}
+                      {replyMessage?.text ||
+                        (replyMessage?.content?.url && "Медиа")}
                     </Text>
                     {isOwn && (
                       <Box
@@ -169,7 +230,7 @@ const ChatBubbleBase = ({
             </PopoverBody>
           </PopoverContent>
         </Popover>
-      ) : null}
+      )}
 
       <Box
         maxWidth={{ base: 72, md: 80, lg: 96 }}
@@ -183,13 +244,25 @@ const ChatBubbleBase = ({
         color={textColor}
         px={includePadding ? 3 : 0}
         py={includePadding ? 2 : 0}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setReplyToMessage(currentMessage);
+        }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={{
+          touchAction: "pan-x",
+          transform: `translateX(${translateX}px)`,
+          transition: isSwiping ? "none" : "transform 0.2s ease-out",
+        }}
       >
         {children}
       </Box>
 
       <HStack spacing={1} justify={"center"} mt={1}>
         {!isOwn && <MessageRead isRead={isRead} />}
-
         <Text
           fontSize="xs"
           opacity={0.7}
@@ -198,7 +271,6 @@ const ChatBubbleBase = ({
         >
           {dateTime.formatted}
         </Text>
-
         {isOwn && <MessageRead isRead={isRead} />}
       </HStack>
     </Flex>
@@ -206,7 +278,7 @@ const ChatBubbleBase = ({
 };
 
 ChatBubbleBase.propTypes = {
-  ...PropTypes.shape(ChatBaseMessageObject).isRequired,
+  ...PropTypes.shape(ChatMessageObject).isRequired,
   includePadding: PropTypes.bool,
   children: PropTypes.node.isRequired,
 };
