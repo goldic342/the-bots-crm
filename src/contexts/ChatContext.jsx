@@ -44,7 +44,7 @@ export const ChatProvider = ({ children }) => {
         const fetchedMessages = await fetchMessages(leadId, chat.botId);
         setMessages((prevMessages) => ({
           ...prevMessages,
-          [leadId]: fetchedMessages.messages,
+          [leadId]: fetchedMessages.messages.reverse(),
         }));
       }
 
