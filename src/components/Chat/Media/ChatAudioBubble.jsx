@@ -14,7 +14,7 @@ import {
   Icon,
   HStack,
 } from "@chakra-ui/react";
-import { Pause, Play, AlertCircle, Music } from "lucide-react";
+import { Pause, Play, AlertCircle, Music, Download } from "lucide-react";
 import ChatBubbleBase from "../ChatBubbleBase";
 import useColors from "../../../hooks/useColors";
 import useMediaLoad from "../../../hooks/useMediaLoad";
@@ -121,7 +121,16 @@ const ChatAudioBubble = ({ message }) => {
     setRemainingTime(audioRef.current.duration - newTime);
     setIsSeeking(false);
   };
-
+  const handleDownload = () => {
+    if (content.url) {
+      const link = document.createElement("a");
+      link.href = content.url;
+      link.download = content.url.split("/").pop();
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
   return (
     <ChatBubbleBase {...message}>
       <chakra.audio src={content.url} ref={audioRef} display="none" />
@@ -173,6 +182,14 @@ const ChatAudioBubble = ({ message }) => {
               {content.fileType === "audio" && (
                 <Icon as={Music} opacity={0.6} size={10} />
               )}
+
+              <Icon
+                as={Download}
+                opacity={0.6}
+                size={10}
+                cursor={"pointer"}
+                onClick={handleDownload}
+              />
               <Text fontSize="xs" color={isOwn ? "whiteAlpha.700" : subText}>
                 {formatTime(remainingTime)}
               </Text>
