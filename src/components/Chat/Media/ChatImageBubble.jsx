@@ -16,12 +16,11 @@ const ChatImageBubble = ({ message }) => {
 
   return (
     <>
-      <ChatBubbleBase
-        {...message}
-        includePadding={false}
-        onClick={() => setModalOpen(true)} // open the full-screen modal
-      >
-        <ChatMediaDisplay media={media} />
+      <ChatBubbleBase {...message} includePadding={false}>
+        <ChatMediaDisplay
+          media={media}
+          onClick={() => setModalOpen(true)} // open the full-screen modal
+        />
       </ChatBubbleBase>
 
       <ChatAlbumModal

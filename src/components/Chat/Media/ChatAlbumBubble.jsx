@@ -25,11 +25,12 @@ const ChatAlbumBubble = ({ message }) => {
 
   return (
     <>
-      <ChatBubbleBase {...message} onClick={handleClick} includePadding={false}>
+      <ChatBubbleBase {...message} includePadding={false}>
         <Grid
           templateColumns="repeat(2, 1fr)"
           maxW={96}
           maxH={96}
+          onClick={handleClick}
           overflow="hidden"
         >
           {visibleItems.map((item, idx) => {

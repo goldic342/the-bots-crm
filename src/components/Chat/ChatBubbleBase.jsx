@@ -6,7 +6,6 @@ import {
   Text,
   useColorModeValue,
   HStack,
-  Spinner,
   Skeleton,
   Icon,
 } from "@chakra-ui/react";
@@ -25,7 +24,6 @@ const ChatBubbleBase = ({
   isRead,
   createdAt,
   onReplyClick,
-  onClick,
   replyMessageId,
   includePadding = true,
   children,
@@ -158,8 +156,6 @@ const ChatBubbleBase = ({
         color={textColor}
         px={includePadding ? 3 : 0}
         py={includePadding ? 2 : 0}
-        cursor={onClick ? "pointer" : "default"}
-        onClick={onClick}
       >
         {children}
       </Box>
@@ -184,7 +180,6 @@ const ChatBubbleBase = ({
 
 ChatBubbleBase.propTypes = {
   ...PropTypes.shape(ChatBaseMessageObject).isRequired,
-  onClick: PropTypes.func,
   includePadding: PropTypes.bool,
   children: PropTypes.node.isRequired,
 };

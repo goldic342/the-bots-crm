@@ -9,12 +9,10 @@ import {
 import { Play } from "lucide-react";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import useColors from "../../../hooks/useColors";
 
-const ChatMediaDisplay = ({ media }) => {
+const ChatMediaDisplay = ({ media, onClick }) => {
   const [loaded, setLoaded] = useState(false);
 
-  const { text, primary } = useColors();
   const textColor = media.isOwn
     ? "white"
     : useColorModeValue("black", "whiteAlpha.900");
@@ -30,6 +28,7 @@ const ChatMediaDisplay = ({ media }) => {
         {!loaded && <Skeleton height={64} width="100%" />}
         {media.type === "image" ? (
           <Image
+            onClick={onClick}
             src={media.src}
             alt="album-item"
             objectFit="cover"
@@ -42,7 +41,7 @@ const ChatMediaDisplay = ({ media }) => {
             onLoad={() => setLoaded(true)}
           />
         ) : (
-          <Box position="relative" width="100%" height="100%">
+          <Box position="relative" width="100%" height="100%" onClick={onClick}>
             <Image
               src={media.thumbnail}
               alt="video-thumbnail"
@@ -97,6 +96,8 @@ ChatMediaDisplay.propTypes = {
     thumbnail: PropTypes.string, // only for videos
     isOwn: PropTypes.bool.isRequired,
   }).isRequired,
+
+  onClick: PropTypes.func.isRequired,
 };
 
 export default ChatMediaDisplay;

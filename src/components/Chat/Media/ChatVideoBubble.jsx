@@ -18,12 +18,8 @@ const ChatVideoBubble = ({ message }) => {
 
   return (
     <>
-      <ChatBubbleBase
-        includePadding={false}
-        onClick={() => setModalOpen(true)}
-        {...message}
-      >
-        <ChatMediaDisplay media={media} />
+      <ChatBubbleBase includePadding={false} {...message}>
+        <ChatMediaDisplay media={media} onClick={() => setModalOpen(true)} />
       </ChatBubbleBase>
 
       <ChatAlbumModal
