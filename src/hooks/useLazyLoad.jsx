@@ -21,5 +21,4 @@ const useLazyLoad = (options = { threshold: 0.1 }) => {
 
   return [elementRef, shouldLoad];
 };
-
 export default useLazyLoad;

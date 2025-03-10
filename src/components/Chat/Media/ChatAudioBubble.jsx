@@ -32,7 +32,6 @@ const ChatAudioBubble = ({ message }) => {
   const { loaded, error, mediaRef: audioRef } = useMediaLoad(content.url);
 
   const [containerRef, shouldLoad] = useLazyLoad();
-
   const isSeekingRef = useRef(isSeeking);
   const {
     register,
@@ -125,9 +124,7 @@ const ChatAudioBubble = ({ message }) => {
 
   return (
     <ChatBubbleBase {...message}>
-      {shouldLoad && (
-        <chakra.audio src={content.url} ref={audioRef} display="none" />
-      )}
+      <chakra.audio src={content.url} ref={audioRef} display="none" />
 
       <Flex justify="space-between" gap={4} ref={containerRef}>
         <IconButton

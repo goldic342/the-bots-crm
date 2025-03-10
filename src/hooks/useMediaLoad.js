@@ -19,7 +19,7 @@ const useMediaLoad = (src) => {
       media.removeEventListener("loadeddata", handleLoad);
       media.removeEventListener("error", handleError);
     };
-  }, [src]);
+  }, [src, mediaRef]);
 
   return { loaded, error, mediaRef };
 };
