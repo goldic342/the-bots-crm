@@ -13,13 +13,17 @@ import {
 import { ArrowUp, Paperclip } from "lucide-react";
 import PropTypes from "prop-types";
 import { useState, useRef, useEffect } from "react";
+import { useChats } from "../../contexts/ChatContext";
 import useColors from "../../hooks/useColors";
 
 const ChatInput = ({ onSendMessage, isSending }) => {
   const [text, setText] = useState("");
   const [file, setFile] = useState(null);
+  const { currentChat } = useChats();
   const textareaRef = useRef(null);
   const sendingColor = useColorModeValue("gray.600", "gray.400");
+
+  const isDisabled = currentChat.status !== "active";
 
   useEffect(() => {
     if (textareaRef.current && text.trim() !== "") {
@@ -63,6 +67,7 @@ const ChatInput = ({ onSendMessage, isSending }) => {
         <Box position="relative">
           <label htmlFor="file-upload">
             <IconButton
+              isDisabled={isDisabled}
               icon={
                 <Paperclip
                   color={useColorModeValue(
@@ -81,6 +86,7 @@ const ChatInput = ({ onSendMessage, isSending }) => {
             />
           </label>
           <Input
+            isDisabled={isDisabled}
             id="file-upload"
             type="file"
             display="none"
@@ -104,6 +110,7 @@ const ChatInput = ({ onSendMessage, isSending }) => {
         <InputGroup>
           <Textarea
             ref={textareaRef}
+            isDisabled={isDisabled}
             placeholder="Написать сообщение..."
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -132,7 +139,7 @@ const ChatInput = ({ onSendMessage, isSending }) => {
           _hover={{ bg: sendButtonHoverBg }}
           onClick={handleSend}
           aria-label="Отправить"
-          isDisabled={!text.trim() && !file}
+          isDisabled={isDisabled || (!text.trim() && !file)}
         />
       </Flex>
     </Box>

@@ -153,7 +153,7 @@ const ChatBubbleBase = ({
       <HStack spacing={1} justify={"center"} mt={1}>
         {!isOwn && <MessageRead isRead={isRead} />}
         <Text fontSize="xs" opacity={0.7}>
-          {transformDateTime(createdAt)}
+          {transformDateTime(createdAt, true)}
         </Text>
         {isOwn && <MessageRead isRead={isRead} />}
       </HStack>

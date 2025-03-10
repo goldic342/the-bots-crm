@@ -31,10 +31,9 @@ const ChatItem = ({ chat, isActive, onClick }) => {
       px={3}
       bg={isActive ? activeBg : inactiveBg}
       transition="background .1s ease-in"
-      _hover={isDisabled ? {} : { bg: hoverBg }}
-      cursor={isDisabled ? "not-allowed" : "pointer"}
-      opacity={isDisabled ? 0.6 : 1}
-      onClick={isDisabled ? undefined : onClick}
+      _hover={{ bg: hoverBg }}
+      cursor={"pointer"}
+      onClick={onClick}
     >
       <Flex align="center">
         <Avatar name={chat.lead.name} src={chat.lead.photo} size="md" mr={3} />
