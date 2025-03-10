@@ -7,15 +7,19 @@ import {
   VStack,
   HStack,
   Icon,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { ChevronRight, Bot } from "lucide-react";
 import PropTypes from "prop-types";
 import { Bot as BotType } from "../../utils/types/botTypes";
+import BotNotAvaliableModal from "./BotNotAvaliableModal";
 
 const BotsListItem = ({ bot, onClick }) => {
   const hoverBg = useColorModeValue("gray.100", "gray.700");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // Status dot colors based on bot.status
+  const handleClick = () => {};
+
   const statusColors = {
     enabled: "green.400",
     disabled: "yellow.400",
@@ -58,6 +62,7 @@ const BotsListItem = ({ bot, onClick }) => {
         />
         <ChevronRight />
       </HStack>
+      <BotNotAvaliableModal isOpen={isOpen} onClose={onClose} />
     </Flex>
   );
 };

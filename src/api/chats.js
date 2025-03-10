@@ -1,7 +1,12 @@
 import { api } from "./api";
 
-export const getChats = async (botId) => {
-  const response = await api.get(`/chat/${botId}`);
+export const getChats = async (botId, offset = 1, limit = 50) => {
+  const response = await api.get(`/chat/${botId}`, {
+    params: {
+      offset,
+      limit,
+    },
+  });
 
   return response.data;
 };
@@ -11,10 +16,12 @@ export const getChatInfo = async (leadId, botId) => {
   return response.data;
 };
 
-export const fetchMessages = async (leadId, botId, offset = 1, limit = 100) => {
+export const fetchMessages = async (leadId, botId, offset = 1, limit = 50) => {
   const response = await api.get(`/message/${botId}/${leadId}`, {
-    offset,
-    limit,
+    params: {
+      offset,
+      limit,
+    },
   });
   return response.data;
 };

@@ -17,7 +17,7 @@ export const ChatProvider = ({ children }) => {
   const [messages, setMessages] = useState({});
 
   const addChats = useCallback((newChats) => {
-    setChats((prevChats) => [...prevChats, newChats]);
+    setChats((prevChats) => [...prevChats, ...newChats]);
   }, []);
 
   const removeChat = useCallback(
