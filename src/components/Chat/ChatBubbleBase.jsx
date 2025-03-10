@@ -121,7 +121,7 @@ const ChatBubbleBase = ({
           maxW={{ base: 72, md: 80, lg: 96 }}
         >
           {isLoading ? (
-            <Skeleton w={"full"} />
+            <Skeleton w={"full"} h={2} />
           ) : (
             <HStack>
               {!isOwn && (
