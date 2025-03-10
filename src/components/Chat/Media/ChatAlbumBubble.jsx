@@ -5,11 +5,14 @@ import ChatBubbleBase from "../ChatBubbleBase";
 import ChatAlbumModal from "./ChatAlbumModal";
 import useLoadedItems from "../../../hooks/useLoadedItems";
 import { AlbumMessage } from "../../../utils/types/chatTypes";
+import useLazyLoad from "../../../hooks/useLazyLoad";
 
 const ChatAlbumBubble = ({ message }) => {
   const { urls, time } = message;
   const [isModalOpen, setModalOpen] = useState(false);
   const [loadedMedia, onMediaLoad] = useLoadedItems();
+
+  const [containerRef, shouldLoad] = useLazyLoad();
 
   // Decide how many images to show in the preview
   const maxDisplayCount = 4;
@@ -30,28 +33,30 @@ const ChatAlbumBubble = ({ message }) => {
           templateColumns="repeat(2, 1fr)"
           maxW={96}
           maxH={96}
+          ref={containerRef}
           onClick={handleClick}
           overflow="hidden"
         >
-          {visibleItems.map((item, idx) => {
-            const src = item.type === "img" ? item.src : item.thumbnail;
-            return (
-              <Box key={idx} position="relative">
-                {!loadedMedia[src] && <Skeleton height="100%" width="100%" />}
-                <Image
-                  src={src}
-                  alt="album-item"
-                  width="100%"
-                  height="100%"
-                  objectFit="cover"
-                  fallbackSrc="https://placehold.co/300x300?text=Not+Found"
-                  style={!loadedMedia[src] ? { display: "none" } : {}}
-                  onError={() => onMediaLoad(src)}
-                  onLoad={() => onMediaLoad(src)}
-                />
-              </Box>
-            );
-          })}
+          {shouldLoad &&
+            visibleItems.map((item, idx) => {
+              const src = item.type === "img" ? item.src : item.thumbnail;
+              return (
+                <Box key={idx} position="relative">
+                  {!loadedMedia[src] && <Skeleton height="100%" width="100%" />}
+                  <Image
+                    src={src}
+                    alt="album-item"
+                    width="100%"
+                    height="100%"
+                    objectFit="cover"
+                    fallbackSrc="https://placehold.co/300x300?text=Not+Found"
+                    style={!loadedMedia[src] ? { display: "none" } : {}}
+                    onError={() => onMediaLoad(src)}
+                    onLoad={() => onMediaLoad(src)}
+                  />
+                </Box>
+              );
+            })}
 
           {hasMore && (
             <Box
