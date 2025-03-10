@@ -43,7 +43,6 @@ const useInfiniteScroll = (
   }, [isVisible, isLoading, onLoadMore, useEffectDropCondition, isObserving]);
 
   const stopObserving = () => {
-    console.log("unobserve");
     if (observerRef.current && lastElementRef.current) {
       observerRef.current.unobserve(lastElementRef.current);
     }

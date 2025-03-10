@@ -59,6 +59,16 @@ export const ChatProvider = ({ children }) => {
       return { ...prevMessages, [leadId]: [...chatMessages, message] };
     });
   }, []);
+  const addMessages = useCallback((leadId, messages) => {
+    // Use when load more messages
+    setMessages((prevMessages) => {
+      const chatMessages = prevMessages[leadId] || [];
+      return {
+        ...prevMessages,
+        [leadId]: [...messages.reverse(), ...chatMessages],
+      };
+    });
+  }, []);
 
   return (
     <ChatContext.Provider
@@ -71,6 +81,7 @@ export const ChatProvider = ({ children }) => {
         removeChat,
         selectChat,
         addMessage,
+        addMessages,
       }}
     >
       {children}

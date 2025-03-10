@@ -102,7 +102,7 @@ const ChatBubbleBase = ({
       alignItems={isOwn ? "flex-end" : "flex-start"}
       mb={2}
     >
-      {replyMessageId != 0 && (
+      {replyMessageId !== 0 && replyMessageId ? (
         <Box
           px={2}
           py={1}
@@ -142,7 +142,7 @@ const ChatBubbleBase = ({
             </HStack>
           )}
         </Box>
-      )}
+      ) : null}
 
       <Box
         maxWidth={{ base: 72, md: 80, lg: 96 }}
