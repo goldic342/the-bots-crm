@@ -14,16 +14,21 @@ import { ArrowUp, Paperclip } from "lucide-react";
 import PropTypes from "prop-types";
 import { useState, useRef, useEffect } from "react";
 import { useChats } from "../../contexts/ChatContext";
+import { useBot } from "../../contexts/botContext";
 import useColors from "../../hooks/useColors";
 
 const ChatInput = ({ onSendMessage, isSending }) => {
   const [text, setText] = useState("");
   const [file, setFile] = useState(null);
+
   const { currentChat } = useChats();
+  const { bot } = useBot();
+
   const textareaRef = useRef(null);
   const sendingColor = useColorModeValue("gray.600", "gray.400");
 
-  const isDisabled = currentChat.status !== "active";
+  const isDisabled =
+    currentChat.status !== "active" || bot.status !== "enabled";
 
   useEffect(() => {
     if (textareaRef.current && text.trim() !== "") {

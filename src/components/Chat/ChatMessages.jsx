@@ -30,7 +30,6 @@ const ChatMessages = ({ messages }) => {
   }, [messages]);
 
   const bg = useColorModeValue("gray.50", "gray.800");
-
   return (
     <Box flex="1" p={4} overflowY="auto" bg={bg}>
       <AudioProvider>
