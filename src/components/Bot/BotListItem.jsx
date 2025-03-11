@@ -15,7 +15,6 @@ import { Bot as BotType } from "../../utils/types/botTypes";
 const BotsListItem = ({ bot, onClick }) => {
   const hoverBg = useColorModeValue("gray.100", "gray.700");
 
-  // Status dot colors based on bot.status
   const statusColors = {
     enabled: "green.400",
     disabled: "yellow.400",

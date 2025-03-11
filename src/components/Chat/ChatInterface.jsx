@@ -27,11 +27,6 @@ const ChatInterface = () => {
       selectChat(leadId);
     }
   }, [leadId, currentChat, selectChat]);
-
-  useEffect(() => {
-    // TODO: Setup real-time message subscription
-  }, [leadId]);
-
   const handleSendMessage = async (text, file, replyMessageId = 0) => {
     const tempId = Date.now(); // Temporary ID for UI tracking
     setSendingMessages((prev) => new Set(prev).add(tempId));

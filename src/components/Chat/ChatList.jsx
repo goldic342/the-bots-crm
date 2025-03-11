@@ -8,32 +8,66 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
-import ChatItem from "./ChatItem";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import SpinnerLoader from "../ui/SpinnerLoader";
 import { ArrowLeft } from "lucide-react";
+
+import ChatItem from "./ChatItem";
+import SpinnerLoader from "../ui/SpinnerLoader";
 import LoaderMessage from "../ui/LoaderMessage";
+
 import { useChats } from "../../contexts/ChatContext";
 import { useWS } from "../../contexts/WSContext";
+import { getChats } from "../../api/chats";
+import useApiRequest from "../../hooks/useApiRequest";
+import useInfiniteScroll from "../../hooks/useInfiniteScroll";
+import { CHATS_OFFSET } from "../../constants";
 
 const ChatList = ({ isLoading, error, onSelectChat }) => {
   const { leadId, botId } = useParams();
   const { isConnected, setBotId } = useWS();
-  const { chats } = useChats();
+  const { chats, addChats } = useChats();
+
   const [filteredChats, setFilteredChats] = useState(chats);
+  const [offset, setOffset] = useState(CHATS_OFFSET + 1);
+
+  const [fetchChats, isLoadingChats, chatsError] = useApiRequest(
+    async (locOffset) => {
+      return await getChats(botId, locOffset);
+    },
+  );
+
   const navigate = useNavigate();
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const statusColor = isConnected ? "green.500" : "red.500";
+
+  const loadMoreChats = async () => {
+    const newChats = await fetchChats(offset);
+
+    if (newChats.count === 0) {
+      stopObserving();
+      setIsVisible(false); // More safety
+      return;
+    }
+
+    setOffset((prev) => prev + CHATS_OFFSET);
+    addChats(newChats.chats);
+    setFilteredChats((prev) => [...prev, ...newChats.chats]);
+  };
+
+  const { lastElementRef, stopObserving, setIsVisible } = useInfiniteScroll({
+    isLoading: isLoading || !chats,
+    onLoadMore: loadMoreChats,
+    useEffectDropCondition: isLoadingChats || chatsError,
+  });
+
+  useEffect(() => {
+    setBotId(botId);
+  }, [botId, setBotId]);
 
   useEffect(() => {
     setFilteredChats(chats);
   }, [chats]);
-
-  useEffect(() => {
-    setBotId(botId);
-  }, [botId]);
-
-  const borderColor = useColorModeValue("gray.200", "gray.700");
-  const statusColor = isConnected ? "green.500" : "red.500";
 
   return (
     <Flex
@@ -57,12 +91,11 @@ const ChatList = ({ isLoading, error, onSelectChat }) => {
           _hover={{ cursor: "pointer" }}
           onClick={() => navigate("/dashboard/bots")}
         />
-
-        <Flex align="center" justify={"center"} gap={2}>
+        <Flex align="center" gap={2}>
           <Text fontSize="xl" fontWeight="bold">
             Чаты
           </Text>
-          <Tooltip label={"Статус подключения к Web Socket"}>
+          <Tooltip label="Статус подключения к WebSocket">
             <Box w={2} h={2} borderRadius="full" bg={statusColor} />
           </Tooltip>
         </Flex>
@@ -71,10 +104,11 @@ const ChatList = ({ isLoading, error, onSelectChat }) => {
       <VStack align="stretch" spacing={2}>
         {isLoading && <SpinnerLoader h={{ base: "20vh", md: "94vh" }} />}
         {error && (
-          <LoaderMessage h={{ base: "20vh", md: "94vh" }} isError={true}>
+          <LoaderMessage h={{ base: "20vh", md: "94vh" }} isError>
             Ошибка загрузки чатов :(
           </LoaderMessage>
         )}
+
         {!isLoading && !error && filteredChats.length === 0 && (
           <LoaderMessage h={{ base: "20vh", md: "94vh" }}>
             Чатов пока нет...
@@ -91,6 +125,18 @@ const ChatList = ({ isLoading, error, onSelectChat }) => {
               onClick={() => onSelectChat(chat.lead.id)}
             />
           ))}
+
+        {isLoadingChats && (
+          <SpinnerLoader h="10vh" text="Загрузка следующих чатов..." />
+        )}
+
+        {chatsError && (
+          <LoaderMessage h="10vh" isError>
+            Ошибка загрузки чатов: {chatsError}
+          </LoaderMessage>
+        )}
+
+        <Box w="full" h="20px" bg="transparent" ref={lastElementRef} />
       </VStack>
     </Flex>
   );

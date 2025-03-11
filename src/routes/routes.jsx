@@ -10,6 +10,7 @@ import Settings from "../pages/Settings.jsx";
 import ChatInterface from "../components/Chat/ChatInterface.jsx";
 import { ChatProvider } from "../contexts/ChatContext.jsx";
 import Error from "../pages/Error.jsx";
+import { BotProvider } from "../contexts/botContext.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -33,14 +34,21 @@ export const router = createBrowserRouter([
           { path: "settings", element: <Settings /> },
           {
             path: "bots",
-            element: <Bots />,
+            element: (
+              <BotProvider>
+                <Bots />
+              </BotProvider>
+            ),
           },
           {
             path: "bots/:botId",
             element: (
-              <ChatProvider>
-                <Chats />
-              </ChatProvider>
+              <BotProvider>
+                <ChatProvider>
+                  {" "}
+                  <Chats />
+                </ChatProvider>
+              </BotProvider>
             ),
             children: [
               {

@@ -11,9 +11,10 @@ import {
 } from "@chakra-ui/react";
 import PasswordInput from "../ui/PasswordInput";
 import { useState } from "react";
-import { PropTypes } from "prop-types";
+import PropTypes from "prop-types";
 import genPassword from "../../utils/genPassword";
 import { Lock } from "lucide-react";
+import { USER_FIELDS } from "../../constants";
 
 const UserForm = ({
   formData,
@@ -22,35 +23,42 @@ const UserForm = ({
   error,
   onSubmit,
   showHeader = true,
+  requiredFields = ["username", "password", "name"],
 }) => {
-  const [formErrors, setFormErrors] = useState({
-    name: "",
-    username: "",
-    password: "",
-  });
-
+  const [formErrors, setFormErrors] = useState({});
   const textColor = useColorModeValue("gray.600", "gray.300");
 
   const validateForm = () => {
-    let errors = { username: "", password: "", name: "" };
+    let errors = {};
+    let isAnyFieldFilled = false;
 
-    if (!formData.username) {
-      errors.username = "Username обязателен";
-    }
-    if (!formData.password) {
-      errors.password = "Пароль обязателен";
-    }
-    if (!formData.name) {
-      errors.name = "Имя обязательно";
+    Object.keys(formData).forEach((key) => {
+      const value = formData[key]?.trim();
+      if (value.length > 0) {
+        isAnyFieldFilled = true;
+      }
+      if (requiredFields.includes(key) && !value) {
+        errors[key] = `${key} обязателен`;
+      } else if (
+        requiredFields.includes(key) &&
+        USER_FIELDS[key] &&
+        (value.length < USER_FIELDS[key].min ||
+          value.length > USER_FIELDS[key].max)
+      ) {
+        errors[key] =
+          `${key} должен содержать от ${USER_FIELDS[key].min} до ${USER_FIELDS[key].max} символов`;
+      }
+    });
+
+    if (!isAnyFieldFilled) {
+      errors.general = "Хотя бы одно поле должно быть заполнено";
     }
 
     setFormErrors(errors);
 
-    if (Object.values(errors).some((error) => error)) {
-      return;
+    if (Object.keys(errors).length === 0) {
+      onSubmit();
     }
-
-    onSubmit();
   };
 
   return (
@@ -98,7 +106,7 @@ const UserForm = ({
         </FormControl>
         <FormControl display="flex" gap={4}>
           <PasswordInput
-            deafaultShow={true}
+            defaultShow={true}
             size="md"
             value={formData.password}
             onChange={(e) =>
@@ -123,6 +131,12 @@ const UserForm = ({
           Создать
         </Button>
 
+        {formErrors.general && (
+          <Text color="red.500" textAlign="center">
+            {formErrors.general}
+          </Text>
+        )}
+
         {error && (
           <Text color="red.500" textAlign="center">
             Ошибка: {error}
@@ -135,15 +149,16 @@ const UserForm = ({
 
 UserForm.propTypes = {
   formData: PropTypes.shape({
-    username: PropTypes.string.isRequired,
-    password: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
+    username: PropTypes.string,
+    password: PropTypes.string,
+    name: PropTypes.string,
   }).isRequired,
   setFormData: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   error: PropTypes.string,
   onSubmit: PropTypes.func.isRequired,
   showHeader: PropTypes.bool,
+  requiredFields: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default UserForm;

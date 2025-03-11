@@ -1,4 +1,8 @@
-export const transformDateTime = (dateStr, onlyTime = false) => {
+export const transformDateTime = (
+  dateStr,
+  onlyTime = false,
+  fullDateTime = false,
+) => {
   //If it's today – only show HH:MM
   //If it’s this week – show weekday name (вт, ср, etc)
   //If it’s this year – show MM.DD (month-day)
@@ -24,8 +28,17 @@ export const transformDateTime = (dateStr, onlyTime = false) => {
   // Always return HH:MM if the flag is true
   const hours = pad(date.getHours());
   const minutes = pad(date.getMinutes());
+
   if (onlyTime) {
     return `${hours}:${minutes}`;
+  }
+
+  // If full datetime is requested
+  if (fullDateTime) {
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    return `${year}.${month}.${day}-${hours}:${minutes}`;
   }
 
   // Check if same day

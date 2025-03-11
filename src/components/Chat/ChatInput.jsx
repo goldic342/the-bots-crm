@@ -9,17 +9,36 @@ import {
   InputRightElement,
   Input,
   Badge,
+  Text,
+  HStack,
+  useToast,
 } from "@chakra-ui/react";
-import { ArrowUp, Paperclip } from "lucide-react";
+import { ArrowUp, Paperclip, X } from "lucide-react";
 import PropTypes from "prop-types";
 import { useState, useRef, useEffect } from "react";
+import { useChats } from "../../contexts/ChatContext";
+import { useBot } from "../../contexts/botContext";
 import useColors from "../../hooks/useColors";
+import { messageToString } from "../../utils/messageToString";
+import { MESSAGE_MAX_LENGHT } from "../../constants";
 
 const ChatInput = ({ onSendMessage, isSending }) => {
   const [text, setText] = useState("");
   const [file, setFile] = useState(null);
+
+  const toast = useToast();
+
+  const { currentChat, replyToMessage, setReplyToMessage } = useChats();
+  const { bot } = useBot();
+
   const textareaRef = useRef(null);
   const sendingColor = useColorModeValue("gray.600", "gray.400");
+
+  const isDisabled =
+    currentChat.status !== "active" || bot.status !== "enabled";
+
+  const { primary } = useColors();
+  const sendButtonHoverBg = useColorModeValue("primary.600", "primary.300");
 
   useEffect(() => {
     if (textareaRef.current && text.trim() !== "") {
@@ -32,10 +51,23 @@ const ChatInput = ({ onSendMessage, isSending }) => {
   }, [text]);
 
   const handleSend = () => {
+    if (text.trim().length > MESSAGE_MAX_LENGHT) {
+      toast({
+        title: `Максимальная длина сообщения: ${MESSAGE_MAX_LENGHT}`,
+        duration: 500,
+        status: "error",
+        position: "bottom-right",
+      });
+      return;
+    }
     if (text.trim() !== "" || file) {
-      onSendMessage(text, 0, file);
+      onSendMessage(text, replyToMessage?.id || 0, file);
+
       setText("");
       setFile(null);
+
+      setReplyToMessage(null);
+
       if (textareaRef.current) {
         textareaRef.current.focus();
       }
@@ -54,15 +86,43 @@ const ChatInput = ({ onSendMessage, isSending }) => {
     setFile(selectedFile);
   };
 
-  const { primary } = useColors();
-  const sendButtonHoverBg = useColorModeValue("primary.600", "primary.300");
-
   return (
     <Box py={3} px={1} position="relative">
+      {replyToMessage && (
+        <Flex
+          alignItems="center"
+          bg={useColorModeValue("gray.100", "gray.700")}
+          px={2}
+          py={1}
+          borderRadius="md"
+          mb={2}
+          position="relative"
+        >
+          <HStack flex="1" pr="2rem" maxW="calc(100% - 40px)">
+            <Badge colorScheme="blue" mr={1}>
+              Ответ
+            </Badge>
+            <Text maxW={"lg"} noOfLines={1}>
+              {messageToString(replyToMessage) || "Сообщение"}
+            </Text>
+          </HStack>
+          <IconButton
+            icon={<X />}
+            size="xs"
+            variant="ghost"
+            position="absolute"
+            right="4px"
+            onClick={() => setReplyToMessage(null)}
+            aria-label="Cancel reply"
+          />
+        </Flex>
+      )}
+
       <Flex alignItems="flex-end">
         <Box position="relative">
           <label htmlFor="file-upload">
             <IconButton
+              isDisabled={isDisabled}
               icon={
                 <Paperclip
                   color={useColorModeValue(
@@ -81,6 +141,7 @@ const ChatInput = ({ onSendMessage, isSending }) => {
             />
           </label>
           <Input
+            isDisabled={isDisabled}
             id="file-upload"
             type="file"
             display="none"
@@ -104,6 +165,7 @@ const ChatInput = ({ onSendMessage, isSending }) => {
         <InputGroup>
           <Textarea
             ref={textareaRef}
+            isDisabled={isDisabled}
             placeholder="Написать сообщение..."
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -132,7 +194,7 @@ const ChatInput = ({ onSendMessage, isSending }) => {
           _hover={{ bg: sendButtonHoverBg }}
           onClick={handleSend}
           aria-label="Отправить"
-          isDisabled={!text.trim() && !file}
+          isDisabled={isDisabled || (!text.trim() && !file)}
         />
       </Flex>
     </Box>

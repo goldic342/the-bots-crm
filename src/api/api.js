@@ -1,6 +1,5 @@
 import axios from "axios";
 import camelcaseKeysDeep from "camelcase-keys-deep";
-import { API_BASE_URL, API_TIMEOUT } from "../config";
 let convertSnakeToCamel = true; // DO NOT TURN OFF
 
 export const setConversionEnabled = (enabled) => {
@@ -8,8 +7,8 @@ export const setConversionEnabled = (enabled) => {
 };
 
 export const api = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: API_TIMEOUT,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: import.meta.env.VITE_API_TIMEOUT,
   headers: { "Content-Type": "application/json" },
 });
 api.defaults.withCredentials = true;
