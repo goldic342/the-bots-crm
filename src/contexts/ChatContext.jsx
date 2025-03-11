@@ -103,6 +103,13 @@ export const ChatProvider = ({ children }) => {
       const chatMessages = prevMessages[leadId] || [];
       return { ...prevMessages, [leadId]: [...chatMessages, message] };
     });
+    setChats((prevChats) =>
+      prevChats.map((chat) =>
+        chat.lead.id === Number(leadId)
+          ? { ...chat, lastMessage: message }
+          : chat,
+      ),
+    );
   }, []);
 
   const addMessages = useCallback((leadId, messages) => {
