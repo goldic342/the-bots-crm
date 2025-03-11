@@ -15,6 +15,7 @@ import { fetchMessages } from "../../api/chats.js";
 import { useChats } from "../../contexts/ChatContext.jsx";
 import { useParams } from "react-router-dom";
 import useApiRequest from "../../hooks/useApiRequest.js";
+import { MESSAGES_OFFSET } from "../../constants.js";
 
 const ChatMessages = ({ messages }) => {
   const chatContainerRef = useRef(null);
@@ -23,7 +24,7 @@ const ChatMessages = ({ messages }) => {
   const { addMessages } = useChats();
   const { leadId, botId } = useParams();
 
-  const [offset, setOffset] = useState(251);
+  const [offset, setOffset] = useState(MESSAGES_OFFSET);
 
   // Custom hook for API request, returning [requestFn, isLoading, error]
   const [getMessages, isLoadingMessages, messagesError] = useApiRequest(
@@ -59,7 +60,7 @@ const ChatMessages = ({ messages }) => {
       stopObserving();
       return;
     }
-    setOffset((prev) => prev + 250);
+    setOffset((prev) => prev + MESSAGES_OFFSET);
     addMessages(leadId, newMessages.messages);
 
     // 3) Wait for next render cycle; then restore scroll position

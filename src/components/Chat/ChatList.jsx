@@ -21,14 +21,15 @@ import { useWS } from "../../contexts/WSContext";
 import { getChats } from "../../api/chats";
 import useApiRequest from "../../hooks/useApiRequest";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
+import { CHATS_OFFSET } from "../../constants";
 
 const ChatList = ({ isLoading, error, onSelectChat }) => {
   const { leadId, botId } = useParams();
   const { isConnected, setBotId } = useWS();
-  const { chats, addChats, addChatUpdates } = useChats();
+  const { chats, addChats } = useChats();
 
   const [filteredChats, setFilteredChats] = useState(chats);
-  const [offset, setOffset] = useState(51);
+  const [offset, setOffset] = useState(CHATS_OFFSET + 1);
 
   const [fetchChats, isLoadingChats, chatsError] = useApiRequest(
     async (locOffset) => {
@@ -49,7 +50,7 @@ const ChatList = ({ isLoading, error, onSelectChat }) => {
       return;
     }
 
-    setOffset((prev) => prev + 50);
+    setOffset((prev) => prev + CHATS_OFFSET);
     addChats(newChats.chats);
     setFilteredChats((prev) => [...prev, ...newChats.chats]);
   };

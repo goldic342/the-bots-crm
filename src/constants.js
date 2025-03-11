@@ -17,3 +17,9 @@ export const UnauthorizedMessage = {
 };
 export const UnauthorizedStatusCode = 401;
 export const TokenType = "Bearer";
+
+export const CHATS_OFFSET = 50;
+export const CHATS_LIMIT = 50;
+
+export const MESSAGES_OFFSET = 100;
+export const MESSAGES_LIMIT = 100;

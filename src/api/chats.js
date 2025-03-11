@@ -1,6 +1,7 @@
+import { CHATS_LIMIT, MESSAGES_LIMIT } from "../constants";
 import { api } from "./api";
 
-export const getChats = async (botId, offset = 1, limit = 50) => {
+export const getChats = async (botId, offset = 1, limit = CHATS_LIMIT) => {
   const response = await api.get(`/chat/${botId}`, {
     params: {
       offset,
@@ -16,7 +17,12 @@ export const getChatInfo = async (leadId, botId) => {
   return response.data;
 };
 
-export const fetchMessages = async (leadId, botId, offset = 1, limit = 250) => {
+export const fetchMessages = async (
+  leadId,
+  botId,
+  offset = 1,
+  limit = MESSAGES_LIMIT,
+) => {
   const response = await api.get(`/message/${botId}/${leadId}`, {
     params: {
       offset,
