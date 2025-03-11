@@ -4,13 +4,11 @@ import {
   useContext,
   useRef,
   useState,
-  useCallback,
   useMemo,
 } from "react";
 import { useChats } from "./ChatContext";
 import { useAuth } from "./AuthContext";
 import camelcaseKeysDeep from "camelcase-keys-deep";
-import { WS_BASE_URL } from "../config";
 
 const WSContext = createContext(undefined);
 
@@ -32,7 +30,7 @@ export const WSProvider = ({ children }) => {
   useEffect(() => {
     if (!botId || !token) return;
 
-    const url = `${WS_BASE_URL}/v1/ws/${botId}?token=${token}`;
+    const url = `${import.meta.env.VITE_WS_BASE_URL}/v1/ws/${botId}?token=${token}`;
     const socket = new WebSocket(url);
     wsRef.current = socket;
 

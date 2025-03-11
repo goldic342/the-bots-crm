@@ -11,7 +11,7 @@ import {
   TokenType,
   UnauthorizedMessage,
   UnauthorizedStatusCode,
-} from "../config";
+} from "../constants";
 import { getMe, getAccessToken } from "../api/auth";
 
 const AuthContext = createContext(undefined);
