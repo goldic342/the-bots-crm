@@ -39,6 +39,7 @@ export const WSProvider = ({ children }) => {
     };
 
     socket.onclose = (event) => {
+      console.log("WS closed: ", event.reason);
       setIsConnected(false);
     };
 
@@ -60,7 +61,9 @@ export const WSProvider = ({ children }) => {
           const ccData = camelcaseKeysDeep(data); // cc - camescase
           const leadId = ccData.lead?.id;
 
-          addChatUpdates(leadId, [ccData.message.id]);
+          if (ccData.message.direction === "incoming") {
+            addChatUpdates(leadId, [ccData.message.id]);
+          }
           addMessage(leadId, camelcaseKeysDeep(ccData.message));
         }
       } catch (error) {
