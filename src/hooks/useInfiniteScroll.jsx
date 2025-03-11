@@ -4,6 +4,7 @@ const useInfiniteScroll = (
   { isLoading, onLoadMore, useEffectDropCondition = false },
   options = { threshold: 0.1 },
 ) => {
+  // FIXME: well.... it works (kinda) sometimes double-fetching. need fix (delay not working)
   const observerRef = useRef(null);
   const lastElementRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -37,7 +38,7 @@ const useInfiniteScroll = (
 
     onLoadMore();
 
-    if (observerRef.current && lastElementRef.current && isObserving) {
+    if (observerRef.current && lastElementRef.current) {
       observerRef.current.observe(lastElementRef.current);
     }
   }, [isVisible, isLoading, onLoadMore, useEffectDropCondition, isObserving]);

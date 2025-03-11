@@ -17,7 +17,6 @@ import { useParams } from "react-router-dom";
 import useApiRequest from "../../hooks/useApiRequest.js";
 
 const ChatMessages = ({ messages }) => {
-  // FIXME: well.... it works (kinda) sometimes double-fetching. need fix
   const chatContainerRef = useRef(null);
   const isFirstRender = useRef(true);
 
@@ -74,14 +73,12 @@ const ChatMessages = ({ messages }) => {
     }, 0);
   }
 
-  // A small helper to check if user is near the bottom
   const isUserNearBottom = () => {
     if (!chatContainerRef.current) return false;
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
     return scrollHeight - (scrollTop + clientHeight) < 150;
   };
 
-  // Scroll to the bottom of the chat container
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop =
@@ -113,7 +110,7 @@ const ChatMessages = ({ messages }) => {
       position="relative"
     >
       <AudioProvider>
-        {/* Error Message */}
+        <Box h={4} w="full" ref={lastElementRef} />
         {messagesError && (
           <Alert status="error" mb={4}>
             <AlertIcon />
@@ -122,17 +119,12 @@ const ChatMessages = ({ messages }) => {
           </Alert>
         )}
 
-        {/* Loading Indicator */}
         {isLoadingMessages && (
-          <Box display="flex" justifyContent="center" my={4}>
+          <Box display="flex" justifyContent="center" my={4} h={4}>
             <Spinner size="md" />
           </Box>
         )}
 
-        {/* This element is observed by the infinite scroll hook (for top loading) */}
-        <Box h={2} w="full" ref={lastElementRef} />
-
-        {/* Render Chat Messages */}
         {messages.map((msg) => (
           <DetermineChatBubble key={msg.id} message={msg} />
         ))}
