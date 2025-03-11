@@ -11,6 +11,9 @@ export const MAX_TRANSLATION = 100;
 
 export const MESSAGE_READ_DELAY_MS = 1000;
 
-export const UnauthorizedMessage = "Unauthorized";
+export const UnauthorizedMessage = {
+  error: "INVALID_TOKEN",
+  message: "Токен недействителен.",
+};
 export const UnauthorizedStatusCode = 401;
 export const TokenType = "Bearer";
