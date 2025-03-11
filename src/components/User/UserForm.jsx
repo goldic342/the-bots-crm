@@ -14,7 +14,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import genPassword from "../../utils/genPassword";
 import { Lock } from "lucide-react";
-import { USER_FIELDS } from "../../formsConfig";
+import { USER_FIELDS } from "../../constants";
 
 const UserForm = ({
   formData,

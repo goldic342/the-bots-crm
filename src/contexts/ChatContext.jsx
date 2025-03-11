@@ -1,5 +1,12 @@
-import { createContext, useCallback, useContext, useState } from "react";
-import { fetchMessages } from "../api/chats";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { fetchMessages, markMessagesAsRead } from "../api/chats";
+import { MESSAGE_READ_DELAY_MS } from "../constants";
 
 const ChatContext = createContext(undefined);
 
@@ -16,6 +23,9 @@ export const ChatProvider = ({ children }) => {
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState({});
   const [replyToMessage, setReplyToMessage] = useState(null);
+
+  //"leadId:botId:messageId"
+  const [readQueue, setReadQueue] = useState(new Set());
 
   const addChats = useCallback((newChats) => {
     setChats((prevChats) => [...prevChats, ...newChats]);
@@ -45,7 +55,7 @@ export const ChatProvider = ({ children }) => {
         const fetchedMessages = await fetchMessages(leadId, chat.botId);
         setMessages((prevMessages) => ({
           ...prevMessages,
-          [leadId]: fetchedMessages.messages.reverse(),
+          [leadId]: fetchedMessages.messages.reverse(), // e.g. newest last
         }));
       }
 
@@ -71,6 +81,62 @@ export const ChatProvider = ({ children }) => {
     });
   }, []);
 
+  const handleMessageVisible = useCallback((leadId, botId, messageId) => {
+    const key = `${leadId}:${botId}:${messageId}`;
+    setReadQueue((prev) => new Set([...prev, key]));
+  }, []);
+
+  useEffect(() => {
+    if (readQueue.size === 0) return;
+
+    const timer = setTimeout(async () => {
+      // Make a copy, then clear readQueue so we don't re-send duplicates
+      const queueEntries = Array.from(readQueue);
+      setReadQueue(new Set());
+
+      // Group by "leadId:botId"
+      const grouped = {};
+      for (const entry of queueEntries) {
+        const [leadIdStr, botIdStr, messageIdStr] = entry.split(":");
+        const groupKey = `${leadIdStr}:${botIdStr}`;
+        const messageId = Number(messageIdStr);
+        if (!grouped[groupKey]) {
+          grouped[groupKey] = [];
+        }
+        grouped[groupKey].push(messageId);
+      }
+
+      // Now mark read in batches, grouped by (leadId, botId)
+      for (const groupKey of Object.keys(grouped)) {
+        const [leadIdStr, botIdStr] = groupKey.split(":");
+        const leadId = Number(leadIdStr);
+        const botId = Number(botIdStr);
+        const messageIds = grouped[groupKey];
+
+        try {
+          await markMessagesAsRead(leadId, botId, messageIds);
+
+          // On success, update local state so they have isRead: true
+          setMessages((prev) => {
+            const copy = { ...prev };
+            if (!copy[leadId]) return copy;
+            copy[leadId] = copy[leadId].map((msg) => {
+              if (messageIds.includes(msg.id)) {
+                return { ...msg, isRead: true };
+              }
+              return msg;
+            });
+            return copy;
+          });
+        } catch (err) {
+          // Catch the error here
+          console.error("Error marking messages as read:", err);
+        }
+      }
+    }, MESSAGE_READ_DELAY_MS);
+
+    return () => clearTimeout(timer);
+  }, [readQueue, setMessages]);
   return (
     <ChatContext.Provider
       value={{
@@ -85,6 +151,7 @@ export const ChatProvider = ({ children }) => {
         addMessages,
         replyToMessage,
         setReplyToMessage,
+        handleMessageVisible,
       }}
     >
       {children}

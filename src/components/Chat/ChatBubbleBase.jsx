@@ -24,9 +24,8 @@ import MessageRead from "../ui/MessageRead";
 import { fetchMessage } from "../../api/chats";
 import { useChats } from "../../contexts/ChatContext";
 import useApiRequest from "../../hooks/useApiRequest";
-
-const SWIPE_THRESHOLD = 50;
-const MAX_TRANSLATION = 100;
+import { useParams } from "react-router-dom";
+import { MAX_TRANSLATION, SWIPE_THRESHOLD } from "../../constants";
 
 const ChatBubbleBase = ({
   direction,
@@ -38,7 +37,9 @@ const ChatBubbleBase = ({
   children,
 }) => {
   const { primary, text } = useColors();
-  const { currentChat, setReplyToMessage, messages } = useChats();
+  const { currentChat, setReplyToMessage, messages, handleMessageVisible } =
+    useChats();
+  const { botId } = useParams();
 
   const currentMessage = messages[currentChat.lead.id].find((m) => m.id === id);
 
@@ -56,6 +57,9 @@ const ChatBubbleBase = ({
     }));
   };
 
+  const isOwn = direction === "outgoing";
+  const replyIdValid = !!replyMessageId && replyMessageId !== 0;
+
   const [isVisible, setIsVisible] = useState(false);
   const [replyMessage, setReplyMessage] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -69,6 +73,8 @@ const ChatBubbleBase = ({
       replyMessageId,
     );
   }, true);
+
+  const [hasSentVisibilityEvent, setHasSentVisibilityEvent] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -86,6 +92,22 @@ const ChatBubbleBase = ({
   }, []);
 
   useEffect(() => {
+    if (!isOwn && isVisible && !isRead && !hasSentVisibilityEvent) {
+      handleMessageVisible(currentChat.lead.id, botId, id);
+      setHasSentVisibilityEvent(true);
+    }
+  }, [
+    isVisible,
+    isOwn,
+    isRead,
+    hasSentVisibilityEvent,
+    handleMessageVisible,
+    currentChat.lead.id,
+    id,
+    botId,
+  ]);
+
+  useEffect(() => {
     if (!replyMessageId || !isVisible || replyMessage) return;
     const fetchMsg = async () => {
       const replyMsg = await fetchReplyMessage();
@@ -94,9 +116,6 @@ const ChatBubbleBase = ({
     fetchMsg();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [replyMessageId, isVisible]);
-
-  const isOwn = direction === "outgoing";
-  const replyIdValid = !!replyMessageId && replyMessageId !== 0;
 
   const bubbleBg = isOwn ? primary : text;
   const textColor = isOwn
@@ -119,7 +138,7 @@ const ChatBubbleBase = ({
     setIsSwiping(true);
     setTouchStartX(e.targetTouches[0].clientX);
     setTouchStartY(e.targetTouches[0].clientY);
-    setTranslateX(0); // reset any leftover movement
+    setTranslateX(0);
   };
 
   const handleTouchMove = (e) => {
@@ -133,12 +152,10 @@ const ChatBubbleBase = ({
     if (Math.abs(diffX) > Math.abs(diffY)) {
       if (isOwn) {
         // For outgoing messages => move bubble right -> left (negative X)
-        // Clamp between -MAX_TRANSLATION and 0
         const clampedDiffX = Math.min(0, Math.max(diffX, -MAX_TRANSLATION));
         setTranslateX(clampedDiffX);
       } else {
         // For incoming messages => move bubble left -> right (positive X)
-        // Clamp between 0 and MAX_TRANSLATION
         const clampedDiffX = Math.max(0, Math.min(diffX, MAX_TRANSLATION));
         setTranslateX(clampedDiffX);
       }
@@ -150,12 +167,10 @@ const ChatBubbleBase = ({
 
     if (isOwn) {
       if (translateX < -SWIPE_THRESHOLD) {
-        // left -> reply
         setReplyToMessage(currentMessage);
       }
     } else {
       if (translateX > SWIPE_THRESHOLD) {
-        // right -> reply
         setReplyToMessage(currentMessage);
       }
     }

@@ -28,7 +28,6 @@ const ChatMediaDisplay = ({ media, onClick }) => {
       textAlign="center"
     >
       <Box width="100%" aspectRatio={16 / 9}>
-        {" "}
         {/* Use a fixed ascpet ratio. TODO: Maybe ask backender to include width, height in filename*/}
         {!loaded && <Skeleton height={64} width="100%" />}
         {shouldLoad &&

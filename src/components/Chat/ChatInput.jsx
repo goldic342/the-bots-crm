@@ -20,7 +20,7 @@ import { useChats } from "../../contexts/ChatContext";
 import { useBot } from "../../contexts/botContext";
 import useColors from "../../hooks/useColors";
 import { messageToString } from "../../utils/messageToString";
-import { MESSAGE_MAX_LENGHT } from "../../formsConfig";
+import { MESSAGE_MAX_LENGHT } from "../../constants";
 
 const ChatInput = ({ onSendMessage, isSending }) => {
   const [text, setText] = useState("");

@@ -60,3 +60,8 @@ export const sendMessage = async (
   );
   return response.data;
 };
+
+export const markMessagesAsRead = async (leadId, botId, ids) => {
+  const response = await api.patch(`/message/${botId}/${leadId}/read`, { ids });
+  return response.data;
+};
