@@ -27,9 +27,15 @@ const ChatFileBubble = ({ message }) => {
         borderRadius="md"
         py={3}
         px={2}
-        borderColor={borderColor}
-        borderWidth={"1px"}
-        borderStyle={"solid"}
+        sx={
+          message.text
+            ? {
+                borderColor: borderColor,
+                borderWidth: "1px",
+                borderStyle: "solid",
+              }
+            : {}
+        }
       >
         <Icon as={File} boxSize={6} />
 
