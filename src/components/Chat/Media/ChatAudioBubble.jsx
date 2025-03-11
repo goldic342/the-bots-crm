@@ -20,7 +20,6 @@ import useColors from "../../../hooks/useColors";
 import useMediaLoad from "../../../hooks/useMediaLoad";
 import { useAudio } from "../../../contexts/AudioContext";
 import { ChatMessage } from "../../../utils/types/chatTypes";
-import useLazyLoad from "../../../hooks/useLazyLoad";
 
 const ChatAudioBubble = ({ message }) => {
   const { content, createdAt, direction } = message;
@@ -31,7 +30,6 @@ const ChatAudioBubble = ({ message }) => {
   const [isSeeking, setIsSeeking] = useState(false);
   const { loaded, error, mediaRef: audioRef } = useMediaLoad(content.url);
 
-  const [containerRef, shouldLoad] = useLazyLoad();
   const isSeekingRef = useRef(isSeeking);
   const {
     register,
@@ -135,7 +133,7 @@ const ChatAudioBubble = ({ message }) => {
     <ChatBubbleBase {...message}>
       <chakra.audio src={content.url} ref={audioRef} display="none" />
 
-      <Flex justify="space-between" gap={4} ref={containerRef}>
+      <Flex justify="space-between" gap={4}>
         <IconButton
           icon={
             playing ? <Pause color={iconColor} /> : <Play color={iconColor} />

@@ -6,6 +6,7 @@ import {
   Spacer,
   useColorModeValue,
   Icon,
+  Tooltip,
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import useColors from "../../hooks/useColors";
@@ -44,7 +45,9 @@ const ChatItem = ({ chat, isActive, onClick }) => {
             <Spacer />
             <Flex align="center">
               {isDisabled && (
-                <Icon as={Ban} color="red.500" boxSize={4} mr={2} />
+                <Tooltip label={"Пользователь заблокирован"}>
+                  <Icon as={Ban} color="red.500" boxSize={4} mr={2} />
+                </Tooltip>
               )}
               <Text fontSize="xs" color={dateColor}>
                 {transformDateTime(chat.lastMessage.createdAt)}
