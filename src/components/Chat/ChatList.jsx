@@ -25,8 +25,16 @@ import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 const ChatList = ({ isLoading, error, onSelectChat }) => {
   const { leadId, botId } = useParams();
   const { isConnected, setBotId } = useWS();
-  const { chats, addChats } = useChats();
+  const { chats, addChats, addChatUpdates } = useChats();
 
+  useEffect(() => {
+    const r = setTimeout(() => {
+      addChatUpdates(291, [979]);
+    }, 1000);
+    return () => {
+      clearTimeout(r);
+    };
+  }, [addChatUpdates]);
   const [filteredChats, setFilteredChats] = useState(chats);
   const [offset, setOffset] = useState(51);
 

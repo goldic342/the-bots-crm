@@ -64,12 +64,47 @@ export const ChatProvider = ({ children }) => {
     [chats, messages],
   );
 
+  const addChatUpdates = useCallback((leadId, value) => {
+    // Adds update and move chat to the start of array
+    setChats((prevChats) => {
+      let updatedChat = null;
+      const newChats = prevChats.filter((chat) => {
+        if (chat.lead.id === Number(leadId)) {
+          updatedChat = {
+            ...chat,
+            updates: [...(chat.updates || []), ...value],
+          };
+          return false; // Remove the chat from its current position
+        }
+        return true;
+      });
+
+      return updatedChat ? [updatedChat, ...newChats] : prevChats;
+    });
+  }, []);
+
+  const removeChatUpdates = useCallback((leadId, valuesToRemove) => {
+    setChats((prevChats) =>
+      prevChats.map((chat) =>
+        chat.lead.id === Number(leadId)
+          ? {
+              ...chat,
+              updates: (chat.updates || []).filter(
+                (update) => !valuesToRemove.includes(update),
+              ),
+            }
+          : chat,
+      ),
+    );
+  }, []);
+
   const addMessage = useCallback((leadId, message) => {
     setMessages((prevMessages) => {
       const chatMessages = prevMessages[leadId] || [];
       return { ...prevMessages, [leadId]: [...chatMessages, message] };
     });
   }, []);
+
   const addMessages = useCallback((leadId, messages) => {
     // Use when load more messages
     setMessages((prevMessages) => {
@@ -113,6 +148,8 @@ export const ChatProvider = ({ children }) => {
         const botId = Number(botIdStr);
         const messageIds = grouped[groupKey];
 
+        removeChatUpdates(leadId, messageIds);
+
         try {
           await markMessagesAsRead(leadId, botId, messageIds);
 
@@ -152,6 +189,8 @@ export const ChatProvider = ({ children }) => {
         replyToMessage,
         setReplyToMessage,
         handleMessageVisible,
+        addChatUpdates,
+        removeChatUpdates,
       }}
     >
       {children}

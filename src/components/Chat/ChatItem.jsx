@@ -7,6 +7,8 @@ import {
   useColorModeValue,
   Icon,
   Tooltip,
+  Badge,
+  HStack,
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import useColors from "../../hooks/useColors";
@@ -25,6 +27,7 @@ const ChatItem = ({ chat, isActive, onClick }) => {
   const messageColor = useColorModeValue("gray.600", "gray.300");
 
   const isDisabled = chat.status !== "active";
+  const unreadCount = chat.updates?.length || 0;
 
   return (
     <Box
@@ -35,6 +38,7 @@ const ChatItem = ({ chat, isActive, onClick }) => {
       _hover={{ bg: hoverBg }}
       cursor={"pointer"}
       onClick={onClick}
+      position="relative"
     >
       <Flex align="center">
         <Avatar name={chat.lead.name} src={chat.lead.photo} size="md" mr={3} />
@@ -43,16 +47,30 @@ const ChatItem = ({ chat, isActive, onClick }) => {
           <Flex align="center">
             <Text fontWeight="bold">{chat.lead.name}</Text>
             <Spacer />
-            <Flex align="center">
+            <HStack align="center" spacing={2}>
+              {unreadCount > 0 && (
+                <Badge
+                  ml={2}
+                  colorScheme="red"
+                  borderRadius="full"
+                  bg={"primary.500"}
+                  color={"white"}
+                  pr
+                  px={2}
+                  fontSize="xs"
+                >
+                  {unreadCount}
+                </Badge>
+              )}
               {isDisabled && (
                 <Tooltip label={"Пользователь заблокирован"}>
-                  <Icon as={Ban} color="red.500" boxSize={4} mr={2} />
+                  <Icon as={Ban} color="red.500" boxSize={4} />
                 </Tooltip>
               )}
               <Text fontSize="xs" color={dateColor}>
                 {transformDateTime(chat.lastMessage.createdAt)}
               </Text>
-            </Flex>
+            </HStack>
           </Flex>
 
           <Flex align="center">

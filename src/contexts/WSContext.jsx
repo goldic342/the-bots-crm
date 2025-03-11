@@ -21,7 +21,7 @@ export const useWS = () => {
 };
 
 export const WSProvider = ({ children }) => {
-  const { addMessage } = useChats();
+  const { addMessage, addChatUpdates } = useChats();
   const { token } = useAuth();
   const [botId, setBotId] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -57,7 +57,11 @@ export const WSProvider = ({ children }) => {
         }
 
         if (data?.type === "new_message") {
-          addMessage(data.lead?.id, camelcaseKeysDeep(data.message));
+          const ccData = camelcaseKeysDeep(data); // cc - camescase
+          const leadId = ccData.lead?.id;
+
+          addChatUpdates(leadId, [ccData.message.id]);
+          addMessage(leadId, camelcaseKeysDeep(ccData.message));
         }
       } catch (error) {
         console.error(
