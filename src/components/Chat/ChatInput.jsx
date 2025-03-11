@@ -11,6 +11,7 @@ import {
   Badge,
   Text,
   HStack,
+  useToast,
 } from "@chakra-ui/react";
 import { ArrowUp, Paperclip, X } from "lucide-react";
 import PropTypes from "prop-types";
@@ -19,10 +20,13 @@ import { useChats } from "../../contexts/ChatContext";
 import { useBot } from "../../contexts/botContext";
 import useColors from "../../hooks/useColors";
 import { messageToString } from "../../utils/messageToString";
+import { MESSAGE_MAX_LENGHT } from "../../formsConfig";
 
 const ChatInput = ({ onSendMessage, isSending }) => {
   const [text, setText] = useState("");
   const [file, setFile] = useState(null);
+
+  const toast = useToast();
 
   const { currentChat, replyToMessage, setReplyToMessage } = useChats();
   const { bot } = useBot();
@@ -47,6 +51,15 @@ const ChatInput = ({ onSendMessage, isSending }) => {
   }, [text]);
 
   const handleSend = () => {
+    if (text.trim().length > MESSAGE_MAX_LENGHT) {
+      toast({
+        title: `Максимальная длина сообщения: ${MESSAGE_MAX_LENGHT}`,
+        duration: 500,
+        status: "error",
+        position: "bottom-right",
+      });
+      return;
+    }
     if (text.trim() !== "" || file) {
       onSendMessage(text, replyToMessage?.id || 0, file);
 

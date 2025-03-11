@@ -44,6 +44,7 @@ const EditModal = ({ isOpen, onClose, selectedUser, confirmEdit }) => {
         <ModalBody>
           <UserForm
             showHeader={false}
+            requiredFields={[]}
             formData={formData}
             setFormData={setFormData}
             onSubmit={handleEditUser}
