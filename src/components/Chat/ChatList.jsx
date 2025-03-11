@@ -27,14 +27,6 @@ const ChatList = ({ isLoading, error, onSelectChat }) => {
   const { isConnected, setBotId } = useWS();
   const { chats, addChats, addChatUpdates } = useChats();
 
-  useEffect(() => {
-    const r = setTimeout(() => {
-      addChatUpdates(291, [979]);
-    }, 1000);
-    return () => {
-      clearTimeout(r);
-    };
-  }, [addChatUpdates]);
   const [filteredChats, setFilteredChats] = useState(chats);
   const [offset, setOffset] = useState(51);
 
