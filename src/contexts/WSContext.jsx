@@ -21,7 +21,7 @@ export const useWS = () => {
 };
 
 export const WSProvider = ({ children }) => {
-  const { addMessage, addChatUpdates } = useChats();
+  const { addMessage, addChatUpdates, markMessagesAsReadUI } = useChats();
   const { token } = useAuth();
   const [botId, setBotId] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -64,6 +64,12 @@ export const WSProvider = ({ children }) => {
             addChatUpdates(leadId, [ccData.message.id]);
           }
           addMessage(leadId, camelcaseKeysDeep(ccData.message));
+        }
+
+        if (data?.type === "mark_message_as_read") {
+          const ccData = camelcaseKeysDeep(data);
+          const leadId = ccData.lead?.id;
+          markMessagesAsReadUI(leadId, [ccData.messageIds]);
         }
       } catch (error) {
         console.error(

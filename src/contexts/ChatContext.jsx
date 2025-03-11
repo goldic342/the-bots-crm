@@ -128,6 +128,20 @@ export const ChatProvider = ({ children }) => {
     setReadQueue((prev) => new Set([...prev, key]));
   }, []);
 
+  const markMessagesAsReadUI = useCallback((leadId, messageIds) => {
+    setMessages((prev) => {
+      const copy = { ...prev };
+      if (!copy[leadId]) return copy;
+      copy[leadId] = copy[leadId].map((msg) => {
+        if (messageIds.includes(msg.id)) {
+          return { ...msg, isRead: true };
+        }
+        return msg;
+      });
+      return copy;
+    });
+  }, []);
+
   useEffect(() => {
     if (readQueue.size === 0) return;
 
@@ -159,19 +173,7 @@ export const ChatProvider = ({ children }) => {
 
         try {
           await markMessagesAsRead(leadId, botId, messageIds);
-
-          // On success, update local state so they have isRead: true
-          setMessages((prev) => {
-            const copy = { ...prev };
-            if (!copy[leadId]) return copy;
-            copy[leadId] = copy[leadId].map((msg) => {
-              if (messageIds.includes(msg.id)) {
-                return { ...msg, isRead: true };
-              }
-              return msg;
-            });
-            return copy;
-          });
+          markMessagesAsReadUI(leadId, messageIds);
         } catch (err) {
           // Catch the error here
           console.error("Error marking messages as read:", err);
@@ -180,7 +182,7 @@ export const ChatProvider = ({ children }) => {
     }, MESSAGE_READ_DELAY_MS);
 
     return () => clearTimeout(timer);
-  }, [readQueue, setMessages]);
+  }, [readQueue, setMessages, markMessagesAsReadUI, removeChatUpdates]);
   return (
     <ChatContext.Provider
       value={{
@@ -198,6 +200,7 @@ export const ChatProvider = ({ children }) => {
         handleMessageVisible,
         addChatUpdates,
         removeChatUpdates,
+        markMessagesAsReadUI,
       }}
     >
       {children}
