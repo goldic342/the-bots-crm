@@ -39,7 +39,6 @@ export const WSProvider = ({ children }) => {
     };
 
     socket.onclose = (event) => {
-      console.log("WS closed: ", event.reason);
       setIsConnected(false);
     };
 
