@@ -1,5 +1,4 @@
 import {
-  Button,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -7,30 +6,22 @@ import {
   ModalBody,
   ModalFooter,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import useApiRequest from "../../hooks/useApiRequest";
 import UserForm from "./UserForm";
-import { editUser } from "../../api/users";
+import PropTypes from "prop-types";
 
-const EditModal = ({ isOpen, onClose, selectedUser, confirmEdit }) => {
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    name: "",
-  });
-  const [editUserReq, isEditingUser, editUserError] = useApiRequest(
-    async () => {
-      return await editUser(
-        selectedUser.id,
-        formData.username,
-        formData.password,
-        formData.name,
-      );
-    },
-  );
+const EditModal = ({
+  isOpen,
+  onClose,
+  selectedUser,
+  onEdit,
+  isLoading,
+  error,
+  setFormData,
+  formData,
+}) => {
   const handleEditUser = async () => {
-    await editUserReq();
-    setFormData({ username: "", password: "", name: "" });
+    onEdit(selectedUser);
+    if (error) return;
     onClose();
   };
 
@@ -48,14 +39,25 @@ const EditModal = ({ isOpen, onClose, selectedUser, confirmEdit }) => {
             formData={formData}
             setFormData={setFormData}
             onSubmit={handleEditUser}
-            isLoading={isEditingUser}
-            error={editUserError}
+            isLoading={isLoading}
+            error={error}
           />
         </ModalBody>
         <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
   );
+};
+
+EditModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  selectedUser: PropTypes.object,
+  formData: PropTypes.object.isRequired,
+  setFormData: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  error: PropTypes.string,
+  onEdit: PropTypes.func.isRequired,
 };
 
 export default EditModal;

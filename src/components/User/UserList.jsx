@@ -13,14 +13,19 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useBreakpointValue } from "@chakra-ui/react";
-import { Edit, Delete } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import { useState } from "react";
+import PropTypes from "prop-types";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
 
-const UserList = ({ usersData, isLoading, error }) => {
-  // TODO: accept onDelete && onEdit from props. no time rn
-  // Needed to update the ui
+const UserList = ({
+  usersData = {},
+  isLoading,
+  error,
+  editInfo,
+  deleteInfo,
+}) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const headerBg = useColorModeValue("primary.500", "primary.700");
   const cellTextColor = useColorModeValue("gray.600", "gray.300");
@@ -28,6 +33,8 @@ const UserList = ({ usersData, isLoading, error }) => {
   const [selectedUser, setSelectedUser] = useState(null);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const users = usersData?.users ?? []; // Ensure users is always an array
 
   const handleDeleteClick = (user) => {
     setSelectedUser(user);
@@ -49,7 +56,7 @@ const UserList = ({ usersData, isLoading, error }) => {
     );
   }
 
-  if (isLoading || usersData.length === 0) {
+  if (isLoading || users.length === 0) {
     return (
       <Box width="full" maxW="6xl" p={6} textAlign="center">
         <Spinner size="xl" color="primary.500" />
@@ -76,7 +83,7 @@ const UserList = ({ usersData, isLoading, error }) => {
           </Tr>
         </Thead>
         <Tbody>
-          {usersData.users.map((user) => (
+          {users.map((user) => (
             <Tr key={user.id}>
               <Td color={cellTextColor}>
                 {user.id.slice(0, isMobile ? 8 : -1)}
@@ -95,7 +102,7 @@ const UserList = ({ usersData, isLoading, error }) => {
                 />
                 <IconButton
                   aria-label="Delete User"
-                  icon={<Delete />}
+                  icon={<Trash />}
                   bg={"red.500"}
                   colorScheme="red"
                   onClick={() => handleDeleteClick(user)}
@@ -109,14 +116,37 @@ const UserList = ({ usersData, isLoading, error }) => {
         isOpen={isOpen}
         onClose={onClose}
         selectedUser={selectedUser}
+        {...deleteInfo}
       />
       <EditModal
         isOpen={isEditOpen}
         onClose={() => setIsEditOpen(false)}
         selectedUser={selectedUser}
+        {...editInfo}
       />
     </Box>
   );
+};
+
+UserList.propTypes = {
+  editInfo: PropTypes.shape({
+    formData: PropTypes.object.isRequired,
+    setFormData: PropTypes.func.isRequired,
+    isLoading: PropTypes.bool.isRequired,
+    error: PropTypes.string,
+    onEdit: PropTypes.func.isRequired,
+  }),
+  deleteInfo: PropTypes.shape({
+    isLoading: PropTypes.bool.isRequired,
+    error: PropTypes.string,
+    onDelete: PropTypes.func.isRequired,
+  }),
+  usersData: PropTypes.shape({
+    users: PropTypes.array,
+    count: PropTypes.number,
+  }),
+  isLoading: PropTypes.bool.isRequired,
+  error: PropTypes.string,
 };
 
 export default UserList;
