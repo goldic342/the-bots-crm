@@ -7,7 +7,7 @@ export const USER_FIELDS = {
 export const MESSAGE_MAX_LENGHT = 1024;
 
 export const SWIPE_THRESHOLD = 50;
-export const MAX_TRANSLATION = 100;
+export const MAX_TRANSLATION = 70;
 
 export const MESSAGE_READ_DELAY_MS = 1000;
 

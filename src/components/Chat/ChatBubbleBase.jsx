@@ -268,7 +268,6 @@ const ChatBubbleBase = ({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         style={{
-          touchAction: "pan-x",
           transform: `translateX(${translateX}px)`,
           transition: isSwiping ? "none" : "transform 0.2s ease-out",
         }}
