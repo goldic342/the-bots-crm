@@ -11,33 +11,42 @@ import { AudioProvider } from "../../contexts/AudioContext";
 import { ChatMessage } from "../../utils/types/chatTypes";
 import DetermineChatBubble from "./DetermineChatBubble.jsx";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll.jsx";
-import { fetchMessages } from "../../api/chats.js";
 import { useChats } from "../../contexts/ChatContext.jsx";
 import { useParams } from "react-router-dom";
-import useApiRequest from "../../hooks/useApiRequest.js";
-import { MESSAGES_OFFSET } from "../../constants.js";
+import { MESSAGES_LIMIT, MESSAGES_OFFSET } from "../../constants.js";
+import { useSearch } from "../../contexts/SearchContext.jsx";
+import { useFetchMessages } from "../../hooks/useFetchMessages.js";
 
-const ChatMessages = ({ messages }) => {
+const ChatMessages = ({ messages, startOffset = 0 }) => {
   const chatContainerRef = useRef(null);
   const isFirstRender = useRef(true);
 
   const { addMessages } = useChats();
-  const { leadId, botId } = useParams();
+  const { leadId } = useParams();
 
-  const [offset, setOffset] = useState(MESSAGES_OFFSET);
+  const { scrollToId } = useSearch();
 
-  // Custom hook for API request, returning [requestFn, isLoading, error]
-  const [getMessages, isLoadingMessages, messagesError] = useApiRequest(
-    async (locOffset) => {
-      return await fetchMessages(leadId, botId, locOffset);
-    },
-  );
+  const [offset, setOffset] = useState(startOffset + MESSAGES_OFFSET + 1);
+  const [getMessages, isLoadingMessages, messagesError] = useFetchMessages();
 
   const { lastElementRef, stopObserving, setIsVisible } = useInfiniteScroll({
     isLoading: !messages,
     onLoadMore: loadMoreMessages,
     useEffectDropCondition: isLoadingMessages || messagesError,
   });
+
+  useEffect(() => {
+    if (!scrollToId || !chatContainerRef.current) return;
+
+    setTimeout(() => {
+      const messageElement = chatContainerRef.current.querySelector(
+        `[data_msgid="${scrollToId}"]`,
+      );
+      if (messageElement) {
+        messageElement.scrollIntoView({ behavior: "instant" });
+      }
+    }, 0); // Scroll only when dom is loaded
+  }, [scrollToId, messages]);
 
   /**
    * When we load more messages at the top, we want to preserve the user's current scroll
@@ -48,14 +57,17 @@ const ChatMessages = ({ messages }) => {
    */
   async function loadMoreMessages() {
     if (!chatContainerRef.current) return;
+    if (messages.length < MESSAGES_LIMIT) {
+      setIsVisible(false);
+      stopObserving();
+      return;
+    }
 
-    // 1) Record current scroll stats
     const oldScrollHeight = chatContainerRef.current.scrollHeight;
     const oldScrollTop = chatContainerRef.current.scrollTop;
 
-    // 2) Fetch new messages
     const newMessages = await getMessages(offset);
-    if (newMessages.count === 0) {
+    if (!newMessages || (newMessages.count ?? 0) < MESSAGES_LIMIT) {
       setIsVisible(false);
       stopObserving();
       return;
@@ -87,7 +99,6 @@ const ChatMessages = ({ messages }) => {
     }
   };
 
-  // Auto-scroll to bottom on first render, or if user is near bottom
   useEffect(() => {
     if (!messages) return;
 
@@ -115,8 +126,7 @@ const ChatMessages = ({ messages }) => {
         {messagesError && (
           <Alert status="error" mb={4}>
             <AlertIcon />
-            {messagesError.message ||
-              "An error occurred while loading messages."}
+            {messagesError.message || "Возникла ошибка при загрузке сообщений"}
           </Alert>
         )}
 
@@ -136,6 +146,7 @@ const ChatMessages = ({ messages }) => {
 
 ChatMessages.propTypes = {
   messages: PropTypes.arrayOf(ChatMessage).isRequired,
+  startOffset: PropTypes.number,
 };
 
 export default ChatMessages;

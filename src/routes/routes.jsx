@@ -45,7 +45,6 @@ export const router = createBrowserRouter([
             element: (
               <BotProvider>
                 <ChatProvider>
-                  {" "}
                   <Chats />
                 </ChatProvider>
               </BotProvider>

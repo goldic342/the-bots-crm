@@ -1,10 +1,11 @@
 import { useEffect } from "react";
-import ChatList from "../components/Chat/ChatList.jsx";
+import ChatListInterface from "../components/Chat/ChatList/ChatListInterface.jsx";
 import { getChats } from "../api/chats.js";
 import useApiRequest from "../hooks/useApiRequest.js";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useChats } from "../contexts/ChatContext.jsx";
 import { WSProvider } from "../contexts/WSContext.jsx";
+import { SearchProvider } from "../contexts/SearchContext.jsx";
 
 const Chats = () => {
   const { botId } = useParams();
@@ -33,12 +34,15 @@ const Chats = () => {
   return (
     <>
       <WSProvider>
-        <ChatList
-          isLoading={isLoading}
-          error={error}
-          onSelectChat={handleSelectChat}
-        />
-        <Outlet />
+        <SearchProvider>
+          <ChatListInterface
+            isLoading={isLoading}
+            error={error}
+            onSelectChat={handleSelectChat}
+          />
+
+          <Outlet />
+        </SearchProvider>
       </WSProvider>
     </>
   );

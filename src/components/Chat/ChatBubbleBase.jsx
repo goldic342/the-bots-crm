@@ -187,6 +187,7 @@ const ChatBubbleBase = ({
       direction="column"
       alignItems={isOwn ? "flex-end" : "flex-start"}
       mb={2}
+      data_msgid={id}
     >
       {replyIdValid && (
         <Popover isOpen={isOpen} onClose={onClose}>

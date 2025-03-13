@@ -1,4 +1,8 @@
-import { CHATS_LIMIT, MESSAGES_LIMIT } from "../constants";
+import {
+  CHATS_LIMIT,
+  MESSAGES_LIMIT,
+  SEARCH_MESSAGES_LIMIT,
+} from "../constants";
 import { api } from "./api";
 
 export const getChats = async (botId, offset = 1, limit = CHATS_LIMIT) => {
@@ -69,5 +73,22 @@ export const sendMessage = async (
 
 export const markMessagesAsRead = async (leadId, botId, ids) => {
   const response = await api.patch(`/message/${botId}/${leadId}/read`, { ids });
+  return response.data;
+};
+
+export const searchMessages = async (
+  botId,
+  search_term,
+  offset = 1,
+  limit = SEARCH_MESSAGES_LIMIT,
+) => {
+  const response = await api.get(`/message/fetch/${botId}`, {
+    params: {
+      search_term,
+      offset,
+      limit,
+    },
+  });
+
   return response.data;
 };

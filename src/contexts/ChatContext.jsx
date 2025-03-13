@@ -123,6 +123,13 @@ export const ChatProvider = ({ children }) => {
     });
   }, []);
 
+  const checkMessageExists = useCallback(
+    (leadId, messageId) => {
+      return messages[leadId]?.some((msg) => msg.id === messageId) || false;
+    },
+    [messages],
+  );
+
   const handleMessageVisible = useCallback((leadId, botId, messageId) => {
     const key = `${leadId}:${botId}:${messageId}`;
     setReadQueue((prev) => new Set([...prev, key]));
@@ -201,6 +208,7 @@ export const ChatProvider = ({ children }) => {
         addChatUpdates,
         removeChatUpdates,
         markMessagesAsReadUI,
+        checkMessageExists,
       }}
     >
       {children}

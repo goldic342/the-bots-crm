@@ -23,3 +23,9 @@ export const CHATS_LIMIT = 50;
 
 export const MESSAGES_OFFSET = 100;
 export const MESSAGES_LIMIT = 100;
+
+export const SEARCH_MESSAGES_OFFSET = 100;
+export const SEARCH_MESSAGES_LIMIT = 100;
+
+export const MESSAGES_MAX_LIMIT = 500;
+export const MESSAGES_MAX_OFFSET = 500;

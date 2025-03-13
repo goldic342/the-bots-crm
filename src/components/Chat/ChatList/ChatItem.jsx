@@ -11,11 +11,11 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
-import useColors from "../../hooks/useColors";
-import { ChatItem as ChatItemType } from "../../utils/types/chatTypes";
-import { transformDateTime } from "../../utils/transformDateTime";
-import MessageRead from "../ui/MessageRead";
-import { messageToString } from "../../utils/messageToString";
+import useColors from "../../../hooks/useColors";
+import { ChatItem as ChatItemType } from "../../../utils/types/chatTypes";
+import { transformDateTime } from "../../../utils/transformDateTime";
+import MessageRead from "../../ui/MessageRead";
+import { messageToString } from "../../../utils/messageToString";
 import { Ban } from "lucide-react";
 
 const ChatItem = ({ chat, isActive, onClick }) => {
