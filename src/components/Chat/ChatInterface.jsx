@@ -16,6 +16,7 @@ import { MESSAGES_OFFSET } from "../../constants";
 import { useFetchMessages } from "../../hooks/useFetchMessages";
 import { sendMessage } from "../../api/chats";
 import SearchLoading from "./ChatList/Search/SearchLoading";
+import AbsoluteWrapper from "../ui/AbsoluteWrapper";
 
 const ChatInterface = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });
@@ -123,43 +124,27 @@ const ChatInterface = () => {
 
   if (isSearching) {
     return (
-      <Box
-        position={isMobile ? "absolute" : "static"}
-        w="full"
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        bg={bg}
-        display="flex"
-        flexDirection="column"
-      >
+      <AbsoluteWrapper isMobile={isMobile} bg={bg}>
         <SearchLoading error={messagesError} />
-      </Box>
+      </AbsoluteWrapper>
     );
   }
 
   if (isLoaded) {
     return (
-      <Box
-        position={isMobile ? "absolute" : "static"}
-        w="full"
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        bg={bg}
-        display="flex"
-        flexDirection="column"
-      >
+      <AbsoluteWrapper isMobile={isMobile} bg={bg}>
         <ChatHeader onBack={handleBack} />
         <ChatMessages messages={messages[leadId]} startOffset={offset} />
         <ChatInput onSendMessage={handleSendMessage} isSending={isSending} />
-      </Box>
+      </AbsoluteWrapper>
     );
   }
 
-  return <SpinnerLoader />;
+  return (
+    <AbsoluteWrapper isMobile={isMobile} bg={bg}>
+      <SpinnerLoader />
+    </AbsoluteWrapper>
+  );
 };
 
 export default ChatInterface;
