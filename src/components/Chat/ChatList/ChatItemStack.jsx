@@ -33,14 +33,20 @@ const ChatItemStack = ({ isLoading, error, onSelectChat }) => {
 
     const newChats = await fetchChats(offset);
 
-    if (!newChats || (newChats.count ?? 0) < CHATS_LIMIT) {
+    if (!newChats || !newChats.chats?.length) {
+      stopObserving();
+      setIsVisible(false);
+      return;
+    }
+    addChats(newChats.chats);
+
+    if ((newChats.count ?? 0) < CHATS_LIMIT) {
       stopObserving();
       setIsVisible(false);
       return;
     }
 
     setOffset((prev) => prev + CHATS_OFFSET);
-    addChats(newChats.chats);
   };
 
   const { lastElementRef, stopObserving, setIsVisible } = useInfiniteScroll({

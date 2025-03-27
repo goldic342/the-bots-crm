@@ -67,12 +67,21 @@ const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET + 1 }) => {
     const oldScrollTop = chatContainerRef.current.scrollTop;
 
     const newMessages = await getMessages(offset);
-    if (!newMessages || (newMessages.count ?? 0) < MESSAGES_LIMIT) {
+
+    if (!newMessages || !newMessages.messages?.length) {
       setIsVisible(false);
       stopObserving();
       return;
     }
+
     addMessages(leadId, newMessages.messages);
+
+    if ((newMessages.count ?? 0) < MESSAGES_LIMIT) {
+      setIsVisible(false);
+      stopObserving();
+      return;
+    }
+
     setOffset((prev) => prev + MESSAGES_OFFSET);
 
     // 3) Wait for next render cycle; then restore scroll position
