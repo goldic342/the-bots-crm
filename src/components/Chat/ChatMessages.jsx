@@ -17,7 +17,7 @@ import { MESSAGES_LIMIT, MESSAGES_OFFSET } from "../../constants.js";
 import { useSearch } from "../../contexts/SearchContext.jsx";
 import { useFetchMessages } from "../../hooks/useFetchMessages.js";
 
-const ChatMessages = ({ messages, startOffset = 0 }) => {
+const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET + 1 }) => {
   const chatContainerRef = useRef(null);
   const isFirstRender = useRef(true);
 
@@ -26,7 +26,7 @@ const ChatMessages = ({ messages, startOffset = 0 }) => {
 
   const { scrollToId } = useSearch();
 
-  const [offset, setOffset] = useState(startOffset + MESSAGES_OFFSET + 1);
+  const [offset, setOffset] = useState(startOffset);
   const [getMessages, isLoadingMessages, messagesError] = useFetchMessages();
 
   const { lastElementRef, stopObserving, setIsVisible } = useInfiniteScroll({
@@ -72,8 +72,8 @@ const ChatMessages = ({ messages, startOffset = 0 }) => {
       stopObserving();
       return;
     }
-    setOffset((prev) => prev + MESSAGES_OFFSET);
     addMessages(leadId, newMessages.messages);
+    setOffset((prev) => prev + MESSAGES_OFFSET);
 
     // 3) Wait for next render cycle; then restore scroll position
     // Using setTimeout(0) is a simple trick to wait until the DOM has updated
