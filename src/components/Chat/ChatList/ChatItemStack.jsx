@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import { getChats } from "../../../api/chats";
 import useApiRequest from "../../../hooks/useApiRequest";
 import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
-import { MESSAGES_LIMIT, MESSAGES_OFFSET } from "../../../constants";
+import { CHATS_LIMIT, CHATS_OFFSET } from "../../../constants";
 import { useChats } from "../../../contexts/ChatContext";
 import { useState } from "react";
 
@@ -16,7 +16,7 @@ const ChatItemStack = ({ isLoading, error, onSelectChat }) => {
   const { leadId, botId } = useParams();
   const { chats, addChats } = useChats();
 
-  const [offset, setOffset] = useState(MESSAGES_OFFSET + 1);
+  const [offset, setOffset] = useState(CHATS_OFFSET + 1);
 
   const [fetchChats, isLoadingChats, chatsError] = useApiRequest(
     async (locOffset) => {
@@ -25,7 +25,7 @@ const ChatItemStack = ({ isLoading, error, onSelectChat }) => {
   );
 
   const loadMoreChats = async () => {
-    if (chats.length < MESSAGES_LIMIT) {
+    if (chats.length < CHATS_LIMIT) {
       stopObserving();
       setIsVisible(false);
       return;
@@ -33,13 +33,13 @@ const ChatItemStack = ({ isLoading, error, onSelectChat }) => {
 
     const newChats = await fetchChats(offset);
 
-    if (!newChats || (newChats.count ?? 0) < MESSAGES_LIMIT) {
+    if (!newChats || (newChats.count ?? 0) < CHATS_LIMIT) {
       stopObserving();
       setIsVisible(false);
       return;
     }
 
-    setOffset((prev) => prev + MESSAGES_OFFSET);
+    setOffset((prev) => prev + CHATS_OFFSET);
     addChats(newChats.chats);
   };
 
@@ -47,7 +47,7 @@ const ChatItemStack = ({ isLoading, error, onSelectChat }) => {
     isLoading: isLoading || !chats,
     onLoadMore: loadMoreChats,
     useEffectDropCondition:
-      isLoadingChats || chatsError || chats.length < MESSAGES_LIMIT,
+      isLoadingChats || chatsError || chats.length < CHATS_LIMIT,
   });
 
   return (
