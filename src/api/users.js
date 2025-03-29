@@ -16,6 +16,7 @@ export const deleteUser = async (userId) => {
   const response = await api.delete(`/user/${userId}`);
   return response.data;
 };
+
 export const editUser = async (userId, username, password, name) => {
   const payload = {};
   if (username) payload.username = username;
@@ -23,5 +24,10 @@ export const editUser = async (userId, username, password, name) => {
   if (name) payload.name = name;
 
   const response = await api.patch(`/user/${userId}`, payload);
+  return response.data;
+};
+
+export const addBot = async (userId, botId) => {
+  const response = await api.patch(`/user/${userId}/add_bot?bot_id=${botId}`);
   return response.data;
 };

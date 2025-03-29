@@ -11,10 +11,9 @@ import {
   useColorModeValue,
   IconButton,
   useDisclosure,
-  HStack,
 } from "@chakra-ui/react";
 import { useBreakpointValue } from "@chakra-ui/react";
-import { Edit, Plus, Trash } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import { useState } from "react";
 import PropTypes from "prop-types";
 import DeleteModal from "./DeleteModal";
@@ -48,11 +47,6 @@ const UserList = ({
   const handleEditClick = (user) => {
     setSelectedUser(user);
     setIsEditOpen(true);
-  };
-
-  const handleAddBotClick = (user) => {
-    setSelectedUser(user);
-    setIsAddBotOpen(true);
   };
 
   if (error) {
@@ -109,27 +103,21 @@ const UserList = ({
               <Td color={cellTextColor}>{user.username}</Td>
               <Td color={cellTextColor}>{user.name}</Td>
               <Td>
-                <HStack spacing={2}>
-                  <IconButton
-                    aria-label="Edit User"
-                    icon={<Edit />}
-                    bg={"green.500"}
-                    colorScheme="green"
-                    onClick={() => handleEditClick(user)}
-                  />
-                  <IconButton
-                    aria-label="Add bot to User"
-                    icon={<Plus />}
-                    bg={"yellow.500"}
-                    onClick={() => handleAddBotClick(user)}
-                  />
-                  <IconButton
-                    aria-label="Delete User"
-                    icon={<Trash />}
-                    bg={"red.500"}
-                    onClick={() => handleDeleteClick(user)}
-                  />
-                </HStack>
+                <IconButton
+                  aria-label="Edit User"
+                  icon={<Edit />}
+                  bg={"green.500"}
+                  colorScheme="green"
+                  onClick={() => handleEditClick(user)}
+                  mr={2}
+                />
+                <IconButton
+                  aria-label="Delete User"
+                  icon={<Trash />}
+                  bg={"red.500"}
+                  colorScheme="red"
+                  onClick={() => handleDeleteClick(user)}
+                />
               </Td>
             </Tr>
           ))}

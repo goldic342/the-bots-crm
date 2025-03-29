@@ -10,18 +10,19 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
+import { deleteUser } from "../../api/users";
+import useApiRequest from "../../hooks/useApiRequest";
 
-const DeleteModal = ({
-  isOpen,
-  onClose,
-  selectedUser,
-  onDelete,
-  isLoading,
-  error,
-}) => {
-  const handleDelete = () => {
-    onDelete(selectedUser);
+const DeleteModal = ({ isOpen, onClose, selectedUser, onDelete }) => {
+  const [deleteUserReq, isLoading, error] = useApiRequest(async (id) => {
+    return await deleteUser(id);
+  });
+
+  const handleDelete = async () => {
+    await deleteUserReq(selectedUser.id);
     if (error) return;
+
+    onDelete(selectedUser);
     onClose();
   };
   return (
@@ -59,8 +60,6 @@ DeleteModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   selectedUser: PropTypes.object,
-  isLoading: PropTypes.bool.isRequired,
-  error: PropTypes.string,
   onDelete: PropTypes.func.isRequired,
 };
 

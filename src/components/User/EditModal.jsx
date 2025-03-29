@@ -8,20 +8,33 @@ import {
 } from "@chakra-ui/react";
 import UserForm from "./UserForm";
 import PropTypes from "prop-types";
+import { editUser } from "../../api/users";
+import useApiRequest from "../../hooks/useApiRequest";
+import { useState } from "react";
 
-const EditModal = ({
-  isOpen,
-  onClose,
-  selectedUser,
-  onEdit,
-  isLoading,
-  error,
-  setFormData,
-  formData,
-}) => {
+const EditModal = ({ isOpen, onClose, selectedUser, onEdit }) => {
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    name: "",
+  });
+
+  const [editUserReq, isLoading, error] = useApiRequest(async (id) => {
+    return await editUser(
+      id,
+      formData.username,
+      formData.password,
+      formData.name,
+    );
+  });
+
   const handleEditUser = async () => {
-    onEdit(selectedUser);
+    const newUser = await editUserReq(selectedUser.id, formData);
+
     if (error) return;
+
+    setFormData({ username: "", password: "", name: "" });
+    onEdit(newUser);
     onClose();
   };
 
@@ -53,10 +66,6 @@ EditModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   selectedUser: PropTypes.object,
-  formData: PropTypes.object.isRequired,
-  setFormData: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  error: PropTypes.string,
   onEdit: PropTypes.func.isRequired,
 };
 

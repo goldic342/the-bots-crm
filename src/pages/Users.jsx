@@ -3,7 +3,7 @@ import UserList from "../components/User/UserList";
 import { useEffect, useState } from "react";
 import useApiRequest from "../hooks/useApiRequest";
 import UserForm from "../components/User/UserForm";
-import { getUsers, createUser, editUser, deleteUser } from "../api/users";
+import { getUsers, createUser, deleteUser } from "../api/users";
 
 const Users = () => {
   const [users, setUsers] = useState({});
@@ -13,25 +13,10 @@ const Users = () => {
     name: "",
   });
 
-  const [editFormData, setEditFormData] = useState({
-    username: "",
-    password: "",
-    name: "",
-  });
-
-  const [editUserReq, isEditingUser, editUserError] = useApiRequest(
-    async (id) => {
-      return await editUser(
-        id,
-        editFormData.username,
-        editFormData.password,
-        editFormData.name,
-      );
-    },
-  );
   const [fetchUsers, isLoading, error] = useApiRequest(async () => {
     return await getUsers();
   });
+
   const [createUserRequest, isCreatingUser, createUserError] = useApiRequest(
     async () => {
       return await createUser(
@@ -49,13 +34,7 @@ const Users = () => {
     setUsers(usersData);
   };
 
-  const handleEditUser = async (user) => {
-    await editUserReq(user.id, editFormData);
-
-    if (editUserError) return;
-
-    setEditFormData({ username: "", password: "", name: "" });
-
+  const handleEditUser = (user) => {
     setUsers((prev) => ({
       ...prev,
       users: prev.users.map((u) =>
@@ -63,26 +42,31 @@ const Users = () => {
           ? u
           : {
               ...u,
-              username: editFormData.username || u.username,
-              name: editFormData.name || u.name,
+              username: user.username,
+              name: user.name,
             },
       ),
     }));
   };
 
-  const [deleteUserReq, isDeletingUser, deleteUserError] = useApiRequest(
-    async (id) => {
-      return await deleteUser(id);
-    },
-  );
-  const handleDeleteUser = async (user) => {
-    await deleteUserReq(user.id);
-
-    if (deleteUserError) return;
-
+  const handleDeleteUser = (user) => {
     setUsers((prev) => ({
       ...prev,
       users: prev.users.filter((u) => u.id !== user.id),
+    }));
+  };
+
+  const handleAddBot = (user, botId) => {
+    setUsers((prev) => ({
+      ...prev,
+      users: prev.users.map((u) =>
+        u.id !== user.id
+          ? u
+          : {
+              ...u,
+              botsIds: [...(u.botsIds || []), botId],
+            },
+      ),
     }));
   };
 
@@ -138,18 +122,9 @@ const Users = () => {
           usersData={users}
           isLoading={isLoading}
           error={error}
-          editInfo={{
-            formData: editFormData,
-            setFormData: setEditFormData,
-            isLoading: isEditingUser,
-            error: editUserError,
-            onEdit: handleEditUser,
-          }}
-          deleteInfo={{
-            isLoading: isDeletingUser,
-            error: deleteUserError,
-            onDelete: handleDeleteUser,
-          }}
+          onEdit={handleEditUser}
+          onDelete={handleDeleteUser}
+          onAddBot={handleAddBot}
         />
       </Flex>
     </Box>
