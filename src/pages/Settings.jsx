@@ -12,12 +12,6 @@ import {
   Tag,
   TagLabel,
   Badge,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
-  AlertDialogFooter,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
@@ -38,8 +32,6 @@ const Settings = () => {
 
   const [debugVisible, setDebugVisible] = useState(false);
   const [clickCount, setClickCount] = useState(0);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = useRef();
 
   const toast = useToast();
 

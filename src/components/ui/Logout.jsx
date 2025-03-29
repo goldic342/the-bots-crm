@@ -38,8 +38,8 @@ const LogoutButton = ({ onConfirm }) => {
                 Отмена
               </Button>
               <Button
-                onClick={() => {
-                  onConfirm();
+                onClick={(e) => {
+                  onConfirm(e);
                   onClose();
                 }}
                 ml={3}
