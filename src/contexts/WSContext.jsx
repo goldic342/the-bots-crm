@@ -9,6 +9,7 @@ import {
 import { useChats } from "./ChatContext";
 import { useAuth } from "./AuthContext";
 import camelcaseKeysDeep from "camelcase-keys-deep";
+import { getChatInfo } from "../api/chats";
 
 const WSContext = createContext(undefined);
 
@@ -21,7 +22,8 @@ export const useWS = () => {
 };
 
 export const WSProvider = ({ children }) => {
-  const { addMessage, addChatUpdates, markMessagesAsReadUI } = useChats();
+  const { addMessage, chats, addChatUpdates, markMessagesAsReadUI, addChats } =
+    useChats();
   const { token } = useAuth();
   const [botId, setBotId] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -42,7 +44,7 @@ export const WSProvider = ({ children }) => {
       setIsConnected(false);
     };
 
-    socket.onmessage = (event) => {
+    socket.onmessage = async (event) => {
       try {
         let data = event.data;
         try {
@@ -59,6 +61,11 @@ export const WSProvider = ({ children }) => {
         if (data?.type === "new_message") {
           const ccData = camelcaseKeysDeep(data); // cc - camescase
           const leadId = ccData.lead?.id;
+
+          if (!chats.some((c) => c.lead.id === leadId)) {
+            const newChat = await getChatInfo(leadId, botId);
+            addChats([newChat]);
+          }
 
           if (ccData.message.direction === "incoming") {
             addChatUpdates(leadId, [ccData.message.id]);
@@ -87,7 +94,15 @@ export const WSProvider = ({ children }) => {
         wsRef.current = null;
       }
     };
-  }, [botId, token, addMessage]);
+  }, [
+    botId,
+    token,
+    chats,
+    addMessage,
+    addChatUpdates,
+    addChats,
+    markMessagesAsReadUI,
+  ]);
 
   const contextValue = useMemo(
     () => ({
