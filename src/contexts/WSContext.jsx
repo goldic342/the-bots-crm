@@ -64,8 +64,7 @@ export const WSProvider = ({ children }) => {
 
           if (!chats.some((c) => c.lead.id === leadId)) {
             const newChat = await getChatInfo(leadId, botId);
-            addChats([newChat]);
-            console.log("called add chat from WSContext");
+            addChats([{ ...newChat, isNewChat: true }]);
           }
 
           if (ccData.message.direction === "incoming") {
