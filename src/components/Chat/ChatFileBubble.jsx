@@ -44,7 +44,7 @@ const ChatFileBubble = ({ message }) => {
           fontWeight="bold"
           _hover={{ textDecoration: "underline", transform: "scale(1.1)" }}
         >
-          {fileName}
+          {fileName.slice(0, 16)}...
         </CRLink>
       </HStack>
       <Text
