@@ -32,14 +32,16 @@ const ChatInterface = () => {
   const [getMessages, isLoadingMessages, messagesError] = useFetchMessages();
 
   const isCorrectChatSelected = currentChat?.lead?.id === Number(leadId);
-  const isLoaded = Boolean(isCorrectChatSelected);
+  const isLoaded = !!isCorrectChatSelected;
   const isSearching = !!scrollToId && !isFetched && isLoaded;
 
   useEffect(() => {
+    console.log(leadId, isCorrectChatSelected, currentChat);
     if (!isCorrectChatSelected) {
+      console.log("incorrect chat");
       selectChat(leadId);
     }
-  }, [leadId, isCorrectChatSelected, selectChat]);
+  }, [leadId, isCorrectChatSelected, selectChat, currentChat]);
 
   useEffect(() => {
     if (!scrollToId || isFetched || !isLoaded || isLoadingMessages) return;
