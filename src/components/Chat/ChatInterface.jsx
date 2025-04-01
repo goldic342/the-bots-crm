@@ -36,9 +36,7 @@ const ChatInterface = () => {
   const isSearching = !!scrollToId && !isFetched && isLoaded;
 
   useEffect(() => {
-    console.log(leadId, isCorrectChatSelected, currentChat);
     if (!isCorrectChatSelected) {
-      console.log("incorrect chat");
       selectChat(leadId);
     }
   }, [leadId, isCorrectChatSelected, selectChat, currentChat]);

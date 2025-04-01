@@ -50,7 +50,9 @@ export const ChatProvider = ({ children }) => {
 
   const selectChat = useCallback(
     async (leadId) => {
+      console.log(chats);
       const chat = chats.find((c) => c.lead.id === Number(leadId));
+      console.log(chat);
       if (chat && !messages[leadId]) {
         const fetchedMessages = await fetchMessages(leadId, chat.botId);
         setMessages((prevMessages) => ({
