@@ -10,6 +10,7 @@ import { useChats } from "./ChatContext";
 import { useAuth } from "./AuthContext";
 import camelcaseKeysDeep from "camelcase-keys-deep";
 import { getChatInfo } from "../api/chats";
+import { useBot } from "./botContext";
 
 const WSContext = createContext(undefined);
 
@@ -26,11 +27,14 @@ export const WSProvider = ({ children }) => {
     useChats();
   const { token } = useAuth();
   const [botId, setBotId] = useState(null);
+  const { bot } = useBot();
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef(null);
 
   useEffect(() => {
     if (!botId || !token) return;
+    if (isConnected) return;
+    if (bot.status !== "enabled") return;
 
     const url = `${import.meta.env.VITE_WS_BASE_URL}/v1/ws/${botId}?token=${token}`;
     const socket = new WebSocket(url);
