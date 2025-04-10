@@ -99,6 +99,7 @@ export const WSProvider = ({ children }) => {
       if (wsRef.current) {
         wsRef.current.close();
         wsRef.current = null;
+        console.log("unmout");
       }
 
       setIsConnected(false);
@@ -110,7 +111,7 @@ export const WSProvider = ({ children }) => {
     addMessage,
     addChatUpdates,
     bot,
-    isConnected,
+    //isConnected,
     addChats,
     markMessagesAsReadUI,
   ]);
