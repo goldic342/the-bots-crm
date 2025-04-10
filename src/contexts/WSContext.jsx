@@ -36,6 +36,7 @@ export const WSProvider = ({ children }) => {
     if (!botId || !token) return;
     if (isConnected) return;
     if (bot.status !== "enabled") return;
+    console.log("passed");
 
     const url = `${import.meta.env.VITE_WS_BASE_URL}/v1/ws/${botId}?token=${token}`;
     const socket = new WebSocket(url);
@@ -108,6 +109,8 @@ export const WSProvider = ({ children }) => {
     chats,
     addMessage,
     addChatUpdates,
+    bot,
+    isConnected,
     addChats,
     markMessagesAsReadUI,
   ]);
