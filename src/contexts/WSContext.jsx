@@ -64,7 +64,7 @@ export const WSProvider = ({ children }) => {
 
           if (!chats.some((c) => c.lead.id === leadId)) {
             const newChat = await getChatInfo(leadId, botId);
-            addChats([{ ...newChat, isNewChat: true }]);
+            addChats([{ ...newChat, isNewChat: true }], true);
           }
 
           if (ccData.message.direction === "incoming") {

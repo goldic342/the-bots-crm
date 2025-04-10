@@ -27,8 +27,10 @@ export const ChatProvider = ({ children }) => {
   //"leadId:botId:messageId"
   const [readQueue, setReadQueue] = useState(new Set());
 
-  const addChats = useCallback((newChats) => {
-    setChats((prevChats) => [...prevChats, ...newChats]);
+  const addChats = useCallback((newChats, reverse = false) => {
+    setChats((prevChats) =>
+      reverse ? [...newChats, ...prevChats] : [...prevChats, ...newChats],
+    );
   }, []);
 
   const removeChat = useCallback(
