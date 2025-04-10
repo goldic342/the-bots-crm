@@ -45,18 +45,6 @@ const ChatBubbleBase = ({
 
   const bubbleRef = useRef(null);
 
-  const [dateTime, setDateTime] = useState({
-    formatted: transformDateTime(createdAt, true),
-    isFull: false,
-  });
-
-  const toggleDateTime = () => {
-    setDateTime((prev) => ({
-      formatted: transformDateTime(createdAt, prev.isFull, !prev.isFull),
-      isFull: !prev.isFull,
-    }));
-  };
-
   const isOwn = direction === "outgoing";
   const replyIdValid = !!replyMessageId && replyMessageId !== 0;
 
@@ -278,13 +266,8 @@ const ChatBubbleBase = ({
 
       <HStack spacing={1} justify={"center"} mt={1}>
         {!isOwn && <MessageRead isRead={isRead} />}
-        <Text
-          fontSize="xs"
-          opacity={0.7}
-          cursor="pointer"
-          onClick={toggleDateTime}
-        >
-          {dateTime.formatted}
+        <Text fontSize="xs" opacity={0.7} cursor="pointer">
+          {transformDateTime(createdAt, false, true)}
         </Text>
         {isOwn && <MessageRead isRead={isRead} />}
       </HStack>
