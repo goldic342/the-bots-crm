@@ -1,0 +1,5 @@
+{$FRONTEND_DOMAIN} {
+    root * /home/dist
+    file_server
+    try_files {path} /index.html
+}
