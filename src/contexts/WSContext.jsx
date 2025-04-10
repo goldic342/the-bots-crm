@@ -32,6 +32,7 @@ export const WSProvider = ({ children }) => {
   const wsRef = useRef(null);
 
   useEffect(() => {
+    console.log(botId, isConnected, bot);
     if (!botId || !token) return;
     if (isConnected) return;
     if (bot.status !== "enabled") return;
