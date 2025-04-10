@@ -105,13 +105,19 @@ export const ChatProvider = ({ children }) => {
       const chatMessages = prevMessages[leadId] || [];
       return { ...prevMessages, [leadId]: [...chatMessages, message] };
     });
-    setChats((prevChats) =>
-      prevChats.map((chat) =>
-        chat.lead.id === Number(leadId)
-          ? { ...chat, lastMessage: message }
-          : chat,
-      ),
-    );
+
+    setChats((prevChats) => {
+      let updatedChat = null;
+      const newChats = prevChats.filter((chat) => {
+        if (chat.lead.id === Number(leadId)) {
+          updatedChat = { ...chat, lastMessage: message };
+          return false;
+        }
+        return true;
+      });
+
+      return updatedChat ? [updatedChat, ...newChats] : prevChats;
+    });
   }, []);
 
   const addMessages = useCallback((leadId, messages) => {

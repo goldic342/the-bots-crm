@@ -70,6 +70,7 @@ export const WSProvider = ({ children }) => {
           if (ccData.message.direction === "incoming") {
             addChatUpdates(leadId, [ccData.message.id]);
           }
+
           addMessage(leadId, camelcaseKeysDeep(ccData.message));
         }
 
@@ -93,6 +94,8 @@ export const WSProvider = ({ children }) => {
         wsRef.current.close();
         wsRef.current = null;
       }
+
+      setIsConnected(false);
     };
   }, [
     botId,
