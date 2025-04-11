@@ -113,17 +113,12 @@ export const ChatProvider = ({ children }) => {
     );
   }, []);
 
-  const addMessage = useCallback((leadId, message) => {
-    setMessages((prevMessages) => {
-      const chatMessages = prevMessages[leadId] || [];
-      return { ...prevMessages, [leadId]: [...chatMessages, message] };
-    });
-
+  const setLastMessage = useCallback((leadId, msg) => {
     setChats((prevChats) => {
       let updatedChat = null;
       const newChats = prevChats.filter((chat) => {
         if (chat.lead.id === Number(leadId)) {
-          updatedChat = { ...chat, lastMessage: message };
+          updatedChat = { ...chat, lastMessage: msg };
           return false;
         }
         return true;
@@ -133,16 +128,35 @@ export const ChatProvider = ({ children }) => {
     });
   }, []);
 
-  const addMessages = useCallback((leadId, messages) => {
-    // Use when load more messages
-    setMessages((prevMessages) => {
-      const chatMessages = prevMessages[leadId] || [];
-      return {
-        ...prevMessages,
-        [leadId]: [...messages.reverse(), ...chatMessages],
-      };
-    });
-  }, []);
+  const addMessage = useCallback(
+    (leadId, message) => {
+      setMessages((prevMessages) => {
+        const chatMessages = prevMessages[leadId] || [];
+        return { ...prevMessages, [leadId]: [...chatMessages, message] };
+      });
+      setLastMessage(leadId, message);
+    },
+    [setLastMessage],
+  );
+
+  const addMessages = useCallback(
+    (leadId, messages) => {
+      const reversedMessages = [...messages].reverse(); // preserve original
+      setMessages((prevMessages) => {
+        const chatMessages = prevMessages[leadId] || [];
+        return {
+          ...prevMessages,
+          [leadId]: [...reversedMessages, ...chatMessages],
+        };
+      });
+
+      const lastMessage = reversedMessages[reversedMessages.length - 1];
+      if (!lastMessage) return;
+
+      setLastMessage(leadId, lastMessage);
+    },
+    [setLastMessage],
+  );
 
   const checkMessageExists = useCallback(
     (leadId, messageId) => {
@@ -230,7 +244,7 @@ export const ChatProvider = ({ children }) => {
         removeChatUpdates,
         markMessagesAsReadUI,
         checkMessageExists,
-        markChatAsNew: updateChatNewStatus,
+        updateChatNewStatus,
       }}
     >
       {children}

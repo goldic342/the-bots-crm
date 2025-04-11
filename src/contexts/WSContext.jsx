@@ -11,6 +11,7 @@ import { useAuth } from "./AuthContext";
 import camelcaseKeysDeep from "camelcase-keys-deep";
 import { getChatInfo } from "../api/chats";
 import { useBot } from "./botContext";
+import { useRefBridge } from "../hooks/useRefBridge";
 
 const WSContext = createContext(undefined);
 
@@ -35,11 +36,7 @@ export const WSProvider = ({ children }) => {
   const { bot } = useBot();
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef(null);
-  const chatsRef = useRef(chats);
-
-  useEffect(() => {
-    chatsRef.current = chats;
-  }, [chats]);
+  const chatsRef = useRefBridge(chats);
 
   useEffect(() => {
     if (!bot.id || !token) return;
@@ -77,7 +74,7 @@ export const WSProvider = ({ children }) => {
           const ccData = camelcaseKeysDeep(data); // cc - camelcase
           const leadId = ccData.lead?.id;
 
-          if (!chats.some((c) => c.lead.id === leadId)) {
+          if (!chatsRef.current.some((c) => c.lead.id === leadId)) {
             const newChat = await getChatInfo(leadId, bot.id);
             addChats([{ ...newChat, isNewChat: true }]);
           } else {

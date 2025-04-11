@@ -17,15 +17,33 @@ import { useWS } from "../../../contexts/WSContext";
 import ChatItemStack from "./ChatItemStack";
 import SearchBar from "./Search/SearchBar";
 import SearchResults from "./Search/SearchResults";
+import { useBot } from "../../../contexts/botContext";
+import { getBot } from "../../../api/bots";
 
 const ChatListInterface = ({ isLoading, error, onSelectChat }) => {
   const { isConnected } = useWS();
+  const { botId } = useParams();
+  const { bot, setBot } = useBot();
 
   const [showSearch, setShowSearch] = useState(false);
 
   const navigate = useNavigate();
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const statusColor = isConnected ? "green.500" : "red.500";
+
+  useEffect(() => {
+    if (bot.status) return;
+    const fetchBot = async () => {
+      try {
+        const resp = await getBot(botId);
+        setBot(resp);
+      } catch (e) {
+        console.error("Error while fetching a bot:", e);
+      }
+    };
+
+    fetchBot();
+  }, [bot, botId, setBot]);
 
   return (
     <Flex

@@ -5,3 +5,9 @@ export const getBots = async () => {
 
   return response.data;
 };
+
+export const getBot = async (botId) => {
+  const response = await api.get(`/bot/${botId}`);
+
+  return response.data;
+};
