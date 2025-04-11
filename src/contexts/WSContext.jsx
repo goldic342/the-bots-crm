@@ -23,8 +23,14 @@ export const useWS = () => {
 };
 
 export const WSProvider = ({ children }) => {
-  const { addMessage, chats, addChatUpdates, markMessagesAsReadUI, addChats } =
-    useChats();
+  const {
+    addMessage,
+    chats,
+    addChatUpdates,
+    markMessagesAsReadUI,
+    addChats,
+    updateChatNewStatus,
+  } = useChats();
   const { token } = useAuth();
   const [botId, setBotId] = useState(null);
   const { bot } = useBot();
@@ -32,11 +38,9 @@ export const WSProvider = ({ children }) => {
   const wsRef = useRef(null);
 
   useEffect(() => {
-    console.log(botId, isConnected, bot);
     if (!botId || !token) return;
     if (isConnected) return;
     if (bot.status !== "enabled") return;
-    console.log("passed");
 
     const url = `${import.meta.env.VITE_WS_BASE_URL}/v1/ws/${botId}?token=${token}`;
     const socket = new WebSocket(url);
@@ -65,12 +69,14 @@ export const WSProvider = ({ children }) => {
         }
 
         if (data?.type === "new_message") {
-          const ccData = camelcaseKeysDeep(data); // cc - camescase
+          const ccData = camelcaseKeysDeep(data); // cc - camelcase
           const leadId = ccData.lead?.id;
 
           if (!chats.some((c) => c.lead.id === leadId)) {
             const newChat = await getChatInfo(leadId, botId);
-            addChats([{ ...newChat, isNewChat: true }], true);
+            addChats([{ ...newChat, isNewChat: true }]);
+          } else {
+            updateChatNewStatus(leadId);
           }
 
           if (ccData.message.direction === "incoming") {
@@ -99,11 +105,11 @@ export const WSProvider = ({ children }) => {
       if (wsRef.current) {
         wsRef.current.close();
         wsRef.current = null;
-        console.log("unmout");
       }
 
       setIsConnected(false);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     botId,
     token,

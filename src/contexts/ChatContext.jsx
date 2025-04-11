@@ -27,10 +27,8 @@ export const ChatProvider = ({ children }) => {
   //"leadId:botId:messageId"
   const [readQueue, setReadQueue] = useState(new Set());
 
-  const addChats = useCallback((newChats, reverse = false) => {
-    setChats((prevChats) =>
-      reverse ? [...newChats, ...prevChats] : [...prevChats, ...newChats],
-    );
+  const addChats = useCallback((newChats) => {
+    setChats((prevChats) => [...prevChats, ...newChats]);
   }, []);
 
   const removeChat = useCallback(
@@ -50,6 +48,20 @@ export const ChatProvider = ({ children }) => {
     [currentChat],
   );
 
+  const updateChatNewStatus = useCallback((leadId, value = true) => {
+    setChats((prevChats) =>
+      prevChats.map((chat) => {
+        if (chat.lead.id === Number(leadId)) {
+          return {
+            ...chat,
+            isNewChat: Boolean(value),
+          };
+        }
+        return chat;
+      }),
+    );
+  }, []);
+
   const selectChat = useCallback(
     async (leadId) => {
       const chat = chats.find((c) => c.lead.id === Number(leadId));
@@ -61,9 +73,10 @@ export const ChatProvider = ({ children }) => {
         }));
       }
 
+      updateChatNewStatus(leadId, false);
       setCurrentChat(chat || null); // Set chat only when all data is parsed
     },
-    [chats, messages],
+    [chats, messages, updateChatNewStatus],
   );
 
   const addChatUpdates = useCallback((leadId, value) => {
@@ -217,6 +230,7 @@ export const ChatProvider = ({ children }) => {
         removeChatUpdates,
         markMessagesAsReadUI,
         checkMessageExists,
+        markChatAsNew: updateChatNewStatus,
       }}
     >
       {children}
