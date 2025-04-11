@@ -16,7 +16,7 @@ const ProtectedRoute = ({ children, allowedRoles = ["admin", "manager"] }) => {
 
   // For a case when user loading is complete, but state is not updated yet
   // Tested with low speed internet - works nice
-  if (!user) return;
+  if (!user) return null;
 
   if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
     return <Forbidden />;

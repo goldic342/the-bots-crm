@@ -11,6 +11,8 @@ import ChatInterface from "../components/Chat/ChatInterface.jsx";
 import { ChatProvider } from "../contexts/ChatContext.jsx";
 import Error from "../pages/Error.jsx";
 import { BotProvider } from "../contexts/botContext.jsx";
+import { WSProvider } from "../contexts/WSContext.jsx";
+import DashboardProviders from "../components/ui/layouts/DashboardProviders.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -22,7 +24,9 @@ export const router = createBrowserRouter([
         path: "/dashboard",
         element: (
           <ProtectedRoute allowedRoles={["admin", "manager"]}>
-            <DashboardRoot />
+            <DashboardProviders>
+              <DashboardRoot />
+            </DashboardProviders>
           </ProtectedRoute>
         ),
         children: [
@@ -34,21 +38,11 @@ export const router = createBrowserRouter([
           { path: "settings", element: <Settings /> },
           {
             path: "bots",
-            element: (
-              <BotProvider>
-                <Bots />
-              </BotProvider>
-            ),
+            element: <Bots />,
           },
           {
             path: "bots/:botId",
-            element: (
-              <BotProvider>
-                <ChatProvider>
-                  <Chats />
-                </ChatProvider>
-              </BotProvider>
-            ),
+            element: <Chats />,
             children: [
               {
                 path: "chat/:leadId",

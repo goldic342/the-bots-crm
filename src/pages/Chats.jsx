@@ -4,7 +4,6 @@ import { getChats } from "../api/chats.js";
 import useApiRequest from "../hooks/useApiRequest.js";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useChats } from "../contexts/ChatContext.jsx";
-import { WSProvider } from "../contexts/WSContext.jsx";
 import { SearchProvider } from "../contexts/SearchContext.jsx";
 
 const Chats = () => {
@@ -32,19 +31,15 @@ const Chats = () => {
   };
 
   return (
-    <>
-      <WSProvider>
-        <SearchProvider>
-          <ChatListInterface
-            isLoading={isLoading}
-            error={error}
-            onSelectChat={handleSelectChat}
-          />
+    <SearchProvider>
+      <ChatListInterface
+        isLoading={isLoading}
+        error={error}
+        onSelectChat={handleSelectChat}
+      />
 
-          <Outlet />
-        </SearchProvider>
-      </WSProvider>
-    </>
+      <Outlet />
+    </SearchProvider>
   );
 };
 

@@ -32,18 +32,23 @@ export const WSProvider = ({ children }) => {
     updateChatNewStatus,
   } = useChats();
   const { token } = useAuth();
-  const [botId, setBotId] = useState(null);
   const { bot } = useBot();
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef(null);
+  const chatsRef = useRef(chats);
 
   useEffect(() => {
-    if (!botId || !token) return;
+    chatsRef.current = chats;
+  }, [chats]);
+
+  useEffect(() => {
+    if (!bot.id || !token) return;
     if (isConnected) return;
     if (bot.status !== "enabled") return;
 
-    const url = `${import.meta.env.VITE_WS_BASE_URL}/v1/ws/${botId}?token=${token}`;
+    const url = `${import.meta.env.VITE_WS_BASE_URL}/v1/ws/${bot.id}?token=${token}`;
     const socket = new WebSocket(url);
+
     wsRef.current = socket;
 
     socket.onopen = () => {
@@ -73,7 +78,7 @@ export const WSProvider = ({ children }) => {
           const leadId = ccData.lead?.id;
 
           if (!chats.some((c) => c.lead.id === leadId)) {
-            const newChat = await getChatInfo(leadId, botId);
+            const newChat = await getChatInfo(leadId, bot.id);
             addChats([{ ...newChat, isNewChat: true }]);
           } else {
             updateChatNewStatus(leadId);
@@ -106,27 +111,15 @@ export const WSProvider = ({ children }) => {
         wsRef.current.close();
         wsRef.current = null;
       }
-
       setIsConnected(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    botId,
-    token,
-    chats,
-    addMessage,
-    addChatUpdates,
-    bot,
-    //isConnected,
-    addChats,
-    markMessagesAsReadUI,
-  ]);
+  }, [token, bot?.id]);
 
   const contextValue = useMemo(
     () => ({
       isConnected,
       socket: wsRef.current,
-      setBotId,
     }),
     [isConnected],
   );

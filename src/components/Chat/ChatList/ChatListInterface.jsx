@@ -19,18 +19,13 @@ import SearchBar from "./Search/SearchBar";
 import SearchResults from "./Search/SearchResults";
 
 const ChatListInterface = ({ isLoading, error, onSelectChat }) => {
-  const { botId } = useParams();
-  const { isConnected, setBotId } = useWS();
+  const { isConnected } = useWS();
 
   const [showSearch, setShowSearch] = useState(false);
 
   const navigate = useNavigate();
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const statusColor = isConnected ? "green.500" : "red.500";
-
-  useEffect(() => {
-    setBotId(botId);
-  }, [botId, setBotId]);
 
   return (
     <Flex
