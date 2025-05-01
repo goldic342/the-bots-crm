@@ -7,13 +7,13 @@ import {
   Spinner,
   InputGroup,
   InputRightElement,
-  Input,
   Badge,
   Text,
   HStack,
   useToast,
+  useOutsideClick,
 } from "@chakra-ui/react";
-import { ArrowUp, Paperclip, X } from "lucide-react";
+import { ArrowUp, Plus, X } from "lucide-react";
 import PropTypes from "prop-types";
 import { useState, useRef, useEffect } from "react";
 import { useChats } from "../../contexts/ChatContext";
@@ -21,12 +21,21 @@ import { useBot } from "../../contexts/botContext";
 import useColors from "../../hooks/useColors";
 import { messageToString } from "../../utils/messageToString";
 import { MESSAGE_MAX_LENGHT } from "../../constants";
+import ChatInputMenu from "./ChatInputMenu";
 
 const ChatInput = ({ onSendMessage, isSending }) => {
   const [text, setText] = useState("");
   const [file, setFile] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
 
   const toast = useToast();
+
+  const popupRef = useRef();
+
+  useOutsideClick({
+    ref: popupRef,
+    handler: () => setShowPopup(false),
+  });
 
   const { currentChat, replyToMessage, setReplyToMessage } = useChats();
   const { bot } = useBot();
@@ -87,7 +96,7 @@ const ChatInput = ({ onSendMessage, isSending }) => {
   };
 
   return (
-    <Box py={3} px={1} position="relative">
+    <Box py={1} pb={2} px={1} position="relative">
       {replyToMessage && (
         <Flex
           alignItems="center"
@@ -120,46 +129,31 @@ const ChatInput = ({ onSendMessage, isSending }) => {
 
       <Flex alignItems="flex-end">
         <Box position="relative">
-          <label htmlFor="file-upload">
-            <IconButton
-              isDisabled={isDisabled}
-              icon={
-                <Paperclip
-                  color={useColorModeValue(
-                    "var(--chakra-colors-blackAlpha-600)",
-                    "var(--chakra-colors-whiteAlpha-900)",
-                  )}
-                />
-              }
-              bg={"transparent"}
-              size="sm"
-              _hover={{
-                bg: useColorModeValue("blackAlpha.100", "whiteAlpha.300"),
-              }}
-              color="white"
-              as="span"
-            />
-          </label>
-          <Input
-            isDisabled={isDisabled}
-            id="file-upload"
-            type="file"
-            display="none"
-            onChange={handleFileChange}
+          <IconButton
+            icon={
+              <Plus
+                color={useColorModeValue(
+                  "var(--chakra-colors-blackAlpha-600)",
+                  "var(--chakra-colors-whiteAlpha-900)",
+                )}
+              />
+            }
+            size="sm"
+            bg="transparent"
+            onClick={() => setShowPopup((prev) => !prev)}
+            _hover={{
+              bg: useColorModeValue("primary.100", "primary.700"),
+            }}
+            aria-label="Toggle menu"
           />
-          {file && (
-            <Badge
-              colorScheme="green"
-              borderRadius="full"
-              fontSize="0.7em"
-              position="absolute"
-              top="-2px"
-              right="-2px"
-              px={1}
-            >
-              1
-            </Badge>
-          )}
+          <ChatInputMenu
+            show={showPopup}
+            onClose={() => setShowPopup(false)}
+            isDisabled={isDisabled}
+            popupRef={popupRef}
+            file={file}
+            handleFileChange={handleFileChange}
+          />
         </Box>
 
         <InputGroup>
@@ -184,7 +178,6 @@ const ChatInput = ({ onSendMessage, isSending }) => {
             </InputRightElement>
           )}
         </InputGroup>
-
         <IconButton
           icon={<ArrowUp size="24px" />}
           borderRadius="full"
