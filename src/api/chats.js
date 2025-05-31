@@ -17,7 +17,7 @@ export const getChats = async (botId, offset = 1, limit = CHATS_LIMIT) => {
 };
 
 export const getChatInfo = async (leadId, botId) => {
-  const response = await api.get(`/chat/${botId}/${leadId}`);
+  const response = await api.get(`/chats/${botId}/${leadId}`);
   return response.data;
 };
 
