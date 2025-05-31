@@ -64,15 +64,9 @@ const UserForm = ({
   return (
     <Flex direction="column" gap={4}>
       {showHeader && (
-        <Flex direction="column" gap={{ base: 2, md: 4 }}>
-          <Heading size="lg" textAlign="center">
-            Создать пользователя
-          </Heading>
-          <Text color={textColor} mb={4} textAlign="center">
-            Заполните все поля ниже, чтобы добавить нового пользователя в
-            систему.
-          </Text>
-        </Flex>
+        <Heading size="lg" textAlign="center">
+          Создать пользователя
+        </Heading>
       )}
 
       <VStack spacing={4}>

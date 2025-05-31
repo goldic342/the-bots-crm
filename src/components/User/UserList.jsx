@@ -30,15 +30,16 @@ const UserList = ({
   onAddBot,
 }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
-  const headerBg = useColorModeValue("primary.500", "primary.700");
-  const cellTextColor = useColorModeValue("gray.600", "gray.300");
-  const [selectedUser, setSelectedUser] = useState(null);
+  const headerBg = useColorModeValue("gray.100", "gray.700");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const textColor = useColorModeValue("gray.700", "gray.300");
 
+  const [selectedUser, setSelectedUser] = useState(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure(false);
   const [isAddBotOpen, setIsAddBotOpen] = useState(false);
 
-  const users = usersData?.users ?? []; // Ensure users is always an array
+  const users = usersData?.users ?? [];
 
   const handleDeleteClick = (user) => {
     setSelectedUser(user);
@@ -57,7 +58,7 @@ const UserList = ({
 
   if (error) {
     return (
-      <Box width="full" maxW="6xl" p={6} textAlign="center">
+      <Box w="full" maxW="6xl" p={6} textAlign="center">
         <Text color="red.500" fontWeight="bold">
           Ошибка: {error}
         </Text>
@@ -67,66 +68,75 @@ const UserList = ({
 
   if (isLoading) {
     return (
-      <Box width="full" maxW="6xl" p={6} textAlign="center">
-        <Spinner size="xl" color="primary.500" />
-        <Text mt={4}>Загружаем пользователей...</Text>
+      <Box w="full" maxW="6xl" p={6} textAlign="center">
+        <Spinner size="xl" color="blue.500" />
+        <Text mt={4} fontSize="sm" color="gray.500">
+          Загрузка пользователей...
+        </Text>
       </Box>
     );
   }
 
   if (users.length === 0) {
     return (
-      <Box width="full" maxW="6xl" p={6} textAlign="center">
-        <Text>Пока нет пользователей :(</Text>
+      <Box w="full" maxW="6xl" p={6} textAlign="center">
+        <Text fontSize="sm" color="gray.500">
+          Пока нет пользователей
+        </Text>
       </Box>
     );
   }
 
   return (
     <Box
-      width="full"
+      w="full"
       maxW="6xl"
-      p={{ base: 1, md: 6 }}
-      overflowX={{ base: "scroll", md: "visible" }}
-      pb={{ base: 10, md: 16, lg: 20 }}
+      p={{ base: 2, md: 6 }}
+      overflowX={{ base: "auto", md: "visible" }}
     >
-      <Table variant="simple" colorScheme="primary">
+      <Table size="md" variant="simple">
         <Thead bg={headerBg}>
           <Tr>
-            <Th color="white">ID</Th>
-            <Th color="white">Username</Th>
-            <Th color="white">Name</Th>
-            <Th color="white">Actions</Th>
+            <Th>ID</Th>
+            <Th>Username</Th>
+            <Th>Имя</Th>
+            <Th textAlign="right">Действия</Th>
           </Tr>
         </Thead>
         <Tbody>
           {users.map((user) => (
-            <Tr key={user.id}>
-              <Td color={cellTextColor}>
-                {user.id.slice(0, isMobile ? 8 : -1)}
-                {isMobile && <>...</>}
+            <Tr key={user.id} borderBottom={`1px solid ${borderColor}`}>
+              <Td color={textColor} fontSize="sm">
+                {user.id}
               </Td>
-              <Td color={cellTextColor}>{user.username}</Td>
-              <Td color={cellTextColor}>{user.name}</Td>
+              <Td color={textColor} fontSize="sm">
+                {user.username}
+              </Td>
+              <Td color={textColor} fontSize="sm">
+                {user.name}
+              </Td>
               <Td>
-                <HStack spacing={2}>
+                <HStack spacing={1} justify="flex-end">
                   <IconButton
-                    aria-label="Edit User"
-                    icon={<Edit />}
-                    bg={"green.500"}
-                    colorScheme="green"
+                    aria-label="Edit"
+                    icon={<Edit size={16} />}
+                    variant="ghost"
+                    size="sm"
                     onClick={() => handleEditClick(user)}
                   />
                   <IconButton
-                    aria-label="Add bot to User"
-                    icon={<Plus />}
-                    bg={"yellow.500"}
+                    aria-label="Add Bot"
+                    icon={<Plus size={16} />}
+                    variant="ghost"
+                    size="sm"
                     onClick={() => handleAddBotClick(user)}
                   />
                   <IconButton
-                    aria-label="Delete User"
-                    icon={<Trash />}
-                    bg={"red.500"}
+                    aria-label="Delete"
+                    icon={<Trash size={16} />}
+                    variant="ghost"
+                    colorScheme="red"
+                    size="sm"
                     onClick={() => handleDeleteClick(user)}
                   />
                 </HStack>
@@ -135,6 +145,7 @@ const UserList = ({
           ))}
         </Tbody>
       </Table>
+
       <DeleteModal
         isOpen={isOpen}
         onClose={onClose}

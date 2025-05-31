@@ -28,6 +28,11 @@ export const editUser = async (userId, username, password, name) => {
 };
 
 export const addBot = async (userId, botId) => {
-  const response = await api.patch(`/users/${userId}/bots/${botId}`);
+  const response = await api.post(`/users/${userId}/bots/${botId}`);
+  return response.data;
+};
+
+export const removeBot = async (userId, botId) => {
+  const response = await api.delete(`/users/${userId}/bots/${botId}`);
   return response.data;
 };

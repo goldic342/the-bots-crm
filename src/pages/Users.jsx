@@ -1,9 +1,16 @@
-import { Box, Flex, Heading, Text, useColorModeValue } from "@chakra-ui/react";
-import UserList from "../components/User/UserList";
+import {
+  Box,
+  Flex,
+  Heading,
+  Text,
+  useColorModeValue,
+  Divider,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import useApiRequest from "../hooks/useApiRequest";
 import UserForm from "../components/User/UserForm";
-import { getUsers, createUser, deleteUser } from "../api/users";
+import UserList from "../components/User/UserList";
+import { getUsers, createUser } from "../api/users";
 
 const Users = () => {
   const [users, setUsers] = useState({});
@@ -13,18 +20,10 @@ const Users = () => {
     name: "",
   });
 
-  const [fetchUsers, isLoading, error] = useApiRequest(async () => {
-    return await getUsers();
-  });
-
+  const [fetchUsers, isLoading, error] = useApiRequest(getUsers);
   const [createUserRequest, isCreatingUser, createUserError] = useApiRequest(
-    async () => {
-      return await createUser(
-        formData.username,
-        formData.password,
-        formData.name,
-      );
-    },
+    async () =>
+      await createUser(formData.username, formData.password, formData.name),
   );
 
   const handleCreateUser = async () => {
@@ -40,11 +39,7 @@ const Users = () => {
       users: prev.users.map((u) =>
         u.id !== user.id
           ? u
-          : {
-              ...u,
-              username: user.username,
-              name: user.name,
-            },
+          : { ...u, username: user.username, name: user.name },
       ),
     }));
   };
@@ -80,33 +75,36 @@ const Users = () => {
   }, []);
 
   const formBg = useColorModeValue("white", "gray.800");
-  const textColor = useColorModeValue("gray.600", "gray.300");
+  const textColor = useColorModeValue("gray.600", "gray.400");
 
   return (
-    <Box w="full" minH="100vh" h="full" p={{ base: 2, lg: 4 }}>
-      <Flex
-        direction="column"
-        align="center"
-        justify="center"
-        pt={{ base: 10, md: 24 }}
-      >
-        <Flex direction="column" p={{ base: 1 }}>
-          <Heading mb={2} textAlign="center">
+    <Box
+      w="full"
+      minH="100vh"
+      px={{ base: 2, md: 6 }}
+      pt={{ base: 6, md: 10 }}
+      pb={20}
+    >
+      <Flex direction="column" align="center">
+        <Box mb={10} textAlign="center" maxW="3xl">
+          <Heading size="lg" mb={2}>
             Управление пользователями
           </Heading>
-          <Text
-            fontSize="lg"
-            maxW="4xl"
-            color={textColor}
-            mb={{ base: 10, md: 16 }}
-            textAlign="center"
-          >
-            Здесь вы можете создавать новых пользователей, а также просматривать
-            и управлять существующими. Используйте форму ниже для добавления
-            нового пользователя.
+          <Text fontSize="md" color={textColor}>
+            Создавайте новых пользователей и управляйте существующими через
+            простую форму ниже.
           </Text>
-        </Flex>
-        <Box w="full" maxW="3xl" bg={formBg} p={{ base: 4, md: 8 }} mb={10}>
+        </Box>
+
+        <Box
+          w="full"
+          maxW="3xl"
+          bg={formBg}
+          p={{ base: 4, md: 6 }}
+          borderRadius="md"
+          boxShadow="sm"
+          mb={12}
+        >
           <UserForm
             formData={formData}
             setFormData={setFormData}
@@ -115,17 +113,21 @@ const Users = () => {
             error={createUserError}
           />
         </Box>
-        <Heading size="xl" mb={4}>
-          Пользователи
-        </Heading>
-        <UserList
-          usersData={users}
-          isLoading={isLoading}
-          error={error}
-          onEdit={handleEditUser}
-          onDelete={handleDeleteUser}
-          onAddBot={handleAddBot}
-        />
+
+        <Box w="full" maxW="6xl">
+          <Heading size="md" textAlign={"center"}>
+            Список пользователей
+          </Heading>
+
+          <UserList
+            usersData={users}
+            isLoading={isLoading}
+            error={error}
+            onEdit={handleEditUser}
+            onDelete={handleDeleteUser}
+            onAddBot={handleAddBot}
+          />
+        </Box>
       </Flex>
     </Box>
   );

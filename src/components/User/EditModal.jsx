@@ -5,6 +5,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import UserForm from "./UserForm";
 import PropTypes from "prop-types";
@@ -42,8 +43,9 @@ const EditModal = ({ isOpen, onClose, selectedUser, onEdit }) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader textAlign={"center"}>
-          Edit {selectedUser?.name}
+        <ModalHeader>
+          Редактировать: {selectedUser?.name}
+          <ModalCloseButton />
         </ModalHeader>
         <ModalBody>
           <UserForm

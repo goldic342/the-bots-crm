@@ -11,3 +11,8 @@ export const getBot = async (botId) => {
 
   return response.data;
 };
+
+export const getUserBots = async (userId) => {
+  const response = await api.get(`/bots/`, { params: { user_id: userId } });
+  return response.data;
+};
