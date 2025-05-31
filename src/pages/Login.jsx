@@ -15,8 +15,11 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../api/auth";
 import { useAuth } from "../contexts/AuthContext";
 import PasswordInput from "../components/ui/PasswordInput";
+import { useAutoLogin } from "../hooks/useAutoLogin";
 
 const Login = () => {
+  useAutoLogin(); // AUTOLOGIN ONLY FOR DEVELOPER
+
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const { token, setToken } = useAuth();
