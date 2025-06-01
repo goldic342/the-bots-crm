@@ -1,7 +1,6 @@
 import {
   Box,
   Flex,
-  Button,
   Heading,
   VStack,
   Text,
@@ -12,14 +11,15 @@ import {
   Tag,
   TagLabel,
   Badge,
-  useDisclosure,
+  Tooltip,
 } from "@chakra-ui/react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { logout } from "../api/auth";
 import { useAuth } from "../contexts/AuthContext";
-import ColorModeSwitcher from "../components/ui/ColorModeSwitcher";
+import ColorModeSwitcher from "../components/Settings/ColorModeSwitcher";
 import { useNavigate } from "react-router-dom";
-import LogoutButton from "../components/ui/Logout";
+import LogoutButton from "../components/Settings/LogoutButton";
+import TestApiButton from "../components/Settings/TestApiButton";
 
 const roleRu = {
   admin: "Админ",
@@ -27,7 +27,7 @@ const roleRu = {
 };
 
 const Settings = () => {
-  const { user, setToken, setUser } = useAuth();
+  const { user, setToken, setUser, token } = useAuth();
   const navigate = useNavigate();
 
   const [debugVisible, setDebugVisible] = useState(false);
@@ -50,7 +50,7 @@ const Settings = () => {
     const newCount = clickCount + 1;
     setClickCount(newCount);
 
-    if (newCount >= 10) {
+    if (newCount >= 5) {
       setDebugVisible(true);
       toast({
         title: "Режим отладки включён",
@@ -69,6 +69,10 @@ const Settings = () => {
       p={6}
       align="center"
       justify="center"
+      bgGradient={useColorModeValue(
+        "linear(to-br, blue.50, gray.100)",
+        "linear(to-br, gray.900, blue.900)",
+      )}
     >
       <Box
         bg={useColorModeValue("white", "gray.800")}
@@ -102,26 +106,20 @@ const Settings = () => {
             <Heading size="md" color={useColorModeValue("gray.700", "white")}>
               {user.name}
             </Heading>
-            <Tag
-              size="sm"
-              colorScheme="blue"
-              mt={1}
-              borderRadius="full"
-              variant="subtle"
-            >
-              <TagLabel>@{user.username}</TagLabel>
-            </Tag>
+            <Tooltip label={`ID: ${user.id}`}>
+              <Tag
+                size="sm"
+                colorScheme="blue"
+                mt={1}
+                borderRadius="full"
+                variant="subtle"
+                onClick={handleSecretClick}
+                cursor={"pointer"}
+              >
+                <TagLabel>@{user.username}</TagLabel>
+              </Tag>
+            </Tooltip>
           </Box>
-
-          <Text
-            onClick={handleSecretClick}
-            cursor="pointer"
-            fontSize="xs"
-            color={useColorModeValue("gray.400", "gray.600")}
-          >
-            {user.id}
-          </Text>
-
           <Collapse in={debugVisible} animateOpacity>
             <Box
               mt={2}
@@ -136,15 +134,24 @@ const Settings = () => {
               whiteSpace="pre-wrap"
               wordBreak="break-word"
             >
-              <Text fontWeight="bold" mb={1}>
-                Bots IDs:
-              </Text>
-              <Text>{user.botsIds.join(", ")}</Text>
+              <VStack>
+                <Box>
+                  <Text fontWeight="bold">User Data:</Text>
+                  <Text>{JSON.stringify(user)}</Text>
+                </Box>
+                <Box>
+                  <Text fontWeight="bold" mb={1}>
+                    Access Token:
+                  </Text>
+                  <Text>{token}</Text>
+                </Box>
+              </VStack>
             </Box>
           </Collapse>
 
-          <VStack spacing={4} mt={3} w={"full"}>
+          <VStack spacing={5} mt={3} w={"full"}>
             <ColorModeSwitcher />
+            <TestApiButton />
             <LogoutButton onConfirm={handleLogout} />
           </VStack>
         </VStack>

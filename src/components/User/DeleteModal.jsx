@@ -48,7 +48,11 @@ const DeleteModal = ({ isOpen, onClose, selectedUser, onDelete }) => {
           >
             Отменить
           </Button>
-          <Button bg={"red.500"} onClick={handleDelete} isLoading={isLoading}>
+          <Button
+            variant={"alert"}
+            onClick={handleDelete}
+            isLoading={isLoading}
+          >
             Удалить
           </Button>
         </ModalFooter>

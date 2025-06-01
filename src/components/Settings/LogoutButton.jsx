@@ -16,7 +16,7 @@ const LogoutButton = ({ onConfirm }) => {
 
   return (
     <>
-      <Button variant="solid" onClick={onOpen} w="full" borderRadius="full">
+      <Button variant="alert" onClick={onOpen} w="full" borderRadius="full">
         Выйти
       </Button>
 
@@ -43,6 +43,7 @@ const LogoutButton = ({ onConfirm }) => {
                   onClose();
                 }}
                 ml={3}
+                variant={"alert"}
               >
                 Выйти
               </Button>

@@ -50,6 +50,10 @@ const theme = extendTheme({
           borderWidth: "1px",
           _hover: { bg: mode("secondary", "gray.700")(props) },
         }),
+        alert: {
+          bg: "red.500",
+          _hover: { bg: "red.300" },
+        },
       },
       defaultProps: {
         variant: "solid",
