@@ -9,6 +9,7 @@ import {
   VStack,
   Fade,
   useColorModeValue,
+  SlideFade,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -41,65 +42,98 @@ const Login = () => {
       setToken(accessToken);
       navigate("/dashboard/bots");
     } catch (error) {
-      setError(error.response?.data?.detail?.message || "Неизвестная ошибка");
+      setError(
+        error.response?.data?.detail?.message ||
+          error.response?.data?.detail ||
+          "Неизвестная ошибка",
+      );
     }
   };
 
-  const formBg = useColorModeValue("white", "gray.700");
-  const textColor = useColorModeValue("gray.400", "gray.200");
+  const formBg = useColorModeValue("white", "gray.800");
+  const textColor = useColorModeValue("gray.500", "gray.300");
+  const inputBg = useColorModeValue("gray.50", "gray.700");
+  const inputBorder = useColorModeValue("gray.300", "gray.600");
+  const buttonHover = useColorModeValue("blue.600", "blue.400");
 
   return (
-    <Container
-      centerContent
-      h="100vh"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
+    <Box
+      bgGradient={useColorModeValue(
+        "linear(to-br, blue.50, gray.100)",
+        "linear(to-br, gray.900, blue.900)",
+      )}
     >
-      <VStack
-        spacing={8}
-        w="full"
-        maxW="md"
-        p={8}
-        bg={formBg}
-        borderRadius="md"
-        boxShadow="md"
+      <Container
+        centerContent
+        h="100vh"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
       >
-        <Heading as="h2" size="lg">
-          Войти
-        </Heading>
-        <Text color={textColor} textAlign="center">
-          Введите данные чтобы авторизоваться
-        </Text>
-        <Stack spacing={4} w="full">
-          <Input
-            onChange={(e) =>
-              setFormData({ ...formData, username: e.target.value })
-            }
-            placeholder="Имя пользователя"
-            size="lg"
-            type="text"
-            spellCheck={false}
-            autoCorrect={"off"}
-            autoCapitalize="off"
-            inputMode="text"
-          />
-          <PasswordInput
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
-          />
-          <Button size="lg" onClick={handleLogin}>
-            Войти
-          </Button>
-        </Stack>
-        <Box h="20px">
-          <Fade in={error}>
-            <Text color="red.500">{error}</Text>
-          </Fade>
-        </Box>
-      </VStack>
-    </Container>
+        <SlideFade in={true} offsetY="20px">
+          <VStack
+            spacing={8}
+            w="full"
+            minW={{ base: "auto", md: "md" }}
+            maxW="lg"
+            p={10}
+            bg={formBg}
+            borderRadius="xl"
+            boxShadow="xl"
+          >
+            <VStack>
+              <Heading as="h2" size="lg">
+                Войти
+              </Heading>
+              <Text color={textColor} textAlign="center">
+                Введите данные чтобы авторизоваться
+              </Text>
+            </VStack>
+
+            <Stack spacing={5} w="full">
+              <Input
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
+                placeholder="Имя пользователя"
+                size="lg"
+                type="text"
+                bg={inputBg}
+                borderColor={inputBorder}
+                borderRadius="xl"
+                autoComplete="username"
+              />
+              <PasswordInput
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                bg={inputBg}
+                borderColor={inputBorder}
+                borderRadius="xl"
+              />
+              <Button
+                size="lg"
+                onClick={handleLogin}
+                colorScheme="blue"
+                borderRadius="xl"
+                transition="all 0.2s"
+                _hover={{ bg: buttonHover }}
+                _active={{ transform: "scale(0.98)" }}
+              >
+                Войти
+              </Button>
+            </Stack>
+            <Box minH="24px">
+              <Fade in={!!error}>
+                <Text color="red.500" fontSize="sm">
+                  {error}
+                </Text>
+              </Fade>
+            </Box>
+          </VStack>
+        </SlideFade>
+      </Container>
+    </Box>
   );
 };
 
