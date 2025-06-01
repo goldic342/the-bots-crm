@@ -1,12 +1,23 @@
 import {
   Box,
-  Flex,
   Heading,
   Text,
   useColorModeValue,
-  Divider,
+  Container,
+  VStack,
+  HStack,
+  Icon,
+  Fade,
+  ScaleFade,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  Skeleton,
+  Flex,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { RefreshCw } from "lucide-react";
 import useApiRequest from "../hooks/useApiRequest";
 import UserForm from "../components/User/UserForm";
 import UserList from "../components/User/UserList";
@@ -26,11 +37,19 @@ const Users = () => {
       await createUser(formData.username, formData.password, formData.name),
   );
 
+  const bgGradient = useColorModeValue(
+    "linear(to-tr, white, gray.50, blue.50)",
+    "linear(to-tr, gray.800, gray.800, blue.900)",
+  );
+  const cardBg = useColorModeValue("white", "gray.800");
+  const cardBorder = useColorModeValue("gray.200", "gray.600");
+  const textColor = useColorModeValue("gray.700", "gray.300");
+  const mutedTextColor = useColorModeValue("gray.500", "gray.400");
+  const accentColor = useColorModeValue("blue.500", "blue.300");
+
   const handleCreateUser = async () => {
     await createUserRequest();
     setFormData({ username: "", password: "", name: "" });
-    const usersData = await fetchUsers();
-    setUsers(usersData);
   };
 
   const handleEditUser = (user) => {
@@ -65,70 +84,129 @@ const Users = () => {
     }));
   };
 
+  const refreshUsers = async () => {
+    const usersData = await fetchUsers();
+    setUsers(usersData);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const usersData = await fetchUsers();
       setUsers(usersData);
     };
-
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const formBg = useColorModeValue("white", "gray.800");
-  const textColor = useColorModeValue("gray.600", "gray.400");
+  const userCount = users?.users?.length || 0;
 
   return (
-    <Box
-      w="full"
-      minH="100vh"
-      px={{ base: 2, md: 6 }}
-      pt={{ base: 6, md: 10 }}
-      pb={20}
-    >
-      <Flex direction="column" align="center">
-        <Box mb={10} textAlign="center" maxW="3xl">
-          <Heading size="lg" mb={2}>
-            Управление пользователями
-          </Heading>
-          <Text fontSize="md" color={textColor}>
-            Создавайте новых пользователей и управляйте существующими через
-            простую форму ниже.
-          </Text>
-        </Box>
+    <Box w="full" minH="100vh" bgGradient={bgGradient}>
+      <Container maxW="7xl" pt={{ base: 8, md: 12 }} pb={6}>
+        <Fade in={true}>
+          <VStack spacing={6} textAlign="center" mb={8}>
+            <Heading size="xl" fontWeight="bold">
+              Управление пользователями
+            </Heading>
 
-        <Box
-          w="full"
-          maxW="3xl"
-          bg={formBg}
-          p={{ base: 4, md: 6 }}
-          borderRadius="md"
-          boxShadow="sm"
-          mb={12}
-        >
-          <UserForm
-            formData={formData}
-            setFormData={setFormData}
-            onSubmit={handleCreateUser}
-            isLoading={isCreatingUser}
-            error={createUserError}
-          />
-        </Box>
+            <Text
+              fontSize="lg"
+              color={mutedTextColor}
+              maxW="2xl"
+              lineHeight="1.6"
+            >
+              Создавайте новых пользователей и управляйте существующими через
+              интуитивный интерфейс с расширенными возможностями управления.
+            </Text>
 
-        <Box w="full" maxW="6xl">
-          <Heading size="md" textAlign={"center"}>
-            Список пользователей
-          </Heading>
+            <VStack spacing={1}>
+              {isLoading ? (
+                <Skeleton height="32px" width="40px" />
+              ) : (
+                <Text fontSize="2xl" fontWeight="bold" color={accentColor}>
+                  {userCount}
+                </Text>
+              )}
 
-          <UserList
-            usersData={users}
-            isLoading={isLoading}
-            error={error}
-            onEdit={handleEditUser}
-            onDelete={handleDeleteUser}
-            onAddBot={handleAddBot}
-          />
-        </Box>
-      </Flex>
+              <Text fontSize="sm" color={mutedTextColor}>
+                Всего пользователей
+              </Text>
+            </VStack>
+          </VStack>
+        </Fade>
+
+        {error && (
+          <ScaleFade in={!!error}>
+            <Alert status="error" borderRadius="lg" mb={6}>
+              <AlertIcon />
+              <Box>
+                <AlertTitle>Ошибка загрузки данных!</AlertTitle>
+                <AlertDescription>
+                  Не удалось загрузить список пользователей. Проверьте
+                  подключение к сети.
+                </AlertDescription>
+              </Box>
+            </Alert>
+          </ScaleFade>
+        )}
+
+        <ScaleFade in={true}>
+          <Flex mb={8} w="full" justify={"center"}>
+            <UserForm
+              formData={formData}
+              setFormData={setFormData}
+              onSubmit={handleCreateUser}
+              isLoading={isCreatingUser}
+              error={createUserError}
+              minW={{ base: "auto", md: "lg", lg: "2xl" }}
+            />
+          </Flex>
+        </ScaleFade>
+
+        <ScaleFade in={true}>
+          <Box
+            bg={cardBg}
+            borderRadius="xl"
+            border="1px solid"
+            borderColor={cardBorder}
+            boxShadow="xl"
+            overflow="hidden"
+          >
+            <Box
+              bg={useColorModeValue("gray.50", "gray.700")}
+              px={6}
+              py={4}
+              borderBottom="1px solid"
+              borderColor={cardBorder}
+            >
+              <HStack justify="space-between" align="center">
+                <Heading size="md" color={textColor}>
+                  Список пользователей
+                </Heading>
+
+                <Icon
+                  as={RefreshCw}
+                  color={mutedTextColor}
+                  cursor="pointer"
+                  _hover={{ color: accentColor, transform: "rotate(180deg)" }}
+                  transition="all 0.3s"
+                  onClick={refreshUsers}
+                  boxSize={5}
+                />
+              </HStack>
+            </Box>
+
+            <UserList
+              usersData={users}
+              isLoading={isLoading}
+              error={error}
+              onEdit={handleEditUser}
+              onDelete={handleDeleteUser}
+              onAddBot={handleAddBot}
+            />
+          </Box>
+        </ScaleFade>
+      </Container>
     </Box>
   );
 };

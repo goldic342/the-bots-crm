@@ -6,7 +6,6 @@ import {
   Text,
   Button,
   FormControl,
-  useColorModeValue,
   IconButton,
 } from "@chakra-ui/react";
 import PasswordInput from "../ui/PasswordInput";
@@ -24,9 +23,9 @@ const UserForm = ({
   onSubmit,
   showHeader = true,
   requiredFields = ["username", "password", "name"],
+  ...props
 }) => {
   const [formErrors, setFormErrors] = useState({});
-  const textColor = useColorModeValue("gray.600", "gray.300");
 
   const validateForm = () => {
     let errors = {};
@@ -62,7 +61,7 @@ const UserForm = ({
   };
 
   return (
-    <Flex direction="column" gap={4}>
+    <Flex direction="column" gap={4} {...props}>
       {showHeader && (
         <Heading size="lg" textAlign="center">
           Создать пользователя

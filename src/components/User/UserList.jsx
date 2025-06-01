@@ -1,22 +1,13 @@
 import {
   Box,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Text,
-  Spinner,
   useColorModeValue,
-  IconButton,
   useDisclosure,
-  HStack,
+  VStack,
 } from "@chakra-ui/react";
-import { useBreakpointValue } from "@chakra-ui/react";
-import { Edit, Plus, Trash } from "lucide-react";
 import { useState } from "react";
 import PropTypes from "prop-types";
+import UserItem from "./UserItem";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
 import AddBotModal from "./AddBotModal";
@@ -29,10 +20,10 @@ const UserList = ({
   onDelete,
   onAddBot,
 }) => {
-  const isMobile = useBreakpointValue({ base: true, md: false });
-  const headerBg = useColorModeValue("gray.100", "gray.700");
-  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const cardBg = useColorModeValue("white", "gray.800");
+  const cardBorder = useColorModeValue("gray.200", "gray.600");
   const textColor = useColorModeValue("gray.700", "gray.300");
+  const mutedTextColor = useColorModeValue("gray.500", "gray.400");
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -58,19 +49,28 @@ const UserList = ({
 
   if (error) {
     return (
-      <Box w="full" maxW="6xl" p={6} textAlign="center">
-        <Text color="red.500" fontWeight="bold">
-          Ошибка: {error}
-        </Text>
+      <Box w="full" p={6} textAlign="center">
+        <VStack spacing={4}>
+          <Box p={6} bg={cardBg} borderRadius="lg">
+            <Text color="red.500" fontWeight="bold" fontSize="lg">
+              Ошибка загрузки данных
+            </Text>
+            <Text color={mutedTextColor} mt={2}>
+              {error}
+            </Text>
+          </Box>
+        </VStack>
       </Box>
     );
   }
 
   if (isLoading) {
     return (
-      <Box w="full" maxW="6xl" p={6} textAlign="center">
-        <Spinner size="xl" color="blue.500" />
-        <Text mt={4} fontSize="sm" color="gray.500">
+      <Box w="full" p={6}>
+        {[...Array(6)].map((_, i) => (
+          <UserItem isLoading={true} key={i} />
+        ))}
+        <Text mt={6} textAlign="center" fontSize="sm" color={mutedTextColor}>
           Загрузка пользователей...
         </Text>
       </Box>
@@ -79,72 +79,42 @@ const UserList = ({
 
   if (users.length === 0) {
     return (
-      <Box w="full" maxW="6xl" p={6} textAlign="center">
-        <Text fontSize="sm" color="gray.500">
-          Пока нет пользователей
-        </Text>
+      <Box w="full" p={6} textAlign="center">
+        <VStack spacing={6}>
+          <Box
+            p={8}
+            bg={cardBg}
+            borderRadius="xl"
+            border="2px dashed"
+            borderColor={cardBorder}
+          >
+            <VStack spacing={2}>
+              <Text fontSize="lg" fontWeight="medium" color={textColor}>
+                Пока нет пользователей
+              </Text>
+              <Text fontSize="sm" color={mutedTextColor}>
+                Создайте первого пользователя, используя форму выше
+              </Text>
+            </VStack>
+          </Box>
+        </VStack>
       </Box>
     );
   }
 
   return (
-    <Box
-      w="full"
-      maxW="6xl"
-      p={{ base: 2, md: 6 }}
-      overflowX={{ base: "auto", md: "visible" }}
-    >
-      <Table size="md" variant="simple">
-        <Thead bg={headerBg}>
-          <Tr>
-            <Th>ID</Th>
-            <Th>Username</Th>
-            <Th>Имя</Th>
-            <Th textAlign="right">Действия</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {users.map((user) => (
-            <Tr key={user.id} borderBottom={`1px solid ${borderColor}`}>
-              <Td color={textColor} fontSize="sm">
-                {user.id}
-              </Td>
-              <Td color={textColor} fontSize="sm">
-                {user.username}
-              </Td>
-              <Td color={textColor} fontSize="sm">
-                {user.name}
-              </Td>
-              <Td>
-                <HStack spacing={1} justify="flex-end">
-                  <IconButton
-                    aria-label="Edit"
-                    icon={<Edit size={16} />}
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleEditClick(user)}
-                  />
-                  <IconButton
-                    aria-label="Add Bot"
-                    icon={<Plus size={16} />}
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleAddBotClick(user)}
-                  />
-                  <IconButton
-                    aria-label="Delete"
-                    icon={<Trash size={16} />}
-                    variant="ghost"
-                    colorScheme="red"
-                    size="sm"
-                    onClick={() => handleDeleteClick(user)}
-                  />
-                </HStack>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+    <Box w="full">
+      <VStack spacing={4} w="full">
+        {users.map((user) => (
+          <UserItem
+            key={user.id}
+            user={user}
+            onEdit={handleEditClick}
+            onDelete={handleDeleteClick}
+            onAddBot={handleAddBotClick}
+          />
+        ))}
+      </VStack>
 
       <DeleteModal
         isOpen={isOpen}
