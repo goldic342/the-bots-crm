@@ -7,7 +7,8 @@ import {
   useBreakpointValue,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
+import CRLink from "../CRLink";
 import SidebarItem from "../SidebarItem";
 import NoChatSelected from "../NoChatSelected";
 import { Bot, Users, Settings } from "lucide-react"; // Added Settings icon
@@ -68,12 +69,16 @@ const DashboardRoot = () => {
         <Box w="full">
           <Box px={{ md: 3, lg: 6 }} pb={4}>
             {isTablet ? (
-              <Logo />
+              <CRLink to={"/dashboard"}>
+                <Logo />
+              </CRLink>
             ) : (
-              <Flex align="center" gap={3}>
-                <Logo w="42px" h="42px" />
-                <Heading size="md">BotsDash</Heading>
-              </Flex>
+              <CRLink to={"/dashboard"}>
+                <Flex align="center" gap={3}>
+                  <Logo w="42px" h="42px" />
+                  <Heading size="md">BotsDash</Heading>
+                </Flex>
+              </CRLink>
             )}
           </Box>
           <Flex direction="column" gap={2}>

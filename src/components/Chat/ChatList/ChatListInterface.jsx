@@ -6,6 +6,7 @@ import {
   Box,
   Tooltip,
   Spacer,
+  IconButton,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -54,16 +55,11 @@ const ChatListInterface = () => {
       borderColor={borderColor}
       flexDir="column"
     >
-      <Flex
-        align="center"
-        gap={3}
-        p={4}
-        borderBottom="1px"
-        borderColor={borderColor}
-      >
-        <Icon
+      <Flex align="center" p={4} borderBottom="1px" borderColor={borderColor}>
+        <IconButton
           as={ArrowLeft}
           boxSize={5}
+          variant="ghost"
           _hover={{ cursor: "pointer" }}
           onClick={() => {
             if (showSearch) {
@@ -90,10 +86,10 @@ const ChatListInterface = () => {
         <Spacer />
 
         {!showSearch && (
-          <Icon
+          <IconButton
             as={Search}
+            variant={"ghost"}
             boxSize={5}
-            mr={4}
             _hover={{ cursor: "pointer", transform: "scale(1.1)" }}
             onClick={() => setShowSearch(true)}
           />
