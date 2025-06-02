@@ -73,7 +73,12 @@ const DashboardRoot = () => {
                 <Logo />
               </CRLink>
             ) : (
-              <CRLink to={"/dashboard"}>
+              <CRLink
+                to={"/dashboard"}
+                _hover={{
+                  textDecoration: "none",
+                }}
+              >
                 <Flex align="center" gap={3}>
                   <Logo w="42px" h="42px" />
                   <Heading size="md">BotsDash</Heading>
