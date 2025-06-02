@@ -6,7 +6,7 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import BotsListItem from "./BotListItem";
+import BotItem from "./BotItem";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { Bot } from "../../utils/types/botTypes";
@@ -73,11 +73,7 @@ const BotsList = ({ bots, onSelectBot, isLoading, error }) => {
           </Text>
         ) : (
           searchResult.map((b) => (
-            <BotsListItem
-              key={b.id}
-              bot={b}
-              onClick={() => onSelectBot(b.id)}
-            />
+            <BotItem key={b.id} bot={b} onClick={() => onSelectBot(b.id)} />
           ))
         )}
       </VStack>

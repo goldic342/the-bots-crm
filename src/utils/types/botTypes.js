@@ -6,5 +6,5 @@ export const Bot = PropTypes.shape({
   type: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   username: PropTypes.string.isRequired,
-  photo: PropTypes.string.isRequired,
+  photo: PropTypes.string,
 });

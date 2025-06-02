@@ -12,7 +12,7 @@ import { ChevronRight, Bot } from "lucide-react";
 import PropTypes from "prop-types";
 import { Bot as BotType } from "../../utils/types/botTypes";
 
-const BotsListItem = ({ bot, onClick }) => {
+const BotItem = ({ bot, onClick }) => {
   const hoverBg = useColorModeValue("gray.100", "gray.700");
 
   const statusColors = {
@@ -23,6 +23,8 @@ const BotsListItem = ({ bot, onClick }) => {
 
   return (
     <Flex
+      as={"button"}
+      href={`/dashboard/bots/${bot.id}`}
       justify="space-between"
       align="center"
       px={4}
@@ -61,9 +63,9 @@ const BotsListItem = ({ bot, onClick }) => {
   );
 };
 
-BotsListItem.propTypes = {
+BotItem.propTypes = {
   bot: BotType.isRequired,
   onClick: PropTypes.func.isRequired,
 };
 
-export default BotsListItem;
+export default BotItem;
