@@ -9,18 +9,18 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import { ArrowLeft, Search } from "lucide-react";
 
 import { useWS } from "../../../contexts/WSContext";
 
-import ChatItemStack from "./ChatItemStack";
+import ChatList from "./ChatList";
 import SearchBar from "./Search/SearchBar";
 import SearchResults from "./Search/SearchResults";
 import { useBot } from "../../../contexts/botContext";
 import { getBot } from "../../../api/bots";
+import FolderList from "./Folder/FolderList";
 
-const ChatListInterface = ({ isLoading, error, onSelectChat }) => {
+const ChatListInterface = () => {
   const { isConnected } = useWS();
   const { botId } = useParams();
   const { bot, setBot } = useBot();
@@ -79,7 +79,7 @@ const ChatListInterface = ({ isLoading, error, onSelectChat }) => {
         ) : (
           <Flex align="center" gap={2} flex="1">
             <Text fontSize="xl" fontWeight="bold">
-              Чаты
+              {bot.name || "Чаты"}
             </Text>
             <Tooltip label="Статус подключения к WebSocket">
               <Box w={2} h={2} borderRadius="full" bg={statusColor} />
@@ -103,20 +103,13 @@ const ChatListInterface = ({ isLoading, error, onSelectChat }) => {
       {showSearch ? (
         <SearchResults />
       ) : (
-        <ChatItemStack
-          isLoading={isLoading}
-          onSelectChat={onSelectChat}
-          error={error}
-        />
+        <>
+          <FolderList />
+          <ChatList />
+        </>
       )}
     </Flex>
   );
-};
-
-ChatListInterface.propTypes = {
-  isLoading: PropTypes.bool.isRequired,
-  error: PropTypes.string,
-  onSelectChat: PropTypes.func.isRequired,
 };
 
 export default ChatListInterface;

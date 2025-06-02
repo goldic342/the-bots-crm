@@ -8,10 +8,7 @@ import AuthLayout from "../components/ui/layouts/AuthLayout.jsx";
 import Chats from "../pages/Chats.jsx";
 import Settings from "../pages/Settings.jsx";
 import ChatInterface from "../components/Chat/ChatInterface.jsx";
-import { ChatProvider } from "../contexts/ChatContext.jsx";
 import Error from "../pages/Error.jsx";
-import { BotProvider } from "../contexts/botContext.jsx";
-import { WSProvider } from "../contexts/WSContext.jsx";
 import DashboardProviders from "../components/ui/layouts/DashboardProviders.jsx";
 
 export const router = createBrowserRouter([
@@ -45,7 +42,7 @@ export const router = createBrowserRouter([
             element: <Chats />,
             children: [
               {
-                path: "chat/:leadId",
+                path: ":folderId/:chatId",
                 element: <ChatInterface />,
               },
             ],

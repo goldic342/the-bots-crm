@@ -5,9 +5,16 @@ import {
 } from "../constants";
 import { api } from "./api";
 
-export const getChats = async (botId, offset = 1, limit = CHATS_LIMIT) => {
-  const response = await api.get(`/chat/${botId}`, {
+export const getChats = async (
+  botId,
+  folderId = 0,
+  offset = 0,
+  limit = CHATS_LIMIT,
+) => {
+  const response = await api.get(`/chats`, {
     params: {
+      bot_id: botId,
+      folder_id: folderId,
       offset,
       limit,
     },

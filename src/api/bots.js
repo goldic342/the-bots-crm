@@ -16,3 +16,8 @@ export const getUserBots = async (userId) => {
   const response = await api.get(`/bots/`, { params: { user_id: userId } });
   return response.data;
 };
+
+export const getFolders = async (botId) => {
+  const response = await api.get(`/bots/${botId}/folders`);
+  return response.data;
+};
