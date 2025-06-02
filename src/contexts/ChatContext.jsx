@@ -19,18 +19,47 @@ export const useChats = () => {
 };
 
 export const ChatProvider = ({ children }) => {
-  const [chats, setChats] = useState([]);
+  // botId: list[folder_id: list[chat]]
+  const [chats, setChats] = useState({});
+
   const [currentChat, setCurrentChat] = useState(null);
+  const [currentFolder, setCurrentFolder] = useState(null);
+
   const [messages, setMessages] = useState({});
   const [replyToMessage, setReplyToMessage] = useState(null);
 
   //"leadId:botId:messageId"
   const [readQueue, setReadQueue] = useState(new Set());
 
-  const addChats = useCallback((newChats) => {
-    setChats((prevChats) => [...prevChats, ...newChats]);
-  }, []);
+  const getFolderKey = useCallback(
+    (folderId) => (folderId != null ? folderId : 0),
+    [],
+  );
 
+  const addChats = useCallback(
+    (botId, newChats, folderId, mode = "add") => {
+      const folderKey = getFolderKey(folderId);
+
+      setChats((prev) => {
+        const botFolders = prev[botId] || {};
+        const currentFolderChats = botFolders[folderKey] || [];
+
+        return {
+          ...prev,
+          [botId]: {
+            ...botFolders,
+            [folderKey]: [
+              ...(mode === "add" ? currentFolderChats : []),
+              ...newChats,
+            ],
+          },
+        };
+      });
+    },
+    [setChats, getFolderKey],
+  );
+
+  // Unsed at f665a887504bab6cff0fe5a61a854ce33f0b90e5 commit (main branch)
   const removeChat = useCallback(
     (leadId) => {
       setChats((prevChats) =>
@@ -48,33 +77,65 @@ export const ChatProvider = ({ children }) => {
     [currentChat],
   );
 
-  const updateChatNewStatus = useCallback((leadId, value = true) => {
-    setChats((prevChats) =>
-      prevChats.map((chat) => {
-        if (chat.lead.id === Number(leadId)) {
-          return {
-            ...chat,
-            isNewChat: Boolean(value),
-          };
-        }
-        return chat;
-      }),
-    );
-  }, []);
+  const updateChatNewStatus = useCallback(
+    (chatId, botId, folderId, value = true) => {
+      const folderKey = getFolderKey(folderId);
+      setChats((prev) => {
+        const prevBotFolders = prev[botId] || {};
+        const prevFolderChats = prevBotFolders[folderKey] || [];
+
+        const updatedFolderChats = prevFolderChats.map((chat) => {
+          if (chat.id === chatId) {
+            return { ...chat, isNewChat: value };
+          }
+          return chat;
+        });
+
+        return {
+          ...prev,
+          [botId]: {
+            ...prevBotFolders,
+            [folderKey]: updatedFolderChats,
+          },
+        };
+      });
+    },
+    [],
+  );
+
+  //  const selectChat = useCallback(
+  //    async (leadId) => {
+  //      const chat = chats.find((c) => c.lead.id === Number(leadId));
+  //      if (chat && (!!chat.isNewChat || !messages[leadId])) {
+  //        const fetchedMessages = await fetchMessages(leadId, chat.botId);
+  //        setMessages((prevMessages) => ({
+  //          ...prevMessages,
+  //          [leadId]: fetchedMessages.messages.reverse(), // e.g. newest last
+  //        }));
+  //      }
+  //
+  //      updateChatNewStatus(leadId, false);
+  //      setCurrentChat(chat || null); // Set chat only when all data is parsed
+  //    },
+  //    [chats, messages, updateChatNewStatus],
+  //  );
 
   const selectChat = useCallback(
-    async (leadId) => {
-      const chat = chats.find((c) => c.lead.id === Number(leadId));
-      if (chat && (!!chat.isNewChat || !messages[leadId])) {
-        const fetchedMessages = await fetchMessages(leadId, chat.botId);
-        setMessages((prevMessages) => ({
-          ...prevMessages,
-          [leadId]: fetchedMessages.messages.reverse(), // e.g. newest last
+    async (chatId, botId, folderId) => {
+      const folderKey = getFolderKey(folderId);
+      const chatList = chats?.[botId]?.[folderKey] || [];
+      const chat = chatList.find((c) => c.id === chatId);
+
+      if (chat && !messages[chatId]) {
+        const fetched = await fetchMessages(chatId);
+        setMessages((prev) => ({
+          ...prev,
+          [chatId]: fetched.messages.reverse(),
         }));
       }
 
-      updateChatNewStatus(leadId, false);
-      setCurrentChat(chat || null); // Set chat only when all data is parsed
+      updateChatNewStatus(chatId, botId, folderId, false);
+      setCurrentChat(chat || null);
     },
     [chats, messages, updateChatNewStatus],
   );
@@ -245,6 +306,8 @@ export const ChatProvider = ({ children }) => {
         markMessagesAsReadUI,
         checkMessageExists,
         updateChatNewStatus,
+        currentFolder,
+        setCurrentFolder,
       }}
     >
       {children}
