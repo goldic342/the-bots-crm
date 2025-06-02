@@ -43,7 +43,7 @@ export const WSProvider = ({ children }) => {
     if (isConnected) return;
     if (bot.status !== "enabled") return;
 
-    const url = `${import.meta.env.VITE_WS_BASE_URL}/v1/ws/${bot.id}?token=${token}`;
+    const url = `${import.meta.env.VITE_WS_BASE_URL}/${bot.id}?token=${token}`;
     const socket = new WebSocket(url);
 
     wsRef.current = socket;
