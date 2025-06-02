@@ -103,10 +103,10 @@ const ChatListInterface = () => {
       {showSearch ? (
         <SearchResults />
       ) : (
-        <>
+        <Box>
           <FolderList />
           <ChatList />
-        </>
+        </Box>
       )}
     </Flex>
   );
