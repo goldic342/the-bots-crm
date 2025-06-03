@@ -18,11 +18,18 @@ import Logo from "../Logo";
 const DashboardRoot = () => {
   const location = useLocation();
   const pathname = location.pathname;
+
   const chatSelected =
-    pathname.startsWith("/dashboard/bots") && !pathname.includes("/chat/");
+    /^\/dashboard\/bots\/\d+\/\d+\/?$/.test(pathname) ||
+    pathname.includes("settings") ||
+    pathname.includes("users");
 
   const isMobile = useBreakpointValue({ base: true, md: false });
-  const isTablet = useBreakpointValue({ base: false, md: true, lg: false });
+  const isTablet = useBreakpointValue({
+    base: false,
+    md: true,
+    lg: false,
+  });
 
   const { user } = useAuth();
 
@@ -87,7 +94,7 @@ const DashboardRoot = () => {
             )}
           </Box>
           <Flex direction="column" gap={2}>
-            {primarySidebarItems.map((item) => (
+            {primarySidebarItems.map(item => (
               <SidebarItem
                 key={item.link}
                 name={item.name}
@@ -112,7 +119,10 @@ const DashboardRoot = () => {
   );
 
   // Mobile Sidebar: Combine primary and settings items in one bottom bar.
-  const mobileSidebarItems = [...primarySidebarItems, settingsSidebarItem];
+  const mobileSidebarItems = [
+    ...primarySidebarItems,
+    settingsSidebarItem,
+  ];
 
   const MobileSidebar = () => (
     <Flex
@@ -122,7 +132,7 @@ const DashboardRoot = () => {
       justifyContent="space-around"
       p={2}
     >
-      {mobileSidebarItems.map((item) => (
+      {mobileSidebarItems.map(item => (
         <SidebarItem
           key={item.link}
           name={item.name}
@@ -156,7 +166,7 @@ const DashboardRoot = () => {
 
       <Flex flex="1" overflowY="auto">
         <Outlet />
-        {!isMobile && chatSelected && <NoChatSelected />}
+        {!isMobile && !chatSelected && <NoChatSelected />}
       </Flex>
 
       {isMobile && <MobileSidebar />}
