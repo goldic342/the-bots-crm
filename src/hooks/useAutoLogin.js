@@ -1,5 +1,3 @@
-// USE ONLY DURING DEVELOPMENT
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/auth";
@@ -29,10 +27,17 @@ export function useAutoLogin() {
             position: "bottom-right",
           });
         } catch (error) {
-          console.error(
-            "Автовход не удался:",
-            error.response?.data?.detail?.message || error.message,
-          );
+          toast({
+            title: "Failed to autologin",
+            status: "error",
+            duration: 4000,
+            isClosable: true,
+            position: "bottom-right",
+            description:
+              error?.response?.data?.detail?.message ??
+              error?.response?.data?.detail ??
+              error?.message,
+          });
         }
       })();
     }

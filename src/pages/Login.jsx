@@ -21,7 +21,10 @@ import { useAutoLogin } from "../hooks/useAutoLogin";
 const Login = () => {
   useAutoLogin(); // AUTOLOGIN ONLY FOR DEVELOPER
 
-  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
   const [error, setError] = useState("");
   const { token, setToken } = useAuth();
   const navigate = useNavigate();
@@ -31,21 +34,24 @@ const Login = () => {
     navigate("/dashboard/bots");
   }, [token, navigate]);
 
-  const handleLogin = async (e) => {
+  const handleLogin = async e => {
     e.preventDefault();
     if (!formData.username || !formData.password) {
       setError("Заполните все поля.");
       return;
     }
     try {
-      const { accessToken } = await login(formData.username, formData.password);
+      const { accessToken } = await login(
+        formData.username,
+        formData.password
+      );
       setToken(accessToken);
       navigate("/dashboard/bots");
     } catch (error) {
       setError(
         error.response?.data?.detail?.message ||
           error.response?.data?.detail ||
-          "Неизвестная ошибка",
+          "Неизвестная ошибка"
       );
     }
   };
@@ -60,7 +66,7 @@ const Login = () => {
     <Box
       bgGradient={useColorModeValue(
         "linear(to-br, blue.50, gray.100)",
-        "linear(to-br, gray.900, blue.900)",
+        "linear(to-br, gray.900, blue.900)"
       )}
     >
       <Container
@@ -92,8 +98,11 @@ const Login = () => {
 
             <Stack spacing={5} w="full">
               <Input
-                onChange={(e) =>
-                  setFormData({ ...formData, username: e.target.value })
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    username: e.target.value,
+                  })
                 }
                 placeholder="Имя пользователя"
                 size="lg"
@@ -104,8 +113,11 @@ const Login = () => {
                 autoComplete="username"
               />
               <PasswordInput
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    password: e.target.value,
+                  })
                 }
                 bg={inputBg}
                 borderColor={inputBorder}
