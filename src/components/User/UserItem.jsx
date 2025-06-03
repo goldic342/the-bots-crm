@@ -81,15 +81,6 @@ const UserItem = ({ user, isLoading, onEdit, onAddBot, onDelete }) => {
                     @{user.username}
                   </Text>
                   <Text color={mutedTextColor}>ID: {user.id}</Text>
-                  {user.botsIds?.length > 0 && (
-                    <HStack spacing={2} align="center">
-                      <Bot size={14} color={mutedTextColor} />
-                      <Badge variant="solid" colorScheme="blue" fontSize="xs">
-                        {user.botsIds.length}{" "}
-                        {user.botsIds.length === 1 ? "бот" : "ботов"}
-                      </Badge>
-                    </HStack>
-                  )}
                 </>
               )}
             </HStack>

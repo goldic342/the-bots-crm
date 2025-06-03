@@ -6,12 +6,12 @@ import {
   ModalHeader,
   ModalOverlay,
   Box,
-  Image,
   Text,
   VStack,
   HStack,
   useColorModeValue,
   useClipboard,
+  Avatar,
 } from "@chakra-ui/react";
 import { useChats } from "../../contexts/ChatContext";
 import { useState } from "react";
@@ -52,7 +52,7 @@ const ChatInfoModal = ({ open, onClose }) => {
             textAlign="center"
             p={5}
           >
-            <Image
+            <Avatar
               src={lead.photo}
               alt="Lead Avatar"
               borderRadius="full"
@@ -76,12 +76,16 @@ const ChatInfoModal = ({ open, onClose }) => {
                 cursor="pointer"
                 transition="all 0.3s ease"
                 _hover={{ color: "blue.500" }}
-                bg={copiedField === "leadId" ? copiedColor : "transparent"}
+                bg={
+                  copiedField === "leadId"
+                    ? copiedColor
+                    : "transparent"
+                }
                 px={2}
                 borderRadius="md"
                 onClick={() => handleCopy("leadId", copyLeadId)}
               >
-                {lead.id}
+                {currentChat.id}
               </Text>
             </HStack>
 
@@ -92,7 +96,11 @@ const ChatInfoModal = ({ open, onClose }) => {
                 cursor="pointer"
                 transition="all 0.3s ease"
                 _hover={{ color: "blue.500" }}
-                bg={copiedField === "botId" ? copiedColor : "transparent"}
+                bg={
+                  copiedField === "botId"
+                    ? copiedColor
+                    : "transparent"
+                }
                 px={2}
                 borderRadius="md"
                 onClick={() => handleCopy("botId", copyBotId)}
@@ -103,7 +111,9 @@ const ChatInfoModal = ({ open, onClose }) => {
 
             <HStack justifyContent="space-between">
               <Text fontWeight="medium">Статус:</Text>
-              <Text color={status === "blocked" ? "red.500" : "green.500"}>
+              <Text
+                color={status === "blocked" ? "red.500" : "green.500"}
+              >
                 {status}
               </Text>
             </HStack>

@@ -53,7 +53,7 @@ const ChatInputMenu = ({
                 <Paperclip
                   color={useColorModeValue(
                     "var(--chakra-colors-blackAlpha-600)",
-                    "var(--chakra-colors-whiteAlpha-900)",
+                    "var(--chakra-colors-whiteAlpha-900)"
                   )}
                 />
               }
@@ -93,12 +93,12 @@ const ChatInputMenu = ({
             <IconButton
               cursor={"pointer"}
               isDisabled={isDisabled}
-              onClick={() => setOpen((prev) => !prev)}
+              onClick={() => setOpen(prev => !prev)}
               icon={
                 <Mail
                   color={useColorModeValue(
                     "var(--chakra-colors-blackAlpha-600)",
-                    "var(--chakra-colors-whiteAlpha-900)",
+                    "var(--chakra-colors-whiteAlpha-900)"
                   )}
                 />
               }
@@ -121,7 +121,7 @@ const ChatInputMenu = ({
 ChatInputMenu.propTypes = {
   show: PropTypes.bool.isRequired,
   isDisabled: PropTypes.bool.isRequired,
-  file: PropTypes.any.isRequired,
+  file: PropTypes.any,
   handleFileChange: PropTypes.func.isRequired,
   popupRef: PropTypes.any.isRequired, // ref
 };

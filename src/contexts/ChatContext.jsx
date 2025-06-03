@@ -19,28 +19,34 @@ export const useChats = () => {
 };
 
 export const ChatProvider = ({ children }) => {
-  // botId: list[folder_id: list[chat]]
+  // Shape: { [botId]: { [folderKey]: Chat[] } }
   const [chats, setChats] = useState({});
 
   const [currentChat, setCurrentChat] = useState(null);
   const [currentFolder, setCurrentFolder] = useState(null);
 
+  // Shape: { [chatId]: Message[] }
   const [messages, setMessages] = useState({});
   const [replyToMessage, setReplyToMessage] = useState(null);
 
-  //"leadId:botId:messageId"
+  // "chatId:botId:messageId"
   const [readQueue, setReadQueue] = useState(new Set());
 
+  // Null/undefined folder → 0 so it’s a plain object key
   const getFolderKey = useCallback(
-    (folderId) => (folderId != null ? folderId : 0),
-    [],
+    folderId => (folderId != null ? folderId : 0),
+    []
   );
+
+  /* ────────────────────────────────────────────────────────────
+     Chats CRUD helpers
+     ──────────────────────────────────────────────────────────── */
 
   const addChats = useCallback(
     (botId, newChats, folderId, mode = "add") => {
       const folderKey = getFolderKey(folderId);
 
-      setChats((prev) => {
+      setChats(prev => {
         const botFolders = prev[botId] || {};
         const currentFolderChats = botFolders[folderKey] || [];
 
@@ -56,79 +62,70 @@ export const ChatProvider = ({ children }) => {
         };
       });
     },
-    [setChats, getFolderKey],
+    [getFolderKey]
   );
 
-  // Unsed at f665a887504bab6cff0fe5a61a854ce33f0b90e5 commit (main branch)
+  /** Completely remove a chat from state (and its messages) */
   const removeChat = useCallback(
-    (leadId) => {
-      setChats((prevChats) =>
-        prevChats.filter((chat) => chat.lead.id !== leadId),
-      );
-      setMessages((prevMessages) => {
-        const newMessages = { ...prevMessages };
-        delete newMessages[leadId];
-        return newMessages;
+    (chatId, botId, folderId) => {
+      const folderKey = getFolderKey(folderId);
+
+      setChats(prev => {
+        const botFolders = prev[botId] || {};
+        const folderChats = botFolders[folderKey] || [];
+        return {
+          ...prev,
+          [botId]: {
+            ...botFolders,
+            [folderKey]: folderChats.filter(c => c.id !== chatId),
+          },
+        };
       });
-      if (currentChat?.lead.id === leadId) {
-        setCurrentChat(null);
-      }
+
+      setMessages(prev => {
+        const m = { ...prev };
+        delete m[chatId];
+        return m;
+      });
+
+      if (currentChat?.id === chatId) setCurrentChat(null);
     },
-    [currentChat],
+    [currentChat, getFolderKey]
   );
 
+  /** Update “isNewChat” flag on one chat */
   const updateChatNewStatus = useCallback(
     (chatId, botId, folderId, value = true) => {
       const folderKey = getFolderKey(folderId);
-      setChats((prev) => {
-        const prevBotFolders = prev[botId] || {};
-        const prevFolderChats = prevBotFolders[folderKey] || [];
 
-        const updatedFolderChats = prevFolderChats.map((chat) => {
-          if (chat.id === chatId) {
-            return { ...chat, isNewChat: value };
-          }
-          return chat;
-        });
+      setChats(prev => {
+        const botFolders = prev[botId] || {};
+        const folderChats = botFolders[folderKey] || [];
 
         return {
           ...prev,
           [botId]: {
-            ...prevBotFolders,
-            [folderKey]: updatedFolderChats,
+            ...botFolders,
+            [folderKey]: folderChats.map(c =>
+              c.id === chatId ? { ...c, isNewChat: value } : c
+            ),
           },
         };
       });
     },
-    [],
+    [getFolderKey]
   );
-
-  //  const selectChat = useCallback(
-  //    async (leadId) => {
-  //      const chat = chats.find((c) => c.lead.id === Number(leadId));
-  //      if (chat && (!!chat.isNewChat || !messages[leadId])) {
-  //        const fetchedMessages = await fetchMessages(leadId, chat.botId);
-  //        setMessages((prevMessages) => ({
-  //          ...prevMessages,
-  //          [leadId]: fetchedMessages.messages.reverse(), // e.g. newest last
-  //        }));
-  //      }
-  //
-  //      updateChatNewStatus(leadId, false);
-  //      setCurrentChat(chat || null); // Set chat only when all data is parsed
-  //    },
-  //    [chats, messages, updateChatNewStatus],
-  //  );
 
   const selectChat = useCallback(
     async (chatId, botId, folderId) => {
       const folderKey = getFolderKey(folderId);
-      const chatList = chats?.[botId]?.[folderKey] || [];
-      const chat = chatList.find((c) => c.id === chatId);
+      const chat = chats?.[botId]?.[folderKey]?.find(
+        c => c.id === Number(chatId)
+      );
 
       if (chat && !messages[chatId]) {
         const fetched = await fetchMessages(chatId);
-        setMessages((prev) => ({
+        setMessages(prev => ({
           ...prev,
           [chatId]: fetched.messages.reverse(),
         }));
@@ -137,111 +134,104 @@ export const ChatProvider = ({ children }) => {
       updateChatNewStatus(chatId, botId, folderId, false);
       setCurrentChat(chat || null);
     },
-    [chats, messages, updateChatNewStatus],
+    [chats, messages, updateChatNewStatus, getFolderKey]
   );
 
-  const addChatUpdates = useCallback((leadId, value) => {
-    // Adds update and move chat to the start of array
-    setChats((prevChats) => {
-      let updatedChat = null;
-      const newChats = prevChats.filter((chat) => {
-        if (chat.lead.id === Number(leadId)) {
-          updatedChat = {
-            ...chat,
-            updates: [...(chat.updates || []), ...value],
-          };
-          return false; // Remove the chat from its current position
-        }
-        return true;
+  const mutateOneChat = useCallback(
+    (chatId, botId, folderId, mutator) => {
+      const folderKey = getFolderKey(folderId);
+
+      setChats(prev => {
+        const botFolders = prev[botId] || {};
+        const folderChats = botFolders[folderKey] || [];
+
+        return {
+          ...prev,
+          [botId]: {
+            ...botFolders,
+            [folderKey]: folderChats.map(c =>
+              c.id === chatId ? mutator(c) : c
+            ),
+          },
+        };
       });
+    },
+    [getFolderKey]
+  );
 
-      return updatedChat ? [updatedChat, ...newChats] : prevChats;
-    });
-  }, []);
+  const addChatUpdates = useCallback(
+    (chatId, botId, folderId, values) =>
+      mutateOneChat(chatId, botId, folderId, chat => ({
+        ...chat,
+        updates: [...(chat.updates || []), ...values],
+      })),
+    [mutateOneChat]
+  );
 
-  const removeChatUpdates = useCallback((leadId, valuesToRemove) => {
-    setChats((prevChats) =>
-      prevChats.map((chat) =>
-        chat.lead.id === Number(leadId)
-          ? {
-              ...chat,
-              updates: (chat.updates || []).filter(
-                (update) => !valuesToRemove.includes(update),
-              ),
-            }
-          : chat,
-      ),
-    );
-  }, []);
+  const removeChatUpdates = useCallback(
+    (chatId, botId, folderId, valuesToRemove) =>
+      mutateOneChat(chatId, botId, folderId, chat => ({
+        ...chat,
+        updates: (chat.updates || []).filter(
+          u => !valuesToRemove.includes(u)
+        ),
+      })),
+    [mutateOneChat]
+  );
 
-  const setLastMessage = useCallback((leadId, msg) => {
-    setChats((prevChats) => {
-      let updatedChat = null;
-      const newChats = prevChats.filter((chat) => {
-        if (chat.lead.id === Number(leadId)) {
-          updatedChat = { ...chat, lastMessage: msg };
-          return false;
-        }
-        return true;
-      });
-
-      return updatedChat ? [updatedChat, ...newChats] : prevChats;
-    });
-  }, []);
+  const setLastMessage = useCallback(
+    (chatId, botId, folderId, msg) =>
+      mutateOneChat(chatId, botId, folderId, chat => ({
+        ...chat,
+        lastMessage: msg,
+      })),
+    [mutateOneChat]
+  );
 
   const addMessage = useCallback(
-    (leadId, message) => {
-      setMessages((prevMessages) => {
-        const chatMessages = prevMessages[leadId] || [];
-        return { ...prevMessages, [leadId]: [...chatMessages, message] };
-      });
-      setLastMessage(leadId, message);
+    (chatId, botId, folderId, message) => {
+      setMessages(prev => ({
+        ...prev,
+        [chatId]: [...(prev[chatId] || []), message],
+      }));
+      setLastMessage(chatId, botId, folderId, message);
     },
-    [setLastMessage],
+    [setLastMessage]
   );
 
   const addMessages = useCallback(
-    (leadId, messages) => {
-      const reversedMessages = [...messages].reverse(); // preserve original
-      setMessages((prevMessages) => {
-        const chatMessages = prevMessages[leadId] || [];
-        return {
-          ...prevMessages,
-          [leadId]: [...reversedMessages, ...chatMessages],
-        };
-      });
-
-      const lastMessage = reversedMessages[reversedMessages.length - 1];
-      if (!lastMessage) return;
-
-      setLastMessage(leadId, lastMessage);
+    (chatId, botId, folderId, msgs) => {
+      const reversed = [...msgs].reverse();
+      setMessages(prev => ({
+        ...prev,
+        [chatId]: [...reversed, ...(prev[chatId] || [])],
+      }));
+      const last = reversed[reversed.length - 1];
+      if (last) setLastMessage(chatId, botId, folderId, last);
     },
-    [setLastMessage],
+    [setLastMessage]
   );
 
   const checkMessageExists = useCallback(
-    (leadId, messageId) => {
-      return messages[leadId]?.some((msg) => msg.id === messageId) || false;
-    },
-    [messages],
+    (chatId, messageId) =>
+      messages[chatId]?.some(m => m.id === messageId) || false,
+    [messages]
   );
 
-  const handleMessageVisible = useCallback((leadId, botId, messageId) => {
-    const key = `${leadId}:${botId}:${messageId}`;
-    setReadQueue((prev) => new Set([...prev, key]));
+  const handleMessageVisible = useCallback((chatId, messageId) => {
+    setReadQueue(prev => new Set(prev).add(`${chatId}:${messageId}`));
   }, []);
 
-  const markMessagesAsReadUI = useCallback((leadId, messageIds) => {
-    setMessages((prev) => {
-      const copy = { ...prev };
-      if (!copy[leadId]) return copy;
-      copy[leadId] = copy[leadId].map((msg) => {
-        if (messageIds.includes(msg.id)) {
-          return { ...msg, isRead: true };
-        }
-        return msg;
-      });
-      return copy;
+  const markMessagesAsReadUI = useCallback((chatId, messageIds) => {
+    setMessages(prev => {
+      if (!prev[chatId]) return prev;
+
+      return {
+        ...prev,
+        [chatId]: prev[chatId].map(m =>
+          messageIds.includes(m.id) ? { ...m, isRead: true } : m
+        ),
+      };
     });
   }, []);
 
@@ -249,50 +239,50 @@ export const ChatProvider = ({ children }) => {
     if (readQueue.size === 0) return;
 
     const timer = setTimeout(async () => {
-      // Make a copy, then clear readQueue so we don't re-send duplicates
       const queueEntries = Array.from(readQueue);
       setReadQueue(new Set());
 
-      // Group by "leadId:botId"
-      const grouped = {};
+      /** { [chatId]: number[] } */
+      const groupedByChat = {};
+
       for (const entry of queueEntries) {
-        const [leadIdStr, botIdStr, messageIdStr] = entry.split(":");
-        const groupKey = `${leadIdStr}:${botIdStr}`;
+        const [chatIdStr, messageIdStr] = entry.split(":");
+        const chatId = Number(chatIdStr);
         const messageId = Number(messageIdStr);
-        if (!grouped[groupKey]) {
-          grouped[groupKey] = [];
-        }
-        grouped[groupKey].push(messageId);
+        (groupedByChat[chatId] ||= []).push(messageId);
       }
 
-      // Now mark read in batches, grouped by (leadId, botId)
-      for (const groupKey of Object.keys(grouped)) {
-        const [leadIdStr, botIdStr] = groupKey.split(":");
-        const leadId = Number(leadIdStr);
-        const botId = Number(botIdStr);
-        const messageIds = grouped[groupKey];
+      const allMessageIds = queueEntries.map(entry =>
+        Number(entry.split(":")[1])
+      );
 
-        removeChatUpdates(leadId, messageIds);
+      try {
+        await markMessagesAsRead(allMessageIds);
 
-        try {
-          await markMessagesAsRead(leadId, botId, messageIds);
-          markMessagesAsReadUI(leadId, messageIds);
-        } catch (err) {
-          // Catch the error here
-          console.error("Error marking messages as read:", err);
+        for (const [chatIdStr, messageIds] of Object.entries(
+          groupedByChat
+        )) {
+          markMessagesAsReadUI(Number(chatIdStr), messageIds);
         }
+      } catch (err) {
+        console.error("Error marking messages as read:", err);
       }
     }, MESSAGE_READ_DELAY_MS);
 
     return () => clearTimeout(timer);
-  }, [readQueue, setMessages, markMessagesAsReadUI, removeChatUpdates]);
+  }, [readQueue, markMessagesAsReadUI]);
   return (
     <ChatContext.Provider
       value={{
+        // state
         chats,
-        setChats,
         currentChat,
         messages,
+        currentFolder,
+
+        // setters  actions
+        setChats,
+        setCurrentFolder,
         addChats,
         removeChat,
         selectChat,
@@ -306,8 +296,6 @@ export const ChatProvider = ({ children }) => {
         markMessagesAsReadUI,
         checkMessageExists,
         updateChatNewStatus,
-        currentFolder,
-        setCurrentFolder,
       }}
     >
       {children}

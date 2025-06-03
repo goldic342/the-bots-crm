@@ -30,6 +30,7 @@ const ChatItem = ({ chat, isActive, onClick }) => {
 
   return (
     <Box
+      as="a"
       py={3}
       px={3}
       bg={isActive ? activeBg : inactiveBg}

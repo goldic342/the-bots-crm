@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  Box,
   useBreakpointValue,
   useColorModeValue,
   useToast,
@@ -20,7 +19,7 @@ import AbsoluteWrapper from "../ui/AbsoluteWrapper";
 
 const ChatInterface = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });
-  const { botId, leadId } = useParams();
+  const { botId, chatId, folderId } = useParams();
   const navigate = useNavigate();
   const { currentChat, selectChat, messages, addMessages } = useChats();
   const toast = useToast();
@@ -31,15 +30,15 @@ const ChatInterface = () => {
   const [offset, setOffset] = useState(MESSAGES_OFFSET + 1);
   const [getMessages, isLoadingMessages, messagesError] = useFetchMessages();
 
-  const isCorrectChatSelected = currentChat?.lead?.id === Number(leadId);
+  const isCorrectChatSelected = currentChat?.id === Number(chatId);
   const isLoaded = !!isCorrectChatSelected;
   const isSearching = !!scrollToId && !isFetched && isLoaded;
 
   useEffect(() => {
     if (!isCorrectChatSelected) {
-      selectChat(leadId);
+      selectChat(chatId, botId, folderId);
     }
-  }, [leadId, isCorrectChatSelected, selectChat, currentChat]);
+  }, [chatId, isCorrectChatSelected, botId, folderId, selectChat]);
 
   useEffect(() => {
     if (!scrollToId || isFetched || !isLoaded || isLoadingMessages) return;
@@ -58,12 +57,12 @@ const ChatInterface = () => {
         return;
       }
 
-      addMessages(leadId, newMessages.messages);
+      addMessages(chatId, botId, folderId, newMessages.messages);
 
-      if (newMessages.messages.some((m) => m.id === scrollToId)) {
+      if (newMessages.messages.some(m => m.id === scrollToId)) {
         setIsFetched(true);
       } else {
-        setOffset((prev) => prev + MESSAGES_OFFSET);
+        setOffset(prev => prev + MESSAGES_OFFSET);
       }
     };
 
@@ -74,28 +73,30 @@ const ChatInterface = () => {
     scrollToId,
     isFetched,
     isLoaded,
-    leadId,
+    chatId,
     toast,
     getMessages,
     addMessages,
     setIsFetched,
+    botId,
+    folderId,
   ]);
 
   useEffect(() => {
     if (isFetched || !scrollToId) return;
 
-    const list = messages[leadId];
-    if (list && list.some((m) => m.id === scrollToId)) {
+    const list = messages[chatId];
+    if (list && list.some(m => m.id === scrollToId)) {
       setIsFetched(true);
     }
-  }, [messages, leadId, scrollToId, isFetched, setIsFetched]);
+  }, [messages, chatId, scrollToId, isFetched, setIsFetched, botId, folderId]);
 
-  const handleSendMessage = async (text, file, replyMessageId = 0) => {
+  const handleSendMessage = async (text, replyMessageId = 0, file) => {
     const tempId = Date.now();
-    setSendingMessages((prev) => new Set(prev).add(tempId));
+    setSendingMessages(prev => new Set(prev).add(tempId));
 
     try {
-      await sendMessage(leadId, botId, text, file, replyMessageId);
+      await sendMessage(chatId, text, replyMessageId, file);
     } catch (error) {
       console.error(error);
       toast({
@@ -107,7 +108,7 @@ const ChatInterface = () => {
         position: "bottom-right",
       });
     } finally {
-      setSendingMessages((prev) => {
+      setSendingMessages(prev => {
         const updated = new Set(prev);
         updated.delete(tempId);
         return updated;
@@ -134,7 +135,7 @@ const ChatInterface = () => {
     return (
       <AbsoluteWrapper isMobile={isMobile} bg={bg}>
         <ChatHeader onBack={handleBack} />
-        <ChatMessages messages={messages[leadId]} startOffset={offset} />
+        <ChatMessages messages={messages[chatId]} startOffset={offset} />
         <ChatInput onSendMessage={handleSendMessage} isSending={isSending} />
       </AbsoluteWrapper>
     );

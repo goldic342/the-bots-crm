@@ -23,8 +23,7 @@ export const ChatBaseMessageObject = {
 };
 export const ChatMessageObject = {
   id: PropTypes.number.isRequired,
-  botId: PropTypes.number.isRequired,
-  leadId: PropTypes.number.isRequired,
+  chatId: PropTypes.number.isRequired,
   content: MessageContent,
   text: PropTypes.string,
   ...ChatBaseMessageObject,

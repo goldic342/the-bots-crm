@@ -22,7 +22,7 @@ const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET + 1 }) => {
   const isFirstRender = useRef(true);
 
   const { addMessages } = useChats();
-  const { leadId } = useParams();
+  const { chatId, botId, folderId } = useParams();
 
   const { scrollToId } = useSearch();
 
@@ -40,7 +40,7 @@ const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET + 1 }) => {
 
     setTimeout(() => {
       const messageElement = chatContainerRef.current.querySelector(
-        `[data_msgid="${scrollToId}"]`,
+        `[data_msgid="${scrollToId}"]`
       );
       if (messageElement) {
         messageElement.scrollIntoView({ behavior: "instant" });
@@ -74,7 +74,7 @@ const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET + 1 }) => {
       return;
     }
 
-    addMessages(leadId, newMessages.messages);
+    addMessages(chatId, botId, folderId, newMessages.messages);
 
     if ((newMessages.count ?? 0) < MESSAGES_LIMIT) {
       setIsVisible(false);
@@ -82,7 +82,7 @@ const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET + 1 }) => {
       return;
     }
 
-    setOffset((prev) => prev + MESSAGES_OFFSET);
+    setOffset(prev => prev + MESSAGES_OFFSET);
 
     // 3) Wait for next render cycle; then restore scroll position
     // Using setTimeout(0) is a simple trick to wait until the DOM has updated
@@ -145,7 +145,7 @@ const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET + 1 }) => {
           </Box>
         )}
 
-        {messages.map((msg) => (
+        {messages.map(msg => (
           <DetermineChatBubble key={msg.id} message={msg} />
         ))}
       </AudioProvider>

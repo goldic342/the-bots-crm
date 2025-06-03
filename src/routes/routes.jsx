@@ -28,7 +28,6 @@ export const router = createBrowserRouter([
         ),
         children: [
           {
-            // Auto redirect to /bots
             index: true,
             element: <Navigate to="bots" replace />,
           },

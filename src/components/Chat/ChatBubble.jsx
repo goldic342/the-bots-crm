@@ -7,6 +7,7 @@ const ChatBubble = ({ message }) => {
   const textColor = isOwn
     ? "white"
     : useColorModeValue("blackAlpha.700", "whiteAlpha.900");
+
   return (
     <ChatBubbleBase {...message}>
       <Text

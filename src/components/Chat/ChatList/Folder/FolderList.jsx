@@ -1,4 +1,4 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, Skeleton, useToast } from "@chakra-ui/react";
 import { useChats } from "../../../../contexts/ChatContext";
 import useApiRequest from "../../../../hooks/useApiRequest";
 import { useEffect, useMemo, useState } from "react";
@@ -7,6 +7,7 @@ import FolderItem from "./FolderItem";
 import { useBot } from "../../../../contexts/botContext";
 
 const FolderList = () => {
+  const toast = useToast();
   const { bot } = useBot();
   const botId = bot.id;
   const { currentFolder, setCurrentFolder } = useChats();
@@ -18,71 +19,46 @@ const FolderList = () => {
       botId: botId,
       totalUnreadMessages: bot.totalUnreadMessages,
     }),
-    [botId, bot],
+    [botId, bot]
   );
 
-  const [folders, setFolders] = useState([
-    allChatsFolder,
-    {
-      id: 1,
-      name: "Folder 13289943204293489203",
-      botId: botId,
-      totalUnreadMessages: 10,
-    },
-    {
-      id: 2,
-      name: "Folder 2",
-      botId: botId,
-      totalUnreadMessages: 0,
-    },
-    {
-      id: 3,
-      name: "Folder 3",
-      botId: botId,
-      totalUnreadMessages: 0,
-    },
-    {
-      id: 4,
-      name: "Folder 4",
-      botId: botId,
-      totalUnreadMessages: 0,
-    },
-    {
-      id: 5,
-      name: "Folder 4",
-      botId: botId,
-      totalUnreadMessages: 0,
-    },
-    {
-      id: 6,
-      name: "Folder 4",
-      botId: botId,
-      totalUnreadMessages: 0,
-    },
-  ]);
+  const [folders, setFolders] = useState([]);
   const [fetchFolders, isLoading, error] = useApiRequest(
-    async (bId) => await getFolders(bId),
+    async bId => await getFolders(bId)
   );
 
   useEffect(() => {
     if (currentFolder) return;
-    // On init set current folder to 0 (all chats)
     setCurrentFolder(allChatsFolder);
   }, [botId, setCurrentFolder, allChatsFolder, currentFolder]);
 
-  //  useEffect(() => {
-  //    const fetchData = async () => {
-  //      const response = await fetchFolders(botId);
-  //      setFolders((prev) => [...prev, response.folders]);
-  //    };
-  //
-  //    fetchData();
-  //    // eslint-disable-next-line react-hooks/exhaustive-deps
-  //  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetchFolders(botId);
+      if (response?.folders) {
+        setFolders(response.folders);
+      }
+    };
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [botId]);
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Ошибка загрузки папок",
+        description: error.message || "Что-то пошло не так.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [error, toast]);
 
   return (
     <Flex
-      gap={4}
+      gap={2}
       px={2}
       py={1}
       overflowX="auto"
@@ -104,9 +80,20 @@ const FolderList = () => {
         scrollbarWidth: "thin",
       }}
     >
-      {folders.map((f) => (
-        <FolderItem key={f.id} folder={f} />
-      ))}
+      <FolderItem key={allChatsFolder.id} folder={allChatsFolder} />
+
+      {isLoading
+        ? Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton
+              key={i}
+              width="100px"
+              height="35px"
+              borderRadius="md"
+            />
+          ))
+        : folders.map(folder => (
+            <FolderItem key={folder.id} folder={folder} />
+          ))}
     </Flex>
   );
 };

@@ -37,11 +37,17 @@ const ChatBubbleBase = ({
   children,
 }) => {
   const { primary, text } = useColors();
-  const { currentChat, setReplyToMessage, messages, handleMessageVisible } =
-    useChats();
+  const {
+    currentChat,
+    setReplyToMessage,
+    messages,
+    handleMessageVisible,
+  } = useChats();
   const { botId } = useParams();
 
-  const currentMessage = messages[currentChat.lead.id].find((m) => m.id === id);
+  const currentMessage = messages[currentChat.id].find(
+    m => m.id === id
+  );
 
   const bubbleRef = useRef(null);
 
@@ -53,23 +59,24 @@ const ChatBubbleBase = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [fetchReplyMessage, isLoading] = useApiRequest(async () => {
-    if (!replyMessageId || !currentChat?.lead?.id || !currentChat?.botId)
+    if (!replyMessageId || !currentChat?.id || !currentChat?.botId)
       return null;
     return await fetchMessage(
-      currentChat.lead.id,
+      currentChat.id,
       currentChat.botId,
-      replyMessageId,
+      replyMessageId
     );
   }, true);
 
-  const [hasSentVisibilityEvent, setHasSentVisibilityEvent] = useState(false);
+  const [hasSentVisibilityEvent, setHasSentVisibilityEvent] =
+    useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsVisible(entry.isIntersecting);
       },
-      { threshold: 0.1 },
+      { threshold: 0.1 }
     );
 
     if (bubbleRef.current) observer.observe(bubbleRef.current);
@@ -81,7 +88,7 @@ const ChatBubbleBase = ({
 
   useEffect(() => {
     if (!isOwn && isVisible && !isRead && !hasSentVisibilityEvent) {
-      handleMessageVisible(currentChat.lead.id, botId, id);
+      handleMessageVisible(currentChat.id, id);
       setHasSentVisibilityEvent(true);
     }
   }, [
@@ -90,7 +97,7 @@ const ChatBubbleBase = ({
     isRead,
     hasSentVisibilityEvent,
     handleMessageVisible,
-    currentChat.lead.id,
+    currentChat.id,
     id,
     botId,
   ]);
@@ -110,7 +117,7 @@ const ChatBubbleBase = ({
     ? "white"
     : useColorModeValue("black", "whiteAlpha.900");
 
-  const handleReplyClick = (event) => {
+  const handleReplyClick = event => {
     event.stopPropagation();
     if (replyMessageId) {
       onOpen();
@@ -122,14 +129,14 @@ const ChatBubbleBase = ({
   const [translateX, setTranslateX] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
 
-  const handleTouchStart = (e) => {
+  const handleTouchStart = e => {
     setIsSwiping(true);
     setTouchStartX(e.targetTouches[0].clientX);
     setTouchStartY(e.targetTouches[0].clientY);
     setTranslateX(0);
   };
 
-  const handleTouchMove = (e) => {
+  const handleTouchMove = e => {
     if (touchStartX === null) return;
 
     const currentX = e.targetTouches[0].clientX;
@@ -140,11 +147,17 @@ const ChatBubbleBase = ({
     if (Math.abs(diffX) > Math.abs(diffY)) {
       if (isOwn) {
         // For outgoing messages => move bubble right -> left (negative X)
-        const clampedDiffX = Math.min(0, Math.max(diffX, -MAX_TRANSLATION));
+        const clampedDiffX = Math.min(
+          0,
+          Math.max(diffX, -MAX_TRANSLATION)
+        );
         setTranslateX(clampedDiffX);
       } else {
         // For incoming messages => move bubble left -> right (positive X)
-        const clampedDiffX = Math.max(0, Math.min(diffX, MAX_TRANSLATION));
+        const clampedDiffX = Math.max(
+          0,
+          Math.min(diffX, MAX_TRANSLATION)
+        );
         setTranslateX(clampedDiffX);
       }
     }
@@ -203,7 +216,12 @@ const ChatBubbleBase = ({
                 <HStack>
                   <HStack>
                     {!isOwn && (
-                      <Box w="2px" h="20px" bg={primary} borderRadius="full" />
+                      <Box
+                        w="2px"
+                        h="20px"
+                        bg={primary}
+                        borderRadius="full"
+                      />
                     )}
                     {replyMessage?.content?.url && (
                       <Icon as={File} boxSize={4} />
@@ -248,7 +266,7 @@ const ChatBubbleBase = ({
         color={textColor}
         px={includePadding ? 3 : 0}
         py={includePadding ? 2 : 0}
-        onContextMenu={(e) => {
+        onContextMenu={e => {
           e.preventDefault();
           e.stopPropagation();
           setReplyToMessage(currentMessage);

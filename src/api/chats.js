@@ -9,7 +9,7 @@ export const getChats = async (
   botId,
   folderId = 0,
   offset = 0,
-  limit = CHATS_LIMIT,
+  limit = CHATS_LIMIT
 ) => {
   const response = await api.get(`/chats`, {
     params: {
@@ -29,12 +29,11 @@ export const getChatInfo = async (leadId, botId) => {
 };
 
 export const fetchMessages = async (
-  leadId,
-  botId,
-  offset = 1,
-  limit = MESSAGES_LIMIT,
+  chatId,
+  offset = 0,
+  limit = MESSAGES_LIMIT
 ) => {
-  const response = await api.get(`/message/${botId}/${leadId}`, {
+  const response = await api.get(`/messages/chats/${chatId}`, {
     params: {
       offset,
       limit,
@@ -43,55 +42,55 @@ export const fetchMessages = async (
   return response.data;
 };
 
-export const fetchMessage = async (leadId, botId, messageId) => {
-  const response = await api.get(`/message/${botId}/${leadId}/${messageId}`);
+export const fetchMessage = async messageId => {
+  const response = await api.get(`/messages/${messageId}`);
   return response.data;
 };
 
 export const sendMessage = async (
-  leadId,
-  botId,
+  chatId,
   text = null,
   replyMessageId = 0,
-  file = null,
+  file = null
 ) => {
   const formData = new FormData();
+
   if (file)
     formData.append(
       "file",
       file,
-      file.name || `upload_${Date.now().toString(16)}`,
+      file.name || `upload_${Date.now().toString(16)}`
     );
 
   if (text) formData.append("text", text);
   formData.append("reply_message_id", replyMessageId);
+  formData.append("chat_id", chatId);
 
-  const response = await api.post(
-    `/message/${botId}/${leadId}/send`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+  const response = await api.post("/messages", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
     },
-  );
+  });
+
   return response.data;
 };
 
-export const markMessagesAsRead = async (leadId, botId, ids) => {
-  const response = await api.patch(`/message/${botId}/${leadId}/read`, { ids });
+export const markMessagesAsRead = async ids => {
+  const response = await api.patch(`/messages`, {
+    message_ids: ids,
+  });
   return response.data;
 };
 
 export const searchMessages = async (
   botId,
-  search_term,
-  offset = 1,
-  limit = SEARCH_MESSAGES_LIMIT,
+  text_query,
+  offset = 0,
+  limit = SEARCH_MESSAGES_LIMIT
 ) => {
-  const response = await api.get(`/message/fetch/${botId}`, {
+  const response = await api.get(`/messages/bots/${botId}`, {
     params: {
-      search_term,
+      text_query,
       offset,
       limit,
     },

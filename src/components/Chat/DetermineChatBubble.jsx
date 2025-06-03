@@ -27,7 +27,7 @@ const DetermineChatBubble = ({ message }) => {
 };
 
 DetermineChatBubble.propTypes = {
-  message: PropTypes.shape(ChatMessage).isRequired,
+  message: PropTypes.shape(ChatMessage),
 };
 
 export default DetermineChatBubble;

@@ -20,7 +20,7 @@ const DashboardRoot = () => {
   const pathname = location.pathname;
 
   const chatSelected =
-    /^\/dashboard\/bots\/\d+\/\d+\/?$/.test(pathname) ||
+    /^\/dashboard\/bots\/\d+\/\d+\/\d+\/?$/.test(pathname) ||
     pathname.includes("settings") ||
     pathname.includes("users");
 
