@@ -11,6 +11,6 @@ export const createTemplate = async (botId, text) => {
 };
 
 export const removeTemplate = async (botId, templateId) => {
-  const response = await api.delete(`/bots/${botId}/templates/${templateId}`);
+  const response = await api.delete(`/bots${botId}/templates/${templateId}`);
   return response.data;
 };

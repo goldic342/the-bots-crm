@@ -1,7 +1,6 @@
 import {
   Flex,
   Text,
-  Icon,
   useColorModeValue,
   Box,
   Tooltip,
@@ -10,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Search, Settings } from "lucide-react";
 
 import { useWS } from "../../../contexts/WSContext";
 
@@ -20,6 +19,7 @@ import SearchResults from "./Search/SearchResults";
 import { useBot } from "../../../contexts/botContext";
 import { getBot } from "../../../api/bots";
 import FolderList from "./Folder/FolderList";
+import BotSettingsModal from "../Modals/BotSettingsModal";
 
 const ChatListInterface = () => {
   const { isConnected } = useWS();
@@ -27,6 +27,7 @@ const ChatListInterface = () => {
   const { bot, setBot } = useBot();
 
   const [showSearch, setShowSearch] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const navigate = useNavigate();
   const borderColor = useColorModeValue("gray.200", "gray.700");
@@ -57,8 +58,7 @@ const ChatListInterface = () => {
     >
       <Flex align="center" p={4} borderBottom="1px" borderColor={borderColor}>
         <IconButton
-          as={ArrowLeft}
-          boxSize={5}
+          icon={<ArrowLeft size={20} />}
           variant="ghost"
           _hover={{ cursor: "pointer" }}
           onClick={() => {
@@ -86,15 +86,28 @@ const ChatListInterface = () => {
         <Spacer />
 
         {!showSearch && (
-          <IconButton
-            as={Search}
-            variant={"ghost"}
-            boxSize={5}
-            _hover={{ cursor: "pointer", transform: "scale(1.1)" }}
-            onClick={() => setShowSearch(true)}
-          />
+          <>
+            <IconButton
+              icon={<Search size={20} />}
+              variant="ghost"
+              boxSize={5}
+              _hover={{ cursor: "pointer", transform: "scale(1.1)" }}
+              onClick={() => setShowSearch(true)}
+            />
+            <IconButton
+              icon={<Settings size={20} />}
+              variant="ghost"
+              ml={2}
+              _hover={{ cursor: "pointer", transform: "scale(1.1)" }}
+              onClick={() => setSettingsOpen(true)}
+            />
+          </>
         )}
       </Flex>
+      <BotSettingsModal
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+      />
 
       {showSearch ? (
         <SearchResults />

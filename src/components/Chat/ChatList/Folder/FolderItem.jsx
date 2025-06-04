@@ -5,20 +5,19 @@ import {
   Badge,
   Tooltip,
   useColorModeValue,
-  VisuallyHidden,
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
-import { useChats } from "../../../../contexts/ChatContext";
+import { useFolders } from "../../../../contexts/FoldersContext";
 
 const MAX_COUNT_DISPLAY = 99;
 
 const FolderItem = ({ folder }) => {
-  const { currentFolder, setCurrentFolder } = useChats();
+  const { currentFolder, setCurrentFolder } = useFolders();
 
   const isActive = currentFolder?.id === folder.id;
   const badgeColor = useColorModeValue(
     isActive ? "primary.500" : "gray.500",
-    isActive ? "primary.300" : "gray.400",
+    isActive ? "primary.300" : "gray.400"
   );
 
   const displayCount =

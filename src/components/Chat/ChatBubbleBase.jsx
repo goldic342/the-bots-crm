@@ -22,7 +22,8 @@ import { transformDateTime } from "../../utils/transformDateTime";
 import { messageToString } from "../../utils/messageToString";
 import MessageRead from "../ui/MessageRead";
 import { fetchMessage } from "../../api/chats";
-import { useChats } from "../../contexts/ChatContext";
+import { useChats } from "../../contexts/ChatsContext";
+import { useMessages } from "../../contexts/MessagesContext";
 import useApiRequest from "../../hooks/useApiRequest";
 import { useParams } from "react-router-dom";
 import { MAX_TRANSLATION, SWIPE_THRESHOLD } from "../../constants";
@@ -37,17 +38,11 @@ const ChatBubbleBase = ({
   children,
 }) => {
   const { primary, text } = useColors();
-  const {
-    currentChat,
-    setReplyToMessage,
-    messages,
-    handleMessageVisible,
-  } = useChats();
+  const { setReplyToMessage, messages, handleMessageVisible } = useMessages();
+  const { currentChat } = useChats();
   const { botId } = useParams();
 
-  const currentMessage = messages[currentChat.id].find(
-    m => m.id === id
-  );
+  const currentMessage = messages[currentChat.id].find(m => m.id === id);
 
   const bubbleRef = useRef(null);
 
@@ -59,8 +54,7 @@ const ChatBubbleBase = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [fetchReplyMessage, isLoading] = useApiRequest(async () => {
-    if (!replyMessageId || !currentChat?.id || !currentChat?.botId)
-      return null;
+    if (!replyMessageId || !currentChat?.id || !currentChat?.botId) return null;
     return await fetchMessage(
       currentChat.id,
       currentChat.botId,
@@ -68,8 +62,7 @@ const ChatBubbleBase = ({
     );
   }, true);
 
-  const [hasSentVisibilityEvent, setHasSentVisibilityEvent] =
-    useState(false);
+  const [hasSentVisibilityEvent, setHasSentVisibilityEvent] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -147,17 +140,11 @@ const ChatBubbleBase = ({
     if (Math.abs(diffX) > Math.abs(diffY)) {
       if (isOwn) {
         // For outgoing messages => move bubble right -> left (negative X)
-        const clampedDiffX = Math.min(
-          0,
-          Math.max(diffX, -MAX_TRANSLATION)
-        );
+        const clampedDiffX = Math.min(0, Math.max(diffX, -MAX_TRANSLATION));
         setTranslateX(clampedDiffX);
       } else {
         // For incoming messages => move bubble left -> right (positive X)
-        const clampedDiffX = Math.max(
-          0,
-          Math.min(diffX, MAX_TRANSLATION)
-        );
+        const clampedDiffX = Math.max(0, Math.min(diffX, MAX_TRANSLATION));
         setTranslateX(clampedDiffX);
       }
     }
@@ -216,12 +203,7 @@ const ChatBubbleBase = ({
                 <HStack>
                   <HStack>
                     {!isOwn && (
-                      <Box
-                        w="2px"
-                        h="20px"
-                        bg={primary}
-                        borderRadius="full"
-                      />
+                      <Box w="2px" h="20px" bg={primary} borderRadius="full" />
                     )}
                     {replyMessage?.content?.url && (
                       <Icon as={File} boxSize={4} />

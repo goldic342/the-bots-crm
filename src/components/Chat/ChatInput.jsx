@@ -16,12 +16,13 @@ import {
 import { ArrowUp, Plus, X } from "lucide-react";
 import PropTypes from "prop-types";
 import { useState, useRef, useEffect } from "react";
-import { useChats } from "../../contexts/ChatContext";
+import { useChats } from "../../contexts/ChatsContext";
 import { useBot } from "../../contexts/botContext";
 import useColors from "../../hooks/useColors";
 import { messageToString } from "../../utils/messageToString";
 import { MESSAGE_MAX_LENGHT } from "../../constants";
 import ChatInputMenu from "./ChatInputMenu";
+import { useMessages } from "../../contexts/MessagesContext";
 
 const ChatInput = ({ onSendMessage, isSending }) => {
   const [text, setText] = useState("");
@@ -37,7 +38,8 @@ const ChatInput = ({ onSendMessage, isSending }) => {
     handler: () => setShowPopup(false),
   });
 
-  const { currentChat, replyToMessage, setReplyToMessage } = useChats();
+  const { replyToMessage, setReplyToMessage } = useMessages();
+  const { currentChat } = useChats();
   const { bot } = useBot();
 
   const textareaRef = useRef(null);
@@ -83,14 +85,14 @@ const ChatInput = ({ onSendMessage, isSending }) => {
     }
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = e => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = event => {
     const selectedFile = event.target.files[0];
     setFile(selectedFile);
   };
@@ -134,13 +136,13 @@ const ChatInput = ({ onSendMessage, isSending }) => {
               <Plus
                 color={useColorModeValue(
                   "var(--chakra-colors-blackAlpha-600)",
-                  "var(--chakra-colors-whiteAlpha-900)",
+                  "var(--chakra-colors-whiteAlpha-900)"
                 )}
               />
             }
             size="sm"
             bg="transparent"
-            onClick={() => setShowPopup((prev) => !prev)}
+            onClick={() => setShowPopup(prev => !prev)}
             _hover={{
               bg: useColorModeValue("primary.100", "primary.700"),
             }}
@@ -153,6 +155,7 @@ const ChatInput = ({ onSendMessage, isSending }) => {
             popupRef={popupRef}
             file={file}
             handleFileChange={handleFileChange}
+            setText={setText}
           />
         </Box>
 
@@ -162,7 +165,7 @@ const ChatInput = ({ onSendMessage, isSending }) => {
             isDisabled={isDisabled}
             placeholder="Написать сообщение..."
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={e => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             autoFocus
             mx={2}

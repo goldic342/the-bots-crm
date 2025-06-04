@@ -6,12 +6,13 @@ import {
   useState,
   useMemo,
 } from "react";
-import { useChats } from "./ChatContext";
+import { useChats } from "./ChatsContext";
 import { useAuth } from "./AuthContext";
 import camelcaseKeysDeep from "camelcase-keys-deep";
 import { getChatInfo } from "../api/chats";
 import { useBot } from "./botContext";
 import { useRefBridge } from "../hooks/useRefBridge";
+import { useMessages } from "./MessagesContext";
 
 const WSContext = createContext(undefined);
 
@@ -24,14 +25,8 @@ export const useWS = () => {
 };
 
 export const WSProvider = ({ children }) => {
-  const {
-    addMessage,
-    chats,
-    addChatUpdates,
-    markMessagesAsReadUI,
-    addChats,
-    updateChatNewStatus,
-  } = useChats();
+  const { addMessage, markMessagesAsReadUI } = useMessages();
+  const { chats, addChatUpdates, addChats, updateChatNewStatus } = useChats();
   const { token } = useAuth();
   const { bot } = useBot();
   const [isConnected, setIsConnected] = useState(false);
@@ -52,11 +47,11 @@ export const WSProvider = ({ children }) => {
       setIsConnected(true);
     };
 
-    socket.onclose = (event) => {
+    socket.onclose = event => {
       setIsConnected(false);
     };
 
-    socket.onmessage = async (event) => {
+    socket.onmessage = async event => {
       try {
         let data = event.data;
         try {
@@ -74,7 +69,7 @@ export const WSProvider = ({ children }) => {
           const ccData = camelcaseKeysDeep(data); // cc - camelcase
           const leadId = ccData.lead?.id;
 
-          if (!chatsRef.current.some((c) => c.lead.id === leadId)) {
+          if (!chatsRef.current.some(c => c.lead.id === leadId)) {
             const newChat = await getChatInfo(leadId, bot.id);
             addChats([{ ...newChat, isNewChat: true }]);
           } else {
@@ -98,7 +93,7 @@ export const WSProvider = ({ children }) => {
           "WebSocket message error:",
           error,
           "Raw data:",
-          event.data,
+          event.data
         );
       }
     };
@@ -118,7 +113,7 @@ export const WSProvider = ({ children }) => {
       isConnected,
       socket: wsRef.current,
     }),
-    [isConnected],
+    [isConnected]
   );
 
   return (

@@ -10,7 +10,7 @@ import {
 } from "../../../../constants";
 import ChatItem from "../ChatItem";
 import { useNavigate, useParams } from "react-router-dom";
-import { useChats } from "../../../../contexts/ChatContext";
+import { useMessages } from "../../../../contexts/MessagesContext";
 
 const SearchResults = () => {
   const {
@@ -24,7 +24,7 @@ const SearchResults = () => {
   } = useSearch();
   const { botId } = useParams();
   const navigate = useNavigate();
-  const { checkMessageExists } = useChats();
+  const { checkMessageExists } = useMessages();
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const safeSearchResults = {
@@ -52,8 +52,8 @@ const SearchResults = () => {
       return;
     }
 
-    setOffset((prev) => prev + SEARCH_MESSAGES_OFFSET);
-    setSearchResults((prev) => {
+    setOffset(prev => prev + SEARCH_MESSAGES_OFFSET);
+    setSearchResults(prev => {
       return {
         count: prev.count + newResults.count,
         messages: [...prev.messages, ...newResults.messages],
@@ -98,7 +98,7 @@ const SearchResults = () => {
       ) : null}
 
       {(!isSearching && !error) || (isLoadingMore && isSearching)
-        ? safeSearchResults.messages.map((data) => {
+        ? safeSearchResults.messages.map(data => {
             const message = data.message;
             const lead = data.lead;
             return (

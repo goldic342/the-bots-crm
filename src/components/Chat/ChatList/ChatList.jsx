@@ -10,11 +10,13 @@ import { getChats } from "../../../api/chats";
 import useApiRequest from "../../../hooks/useApiRequest";
 import useInfiniteScroll from "../../../hooks/useInfiniteScroll";
 import { CHATS_LIMIT, CHATS_OFFSET } from "../../../constants";
-import { useChats } from "../../../contexts/ChatContext";
+import { useChats } from "../../../contexts/ChatsContext";
+import { useFolders } from "../../../contexts/FoldersContext";
 
 const ChatList = () => {
   const { chatId, botId } = useParams();
-  const { chats, addChats, currentFolder } = useChats();
+  const { chats, addChats } = useChats();
+  const { currentFolder } = useFolders();
   const navigate = useNavigate();
 
   const [offset, setOffset] = useState(CHATS_OFFSET);
@@ -22,13 +24,13 @@ const ChatList = () => {
   const [fetchChats, isLoadingChats, chatsError] = useApiRequest(
     async (folderId, locOffset) => {
       return await getChats(botId, folderId, locOffset);
-    },
+    }
   );
 
   const [fetchInitialChats, initialLoading, initialError] = useApiRequest(
-    async (folderId) => {
+    async folderId => {
       return await getChats(botId, folderId);
-    },
+    }
   );
 
   // Initial fetch only once
@@ -48,7 +50,7 @@ const ChatList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [botId, currentFolder?.id, addChats]);
 
-  const handleSelectChat = (chatId) => {
+  const handleSelectChat = chatId => {
     navigate(`/dashboard/bots/${botId}/${currentFolder.id}/${chatId}`);
   };
 
@@ -67,7 +69,7 @@ const ChatList = () => {
       setIsVisible(false);
     }
 
-    setOffset((prev) => prev + CHATS_OFFSET);
+    setOffset(prev => prev + CHATS_OFFSET);
   };
 
   const { lastElementRef, stopObserving, setIsVisible } = useInfiniteScroll({
@@ -101,7 +103,7 @@ const ChatList = () => {
 
       {!initialLoading &&
         !initialError &&
-        chatsForFolder.map((chat) => (
+        chatsForFolder.map(chat => (
           <ChatItem
             key={chat.id}
             chat={chat}

@@ -6,18 +6,18 @@ import { useEffect, useState } from "react";
 import { getTemplates } from "../../../api/templates";
 import SpinnerLoader from "../../ui/SpinnerLoader";
 
-const TemplateList = ({ open, templatesRef }) => {
+const TemplateList = ({ open, templatesRef, setText }) => {
   const { botId } = useParams();
   const [templates, setTemplates] = useState([]);
 
-  const [fetchTemplates, isLoading, error] = useApiRequest(async (botId) => {
+  const [fetchTemplates, isLoading, error] = useApiRequest(async botId => {
     return await getTemplates(botId);
   });
 
   useEffect(() => {
     const fetchTemps = async () => {
       const res = await fetchTemplates(botId);
-      setTemplates(res);
+      setTemplates(res.templates);
     };
     fetchTemps();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -50,13 +50,15 @@ const TemplateList = ({ open, templatesRef }) => {
         )}
         {error && <Text color="red.500">Ошибка при загрузке шаблонов</Text>}
 
-        {!isLoading && !error ? (
+        {!isLoading && !error && templates.length === 0 && (
           <Text>Шаблонов нет.</Text>
-        ) : (
-          templates.map((t, id) => (
-            <TemplateItem template={t} setText={() => 1} key={id} />
-          ))
         )}
+
+        {!isLoading &&
+          !error &&
+          templates.map((t, id) => (
+            <TemplateItem template={t} setText={setText} key={id} />
+          ))}
       </Flex>
     </Fade>
   );

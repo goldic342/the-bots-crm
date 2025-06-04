@@ -37,7 +37,7 @@ const BotItem = ({ bot, onClick }) => {
       onClick={onClick}
     >
       <HStack spacing={4}>
-        <Avatar size="md" src={bot.photo} />
+        <Avatar size="md" src={bot.photo} name={bot.name} />
         <VStack align="start" spacing={0}>
           <HStack spacing={1} overflow={"hidden"}>
             {bot.type === "bot" && <Icon as={Bot} color={"gray.400"} />}

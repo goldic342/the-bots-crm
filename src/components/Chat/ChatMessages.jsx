@@ -11,17 +11,17 @@ import { AudioProvider } from "../../contexts/AudioContext";
 import { ChatMessage } from "../../utils/types/chatTypes";
 import DetermineChatBubble from "./DetermineChatBubble.jsx";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll.jsx";
-import { useChats } from "../../contexts/ChatContext.jsx";
 import { useParams } from "react-router-dom";
 import { MESSAGES_LIMIT, MESSAGES_OFFSET } from "../../constants.js";
 import { useSearch } from "../../contexts/SearchContext.jsx";
 import { useFetchMessages } from "../../hooks/useFetchMessages.js";
+import { useMessages } from "../../contexts/MessagesContext.jsx";
 
 const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET + 1 }) => {
   const chatContainerRef = useRef(null);
   const isFirstRender = useRef(true);
 
-  const { addMessages } = useChats();
+  const { addMessages } = useMessages();
   const { chatId, botId, folderId } = useParams();
 
   const { scrollToId } = useSearch();

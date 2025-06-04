@@ -58,6 +58,8 @@ const TemplateItem = ({ template, setText }) => {
 TemplateItem.propTypes = {
   template: PropTypes.shape({
     text: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
+    botId: PropTypes.number.isRequired,
   }).isRequired,
   setText: PropTypes.func.isRequired,
 };

@@ -1,12 +1,18 @@
 import { WSProvider } from "../../../contexts/WSContext";
 import { BotProvider } from "../../../contexts/botContext";
-import { ChatProvider } from "../../../contexts/ChatContext";
+import { ChatsProvider } from "../../../contexts/ChatsContext";
+import { FoldersProvider } from "../../../contexts/FoldersContext";
+import { MessagesProvider } from "../../../contexts/MessagesContext";
 
 const DashboardProviders = ({ children }) => (
   <BotProvider>
-    <ChatProvider>
-      <WSProvider>{children}</WSProvider>
-    </ChatProvider>
+    <FoldersProvider>
+      <MessagesProvider>
+        <ChatsProvider>
+          <WSProvider>{children}</WSProvider>
+        </ChatsProvider>
+      </MessagesProvider>
+    </FoldersProvider>
   </BotProvider>
 );
 

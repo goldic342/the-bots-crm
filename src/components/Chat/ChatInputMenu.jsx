@@ -17,6 +17,7 @@ import PropTypes from "prop-types";
 const ChatInputMenu = ({
   show,
   isDisabled,
+  setText,
   file,
   handleFileChange,
   popupRef,
@@ -45,27 +46,29 @@ const ChatInputMenu = ({
         gap={1}
       >
         <Box position="relative">
-          <label htmlFor="file-upload">
-            <IconButton
-              cursor={"pointer"}
-              isDisabled={isDisabled}
-              icon={
-                <Paperclip
-                  color={useColorModeValue(
-                    "var(--chakra-colors-blackAlpha-600)",
-                    "var(--chakra-colors-whiteAlpha-900)"
-                  )}
-                />
-              }
-              bg={"transparent"}
-              size="sm"
-              _hover={{
-                bg: useColorModeValue("blackAlpha.100", "whiteAlpha.300"),
-              }}
-              as="span"
-              aria-label="Attach file"
-            />
-          </label>
+          <Tooltip label="Прикрепить файл">
+            <label htmlFor="file-upload">
+              <IconButton
+                cursor={"pointer"}
+                isDisabled={isDisabled}
+                icon={
+                  <Paperclip
+                    color={useColorModeValue(
+                      "var(--chakra-colors-blackAlpha-600)",
+                      "var(--chakra-colors-whiteAlpha-900)"
+                    )}
+                  />
+                }
+                bg={"transparent"}
+                size="sm"
+                _hover={{
+                  bg: useColorModeValue("blackAlpha.100", "whiteAlpha.300"),
+                }}
+                as="span"
+                aria-label="Attach file"
+              />
+            </label>
+          </Tooltip>
           <Input
             isDisabled={isDisabled}
             id="file-upload"
@@ -110,7 +113,12 @@ const ChatInputMenu = ({
               as="span"
               aria-label="Template"
             />
-            <TemplateList open={open} templatesRef={templatesRef} />
+
+            <TemplateList
+              open={open}
+              templatesRef={templatesRef}
+              setText={setText}
+            />
           </Box>
         </Tooltip>
       </Flex>
@@ -123,6 +131,7 @@ ChatInputMenu.propTypes = {
   isDisabled: PropTypes.bool.isRequired,
   file: PropTypes.any,
   handleFileChange: PropTypes.func.isRequired,
+  setText: PropTypes.func.isRequired,
   popupRef: PropTypes.any.isRequired, // ref
 };
 

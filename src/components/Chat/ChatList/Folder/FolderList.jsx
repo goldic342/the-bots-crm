@@ -1,16 +1,16 @@
 import { Flex, Skeleton, useToast } from "@chakra-ui/react";
-import { useChats } from "../../../../contexts/ChatContext";
 import useApiRequest from "../../../../hooks/useApiRequest";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { getFolders } from "../../../../api/bots";
 import FolderItem from "./FolderItem";
 import { useBot } from "../../../../contexts/botContext";
+import { useFolders } from "../../../../contexts/FoldersContext";
 
 const FolderList = () => {
   const toast = useToast();
   const { bot } = useBot();
   const botId = bot.id;
-  const { currentFolder, setCurrentFolder } = useChats();
+  const { currentFolder, setCurrentFolder, addFolders, folders } = useFolders();
 
   const allChatsFolder = useMemo(
     () => ({
@@ -22,7 +22,6 @@ const FolderList = () => {
     [botId, bot]
   );
 
-  const [folders, setFolders] = useState([]);
   const [fetchFolders, isLoading, error] = useApiRequest(
     async bId => await getFolders(bId)
   );
@@ -36,7 +35,7 @@ const FolderList = () => {
     const fetchData = async () => {
       const response = await fetchFolders(botId);
       if (response?.folders) {
-        setFolders(response.folders);
+        addFolders(botId, response.folders, "set");
       }
     };
 
@@ -84,14 +83,9 @@ const FolderList = () => {
 
       {isLoading
         ? Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton
-              key={i}
-              width="100px"
-              height="35px"
-              borderRadius="md"
-            />
+            <Skeleton key={i} width="100px" height="35px" borderRadius="md" />
           ))
-        : folders.map(folder => (
+        : folders[botId]?.map(folder => (
             <FolderItem key={folder.id} folder={folder} />
           ))}
     </Flex>

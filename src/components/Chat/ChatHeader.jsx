@@ -10,8 +10,8 @@ import {
 } from "@chakra-ui/react";
 import { ArrowLeft } from "lucide-react";
 import PropTypes from "prop-types";
-import ChatInfoModal from "./ChatInfoModal";
-import { useChats } from "../../contexts/ChatContext";
+import ChatInfoModal from "./Modals/ChatInfoModal";
+import { useChats } from "../../contexts/ChatsContext";
 import { useWS } from "../../contexts/WSContext";
 
 const ChatHeader = ({ onBack }) => {
@@ -55,6 +55,7 @@ const ChatHeader = ({ onBack }) => {
 
       <Avatar
         src={chat.lead?.photo}
+        name={chat.lead.name}
         size="sm"
         cursor="pointer"
         onClick={onOpen}
