@@ -27,9 +27,6 @@ export const MessagesProvider = ({ children }) => {
   const [replyToMessage, setReplyToMessage] = useState(null);
   const [readQueue, setReadQueue] = useState(new Set());
 
-  /* ─── Public helpers ────────────────────────────────────── */
-
-  /** Pull messages from the server only if we don't have them yet */
   const ensureMessagesLoaded = useCallback(
     async chatId => {
       if (messages[chatId]) return;
@@ -101,7 +98,6 @@ export const MessagesProvider = ({ children }) => {
         (grouped[chatId] ||= []).push(Number(msgIdStr));
       }
 
-      /* Remote first, UI second (optimistic could be done too) */
       try {
         await markMessagesAsRead(entries.map(e => Number(e.split(":")[1])));
         Object.entries(grouped).forEach(([cid, ids]) =>

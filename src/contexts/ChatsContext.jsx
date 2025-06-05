@@ -96,19 +96,33 @@ export const ChatsProvider = ({ children }) => {
     [getFolderKey]
   );
 
-  const replaceChatContents = useCallback(
-    (chatId, botId, folderId, newChatData) => {
-      mutateOneChat(chatId, botId, folderId, oldChat => ({
-        ...oldChat,
-        ...newChatData,
-        // Preserve
-        id: oldChat.id,
-        botId: oldChat.botId,
-      }));
-    },
-    [mutateOneChat]
-  );
+  const mutateAllChatInstances = useCallback(
+    (chatId, botId, mutator) => {
+      setChats(prev => {
+        const botChats = prev[botId];
+        if (!botChats) return prev;
 
+        // collect folders that contain that chat
+        const folderIds = Object.entries(botChats)
+          .filter(([_, fChats]) => fChats.some(c => c.id === chatId))
+          .map(([fId]) => fId);
+
+        if (!folderIds.length) return prev;
+
+        const next = { ...prev };
+        folderIds.forEach(folderKey => {
+          next[botId] = {
+            ...next[botId],
+            [folderKey]: next[botId][folderKey].map(c =>
+              c.id === chatId ? mutator(c) : c
+            ),
+          };
+        });
+        return next;
+      });
+    },
+    [] // ✅ no deps needed
+  );
   const updateChatNewStatus = useCallback(
     (chatId, botId, folderId, value = true) =>
       mutateOneChat(chatId, botId, folderId, chat => ({
@@ -118,16 +132,6 @@ export const ChatsProvider = ({ children }) => {
     [mutateOneChat]
   );
 
-  const setLastMessage = useCallback(
-    (chatId, botId, folderId, msg) =>
-      mutateOneChat(chatId, botId, folderId, chat => ({
-        ...chat,
-        lastMessage: msg,
-      })),
-    [mutateOneChat]
-  );
-
-  /** Choose a chat: load messages (if needed) & clear “new” badge */
   const selectChat = useCallback(
     async (chatId, botId, folderId = currentFolder) => {
       const folderKey = getFolderKey(folderId);
@@ -182,9 +186,8 @@ export const ChatsProvider = ({ children }) => {
         selectChat,
         removeChat,
         updateChatNewStatus,
-        setLastMessage,
-        replaceChatContents,
         moveChatToStart,
+        mutateAllChatInstances,
 
         // Expose message helpers so consumers only need one hook
         addMessage,

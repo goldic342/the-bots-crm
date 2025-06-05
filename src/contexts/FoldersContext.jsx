@@ -38,6 +38,17 @@ export const FoldersProvider = ({ children }) => {
     []
   );
 
+  const editFolder = useCallback((botId, folderId, newFolderData) => {
+    setFolders(prev => ({
+      ...prev,
+      [botId]: (prev[botId] || []).map(f =>
+        folderId === f.id
+          ? { ...f, ...newFolderData, id: f.id, botId: f.botId }
+          : f
+      ),
+    }));
+  }, []);
+
   return (
     <FoldersContext.Provider
       value={{
@@ -46,6 +57,7 @@ export const FoldersProvider = ({ children }) => {
         setCurrentFolder,
         addFolders,
         removeFolder,
+        editFolder,
         getFolderKey,
       }}
     >

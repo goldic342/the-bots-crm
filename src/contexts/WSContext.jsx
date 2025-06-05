@@ -12,6 +12,7 @@ import camelcaseKeysDeep from "camelcase-keys-deep";
 import { useBot } from "./botContext";
 import { useRefBridge } from "../hooks/useRefBridge";
 import { useMessages } from "./MessagesContext";
+import { useFolders } from "./FoldersContext";
 
 const WSContext = createContext(undefined);
 
@@ -25,10 +26,14 @@ export const useWS = () => {
 
 export const WSProvider = ({ children }) => {
   const { addMessage, markMessagesAsReadUI } = useMessages();
-  const { chats, addChats, moveChatToStart, replaceChatContents } = useChats();
+  const { chats, addChats, moveChatToStart, mutateAllChatInstances } =
+    useChats();
+  const { editFolder } = useFolders();
   const { token } = useAuth();
   const { bot } = useBot();
+
   const [isConnected, setIsConnected] = useState(false);
+
   const wsRef = useRef(null);
   const chatsRef = useRefBridge(chats);
 
@@ -69,22 +74,30 @@ export const WSProvider = ({ children }) => {
           const newChat = ccData.chat;
           const chatId = newChat.id;
 
-          const folderIds = [];
+          const botChats = chatsRef.current[bot.id];
+          const chatExists =
+            botChats &&
+            Object.values(botChats).some(fChats =>
+              fChats.some(c => c.id === chatId)
+            );
 
-          for (const [fId, fChats] of Object.entries(
-            chatsRef.current[bot.id]
-          )) {
-            if (fChats.some(c => c.id === chatId)) folderIds.push(fId);
-          }
-
-          if (folderIds.length === 0) {
+          if (!chatExists) {
             addChats(bot.id, [newChat], 0, "add", "start");
           } else {
-            folderIds.forEach(fId => {
-              // In each folder mutate the Chat
-              replaceChatContents(chatId, bot.id, fId, newChat);
-              moveChatToStart(chatId, bot.id, fId);
-            });
+            mutateAllChatInstances(
+              chatId,
+              bot.id,
+              (_, __, folderId, oldChat) => {
+                moveChatToStart(chatId, bot.id, folderId);
+                return {
+                  ...oldChat,
+                  ...newChat,
+                  // Preserve
+                  id: oldChat.id,
+                  botId: oldChat.botId,
+                };
+              }
+            );
           }
 
           addMessage(chatId, newChat.lastMessage);
@@ -92,8 +105,19 @@ export const WSProvider = ({ children }) => {
 
         if (data?.event === "mark_message_as_read") {
           const ccData = camelcaseKeysDeep(data);
-          const leadId = ccData.lead?.id;
-          markMessagesAsReadUI(leadId, [ccData.messageIds]);
+          const chatId = ccData.chatId;
+          const update = ccData.data;
+
+          editFolder(bot.id, 0, update.totalUnreadMessagesBot);
+
+          mutateAllChatInstances(chatId, bot.id, (_, __, ___, oldChat) => {
+            return {
+              ...oldChat,
+              totalUnreadMessages: update.totalUnreadMessagesChat,
+            };
+          });
+
+          markMessagesAsReadUI(chatId, [update.ids]);
         }
       } catch (error) {
         console.error(
@@ -112,6 +136,8 @@ export const WSProvider = ({ children }) => {
       }
       setIsConnected(false);
     };
+    // TODO: check for dependecies - some functions use chats (not chatsRef)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, bot?.id]);
 
