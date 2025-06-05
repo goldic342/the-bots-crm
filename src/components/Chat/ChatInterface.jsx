@@ -8,7 +8,7 @@ import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import { useNavigate, useParams } from "react-router-dom";
-import { useChats } from "../../contexts/ChatContext";
+import { useChats } from "../../contexts/ChatsContext";
 import SpinnerLoader from "../ui/SpinnerLoader";
 import { useSearch } from "../../contexts/SearchContext";
 import { MESSAGES_OFFSET } from "../../constants";
@@ -16,12 +16,14 @@ import { useFetchMessages } from "../../hooks/useFetchMessages";
 import { sendMessage } from "../../api/chats";
 import SearchLoading from "./ChatList/Search/SearchLoading";
 import AbsoluteWrapper from "../ui/AbsoluteWrapper";
+import { useMessages } from "../../contexts/MessagesContext";
 
 const ChatInterface = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const { botId, chatId, folderId } = useParams();
   const navigate = useNavigate();
-  const { currentChat, selectChat, messages, addMessages } = useChats();
+  const { messages, addMessages } = useMessages();
+  const { currentChat, selectChat } = useChats();
   const toast = useToast();
 
   const [sendingMessages, setSendingMessages] = useState(new Set());

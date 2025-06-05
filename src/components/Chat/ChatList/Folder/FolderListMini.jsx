@@ -33,7 +33,7 @@ const FolderListMini = () => {
   const [newName, setNewName] = useState("");
   const [createReq, creating, creatingError] = useApiRequest(async name => {
     const res = await createFolder(botId, name);
-    addFolders(botId, [res.folder]);
+    addFolders(botId, [res]);
     setNewName("");
   });
 
@@ -72,7 +72,7 @@ const FolderListMini = () => {
         />
         <IconButton
           aria-label="Создать папку"
-          con={<Plus size={18} />}
+          icon={<Plus size={18} />}
           size="sm"
           isLoading={creating}
           onClick={handleCreate}
