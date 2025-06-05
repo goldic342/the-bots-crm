@@ -136,7 +136,6 @@ export const WSProvider = ({ children }) => {
       }
       setIsConnected(false);
     };
-    // TODO: check for dependecies - some functions use chats (not chatsRef)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, bot?.id]);

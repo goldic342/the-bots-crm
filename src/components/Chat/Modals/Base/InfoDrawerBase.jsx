@@ -34,7 +34,12 @@ const InfoDrawerBase = ({
   const hoverBg = useColorModeValue("gray.100", "gray.700");
 
   return (
-    <Drawer isOpen={isOpen} placement="bottom" size="full" onClose={onClose}>
+    <Drawer
+      isOpen={isOpen}
+      placement={{ base: "bottom", md: "right" }}
+      size={{ base: "full", md: "lg", lg: "lg" }}
+      onClose={onClose}
+    >
       <DrawerOverlay />
 
       <DrawerContent>
