@@ -13,7 +13,7 @@ export const getBot = async botId => {
 };
 
 export const getUserBots = async userId => {
-  const response = await api.get(`/bots/`, { params: { user_id: userId } });
+  const response = await api.get(`/bots`, { params: { user_id: userId } });
   return response.data;
 };
 

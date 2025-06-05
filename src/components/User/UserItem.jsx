@@ -103,7 +103,7 @@ const UserItem = ({ user, isLoading, onEdit, onAddBot, onDelete }) => {
                   variant="ghost"
                   size="sm"
                   colorScheme="blue"
-                  onClick={onEdit}
+                  onClick={() => onEdit(user)}
                   _hover={{ bg: "blue.50" }}
                 />
               </Tooltip>
@@ -114,7 +114,7 @@ const UserItem = ({ user, isLoading, onEdit, onAddBot, onDelete }) => {
                   variant="ghost"
                   size="sm"
                   colorScheme="green"
-                  onClick={onAddBot}
+                  onClick={() => onAddBot(user)}
                   _hover={{ bg: "green.50" }}
                 />
               </Tooltip>
@@ -125,7 +125,7 @@ const UserItem = ({ user, isLoading, onEdit, onAddBot, onDelete }) => {
                   variant="ghost"
                   colorScheme="red"
                   size="sm"
-                  onClick={onDelete}
+                  onClick={() => onDelete(user)}
                   _hover={{ bg: "red.50" }}
                 />
               </Tooltip>
