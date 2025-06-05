@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { useChats } from "../../../contexts/ChatsContext";
-import InfoModalBase from "./Base/InfoModalBase";
+import InfoDrawerBase from "./Base/InfoDrawerBase";
 
 const ChatInfoModal = ({ open, onClose }) => {
   const { currentChat } = useChats();
@@ -28,7 +28,7 @@ const ChatInfoModal = ({ open, onClose }) => {
   ];
 
   return (
-    <InfoModalBase
+    <InfoDrawerBase
       isOpen={open}
       onClose={onClose}
       title="Информация о чате"

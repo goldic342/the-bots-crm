@@ -19,7 +19,7 @@ import SearchResults from "./Search/SearchResults";
 import { useBot } from "../../../contexts/botContext";
 import { getBot } from "../../../api/bots";
 import FolderList from "./Folder/FolderList";
-import BotSettingsModal from "../Modals/BotSettingsModal";
+import BotSettingsDrawer from "../Modals/BotSettingsDrawer";
 
 const ChatListInterface = () => {
   const { isConnected } = useWS();
@@ -104,7 +104,7 @@ const ChatListInterface = () => {
           </>
         )}
       </Flex>
-      <BotSettingsModal
+      <BotSettingsDrawer
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
       />

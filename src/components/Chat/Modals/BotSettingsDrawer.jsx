@@ -1,12 +1,15 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
-import InfoModalBase from "./Base/InfoModalBase";
-import { useBot } from "../../../contexts/botContext";
-import { Divider, VStack } from "@chakra-ui/react";
-import TemplateListMini from "../Templates/TemplateListMini";
-import FolderListMini from "../ChatList/Folder/FolderListMini";
+import { Folder, Text } from "lucide-react";
+import InfoDrawerBase from "./Base/InfoDrawerBase.jsx";
 
-const BotSettingsModal = ({ isOpen, onClose }) => {
+import { useBot } from "../../../contexts/botContext";
+import FolderListMini from "../ChatList/Folder/FolderListMini";
+import TemplateListMini from "../Templates/TemplateListMini";
+
+const BotSettingsDrawer = ({ isOpen, onClose }) => {
   const { bot } = useBot();
+  const [section, setSection] = useState(null);
 
   const details = [
     { id: "id", label: "ID", value: bot.id, copyable: true },
@@ -25,8 +28,26 @@ const BotSettingsModal = ({ isOpen, onClose }) => {
     },
   ].filter(Boolean);
 
+  const actions = [
+    {
+      icon: Folder,
+      label: "Папки",
+      onClick: () => setSection(s => (s === "folders" ? null : "folders")),
+    },
+
+    {
+      icon: Text,
+      label: "Шаблоны",
+      onClick: () => setSection(s => (s === "templates" ? null : "templates")),
+    },
+  ];
+
+  let inner = null;
+  if (section === "folders") inner = <FolderListMini />;
+  if (section === "templates") inner = <TemplateListMini />;
+
   return (
-    <InfoModalBase
+    <InfoDrawerBase
       isOpen={isOpen}
       onClose={onClose}
       title="Настройки бота"
@@ -34,20 +55,16 @@ const BotSettingsModal = ({ isOpen, onClose }) => {
       avatarName={bot.name}
       username={bot.username}
       details={details}
-      size="lg"
+      actions={actions}
     >
-      <VStack align="stretch" spacing={6}>
-        <FolderListMini />
-        <Divider />
-        <TemplateListMini />
-      </VStack>
-    </InfoModalBase>
+      {inner}
+    </InfoDrawerBase>
   );
 };
 
-BotSettingsModal.propTypes = {
+BotSettingsDrawer.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-export default BotSettingsModal;
+export default BotSettingsDrawer;
