@@ -22,6 +22,7 @@ import useApiRequest from "../../hooks/useApiRequest";
 import { addBot, removeBot } from "../../api/users";
 import { getUserBots, getBots } from "../../api/bots";
 import { X } from "lucide-react";
+import InlineItemsList from "../ui/InlineItemsList";
 
 const AddBotModal = ({ isOpen, onClose, selectedUser, onAddBot }) => {
   const [AddBotReq, isAdding, addError] = useApiRequest(
@@ -105,29 +106,15 @@ const AddBotModal = ({ isOpen, onClose, selectedUser, onAddBot }) => {
                   Назначенные боты:
                 </Text>
                 <Box maxH="150px" overflowY="auto" pl={1}>
-                  {currentUserBots.length > 0 ? (
-                    <List spacing={2}>
-                      {currentUserBots.map(bot => (
-                        <ListItem key={bot.id}>
-                          <HStack justify="space-between">
-                            <Text fontSize="sm">{bot.name}</Text>
-                            <IconButton
-                              icon={<X size={16} />}
-                              size="xs"
-                              variant="ghost"
-                              aria-label="Удалить"
-                              onClick={() => handleRemoveBot(bot.id)}
-                              isLoading={isRemoving}
-                            />
-                          </HStack>
-                        </ListItem>
-                      ))}
-                    </List>
-                  ) : (
-                    <Text color="gray.500" fontSize="sm">
-                      Нет ботов
-                    </Text>
-                  )}
+                  <InlineItemsList
+                    items={currentUserBots.map(b => ({
+                      ...b,
+                      id: b.id,
+                      label: b.name,
+                      icon: X,
+                      onClick: () => handleRemoveBot(b.id),
+                    }))}
+                  />
                 </Box>
               </Box>
 
