@@ -10,6 +10,7 @@ import {
   Avatar,
   VStack,
   useColorModeValue,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import Row from "./Row";
@@ -36,9 +37,10 @@ const InfoDrawerBase = ({
   return (
     <Drawer
       isOpen={isOpen}
-      placement={{ base: "bottom", md: "right" }}
-      size={{ base: "full", md: "lg", lg: "lg" }}
+      placement={useBreakpointValue({ base: "bottom", md: "right" })}
+      size={{ base: "full", md: "md", lg: "lg" }}
       onClose={onClose}
+      blockScrollOnMount={false}
     >
       <DrawerOverlay />
 
