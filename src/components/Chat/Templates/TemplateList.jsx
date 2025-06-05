@@ -49,7 +49,11 @@ const TemplateList = ({ Icon, onIconClick }) => {
           <Skeleton key={i} h="38px" mb={2} borderRadius="md" />
         ))
       ) : (
-        <InlineItemsList items={items} contentMaxH="120px" />
+        <InlineItemsList
+          items={items}
+          contentMaxH="120px"
+          noItemsText={"Шаблонов нет."}
+        />
       )}
     </Box>
   );

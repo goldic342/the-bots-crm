@@ -15,13 +15,17 @@ import PropTypes from "prop-types";
  *
  * @param {{ items: Item[]; contentMaxH?: string | number }} props
  */
-const InlineItemsList = ({ items, contentMaxH = "120px" }) => {
+const InlineItemsList = ({
+  items,
+  contentMaxH = "120px",
+  noItemsText = "Элементов нет.",
+}) => {
   const itemBg = useColorModeValue("gray.100", "gray.800");
 
   if (!items || items.length === 0) {
     return (
       <Text color="gray.500" fontSize="sm">
-        Нет элементов
+        {noItemsText}
       </Text>
     );
   }

@@ -141,7 +141,11 @@ const FolderDrawer = ({ isOpen, onClose }) => {
                 <Skeleton key={i} h="38px" mb={2} borderRadius="md" />
               ))
             ) : (
-              <InlineItemsList items={items} contentMaxH="120px" />
+              <InlineItemsList
+                items={items}
+                contentMaxH="120px"
+                noItemsText={"Папок нет."}
+              />
             )}
           </Box>
         </DrawerBody>
