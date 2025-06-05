@@ -1,27 +1,38 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import PropTypes from "prop-types";
-import { Folder, Text as IconText } from "lucide-react"; // alias to avoid chakra’s Text
+import { Folder, Text as IconText } from "lucide-react";
 import { useDisclosure } from "@chakra-ui/react";
 
 import InfoDrawerBase from "./Base/InfoDrawerBase.jsx";
 import { useBot } from "../../../contexts/botContext";
 
-import FolderListMini from "../ChatList/Folder/FolderListMini";
 import TemplateDrawer from "../Templates/TemplateDrawer";
+import FolderDrawer from "../ChatList/Folder/FolderDrawer.jsx";
 
 const BotSettingsDrawer = ({ isOpen, onClose }) => {
   const { bot } = useBot();
-  const [section, setSection] = useState(null);
 
+  // Drawer control: Templates
   const {
     isOpen: isTemplatesOpen,
     onOpen: openTemplates,
     onClose: closeTemplates,
   } = useDisclosure();
 
+  // Drawer control: Folders
+  const {
+    isOpen: isFoldersOpen,
+    onOpen: openFolders,
+    onClose: closeFolders,
+  } = useDisclosure();
+
+  // Auto-close nested drawers when base drawer closes
   useEffect(() => {
-    if (!isOpen) closeTemplates();
-  }, [isOpen, closeTemplates]);
+    if (!isOpen) {
+      closeTemplates();
+      closeFolders();
+    }
+  }, [isOpen, closeTemplates, closeFolders]);
 
   const details = [
     { id: "id", label: "ID", value: bot.id, copyable: true },
@@ -44,7 +55,7 @@ const BotSettingsDrawer = ({ isOpen, onClose }) => {
     {
       icon: Folder,
       label: "Папки",
-      onClick: () => setSection(s => (s === "folders" ? null : "folders")),
+      onClick: openFolders,
     },
     {
       icon: IconText,
@@ -53,11 +64,9 @@ const BotSettingsDrawer = ({ isOpen, onClose }) => {
     },
   ];
 
-  let inner = null;
-  if (section === "folders") inner = <FolderListMini />;
-
   const handleClose = () => {
     closeTemplates();
+    closeFolders();
     onClose();
   };
 
@@ -72,10 +81,9 @@ const BotSettingsDrawer = ({ isOpen, onClose }) => {
         username={bot.username}
         details={details}
         actions={actions}
-      >
-        {inner}
-      </InfoDrawerBase>
+      />
 
+      <FolderDrawer isOpen={isFoldersOpen} onClose={closeFolders} />
       <TemplateDrawer isOpen={isTemplatesOpen} onClose={closeTemplates} />
     </>
   );

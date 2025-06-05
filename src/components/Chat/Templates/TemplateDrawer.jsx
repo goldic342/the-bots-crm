@@ -16,45 +16,66 @@ import {
 } from "@chakra-ui/react";
 import { Plus, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useTemplates } from "../../../contexts/TemplatesContext";
-import useEntityManager from "../../../hooks/useEntityManager";
 import useApiRequest from "../../../hooks/useApiRequest";
 import InlineItemsList from "../../ui/InlineItemsList";
 
-const TemplateDrawerMini = ({ isOpen, onClose }) => {
+import {
+  removeTemplate as removeFetch,
+  createTemplate as createFetch,
+  getTemplates as loadFetch,
+} from "../../../api/templates";
+import { useParams } from "react-router-dom";
+
+const TemplateDrawer = ({ isOpen, onClose }) => {
+  const { botId } = useParams();
   const toast = useToast();
   const initialRef = useRef(null);
-  const { templates, refresh, addTemplate, removeTemplate } = useTemplates();
 
-  useEntityManager({ refresh }, []);
-
+  const [templates, setTemplates] = useState([]);
   const [text, setText] = useState("");
-  const [createReq, creating, creatingError] = useApiRequest(async t =>
-    addTemplate(t)
-  );
 
-  const handleCreate = async () => {
-    const trimmed = text.trim();
-    if (!trimmed) return;
-    await createReq(trimmed);
+  const [loadTemplates, loading, loadingError] = useApiRequest(async () => {
+    const result = await loadFetch(botId);
+    setTemplates(result.templates);
+  });
+
+  const [createReq, creating, creatingError] = useApiRequest(async newText => {
+    const newItem = await createFetch(botId, newText);
+    setTemplates(prev => [newItem, ...prev]);
     setText("");
     initialRef.current?.focus();
-  };
+  });
 
-  const [deleteReq, deleting, deletingError] = useApiRequest(async id =>
-    removeTemplate(id)
-  );
+  const [deleteReq, deleting, deletingError] = useApiRequest(async id => {
+    await removeFetch(botId, id);
+    setTemplates(prev => prev.filter(t => t.id !== id));
+  });
 
   useEffect(() => {
-    if (!creatingError && !deletingError) return;
+    if (isOpen) loadTemplates();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!creatingError && !deletingError && !loadingError) return;
     toast({
-      title: `Не удалось ${creatingError ? "создать" : "удалить"} шаблон`,
+      title: `Не удалось ${
+        creatingError
+          ? "создать"
+          : deletingError
+            ? "удалить"
+            : "загрузить шаблоны"
+      }`,
       status: "error",
       position: "bottom-right",
       duration: 3000,
-      isClosable: true,
     });
-  }, [creatingError, deletingError, toast]);
+  }, [creatingError, deletingError, loadingError, toast]);
+
+  const handleCreate = () => {
+    if (!text.trim()) return;
+    createReq(text.trim());
+  };
 
   const items = useMemo(
     () =>
@@ -72,21 +93,20 @@ const TemplateDrawerMini = ({ isOpen, onClose }) => {
       isOpen={isOpen}
       placement="right"
       onClose={onClose}
-      size={"lg"}
+      size="lg"
       initialFocusRef={initialRef}
     >
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-
         <DrawerHeader borderBottomWidth="1px">
           Шаблоны ответов
           <Text fontSize="sm" color="gray.500" mt={1}>
-            Создайте, просматривайте и удаляйте текстовые шаблоны{" "}
+            Создайте, просматривайте и удаляйте текстовые шаблоны
           </Text>
         </DrawerHeader>
 
-        <DrawerBody pt={4}>
+        <DrawerBody pt={4} overflowY="auto" maxH="calc(100vh - 160px)">
           <HStack
             mb={4}
             as="form"
@@ -99,12 +119,12 @@ const TemplateDrawerMini = ({ isOpen, onClose }) => {
               ref={initialRef}
               placeholder="Новый шаблон"
               value={text}
-              borderRadius={"md"}
               onChange={e => setText(e.target.value)}
               onKeyDown={e => {
                 if (e.key === "Escape") setText("");
               }}
               size="md"
+              borderRadius="md"
               isDisabled={creating}
             />
             <Tooltip label="Создать шаблон" hasArrow>
@@ -119,13 +139,13 @@ const TemplateDrawerMini = ({ isOpen, onClose }) => {
             </Tooltip>
           </HStack>
 
-          <Box css={{ scrollbarWidth: "thin" }} pr={1}>
-            {creating || deleting ? (
+          <Box pr={1}>
+            {loading ? (
               Array.from({ length: 3 }).map((_, i) => (
                 <Skeleton key={i} h="38px" mb={2} borderRadius="md" />
               ))
             ) : (
-              <InlineItemsList items={items} contentMaxH={32} />
+              <InlineItemsList items={items} contentMaxH="120px" />
             )}
           </Box>
         </DrawerBody>
@@ -134,4 +154,4 @@ const TemplateDrawerMini = ({ isOpen, onClose }) => {
   );
 };
 
-export default TemplateDrawerMini;
+export default TemplateDrawer;
