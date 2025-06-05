@@ -17,10 +17,6 @@ export const useMessages = () => {
   return ctx;
 };
 
-/**
- * Stores message lists *per chat*, deals with the “mark as read” queue, and
- * exposes helpers for components **or other contexts** (e.g. ChatsContext).
- */
 export const MessagesProvider = ({ children }) => {
   // { [chatId]: Message[] }
   const [messages, setMessages] = useState({});
@@ -71,8 +67,6 @@ export const MessagesProvider = ({ children }) => {
     []
   );
 
-  /* ─── Mark-as-read side-effect ──────────────────────────── */
-
   const markMessagesAsReadUI = useCallback(
     (chatId, messageIds) =>
       setMessages(prev => ({
@@ -90,22 +84,24 @@ export const MessagesProvider = ({ children }) => {
       const entries = Array.from(readQueue);
       setReadQueue(new Set());
 
-      /** Group by chat for efficient state updates */
       const grouped = {};
       for (const entry of entries) {
         const [chatIdStr, msgIdStr] = entry.split(":");
         const chatId = Number(chatIdStr);
-        (grouped[chatId] ||= []).push(Number(msgIdStr));
+
+        grouped[chatId] ??= [];
+        grouped[chatId].push(Number(msgIdStr));
       }
 
-      try {
-        await markMessagesAsRead(entries.map(e => Number(e.split(":")[1])));
-        Object.entries(grouped).forEach(([cid, ids]) =>
-          markMessagesAsReadUI(Number(cid), ids)
-        );
-      } catch (err) {
-        console.error("Error marking messages as read:", err);
-      }
+      Object.entries(grouped).forEach(async ([cid, ids]) => {
+        try {
+          await markMessagesAsRead(cid, ids);
+        } catch (error) {
+          console.error(
+            `Failed to mark message as read. ChatId: ${cid}, Message ids: ${ids}, error: ${error}`
+          );
+        }
+      });
     }, MESSAGE_READ_DELAY_MS);
 
     return () => clearTimeout(timer);

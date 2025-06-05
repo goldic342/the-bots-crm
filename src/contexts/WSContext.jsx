@@ -117,7 +117,7 @@ export const WSProvider = ({ children }) => {
             };
           });
 
-          markMessagesAsReadUI(chatId, [update.ids]);
+          markMessagesAsReadUI(chatId, update.ids);
         }
       } catch (error) {
         console.error(
