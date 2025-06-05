@@ -75,9 +75,10 @@ export const sendMessage = async (
   return response.data;
 };
 
-export const markMessagesAsRead = async ids => {
+export const markMessagesAsRead = async (ids, chatId) => {
   const response = await api.patch(`/messages`, {
     message_ids: ids,
+    chat_id: chatId,
   });
   return response.data;
 };
