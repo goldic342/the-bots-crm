@@ -14,7 +14,7 @@ import { deleteUser } from "../../api/users";
 import useApiRequest from "../../hooks/useApiRequest";
 
 const DeleteModal = ({ isOpen, onClose, selectedUser, onDelete }) => {
-  const [deleteUserReq, isLoading, error] = useApiRequest(async (id) => {
+  const [deleteUserReq, isLoading, error] = useApiRequest(async id => {
     return await deleteUser(id);
   });
 

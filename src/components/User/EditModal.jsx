@@ -20,12 +20,12 @@ const EditModal = ({ isOpen, onClose, selectedUser, onEdit }) => {
     name: "",
   });
 
-  const [editUserReq, isLoading, error] = useApiRequest(async (id) => {
+  const [editUserReq, isLoading, error] = useApiRequest(async id => {
     return await editUser(
       id,
       formData.username,
       formData.password,
-      formData.name,
+      formData.name
     );
   });
 

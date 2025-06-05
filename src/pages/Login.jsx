@@ -41,10 +41,7 @@ const Login = () => {
       return;
     }
     try {
-      const { accessToken } = await login(
-        formData.username,
-        formData.password
-      );
+      const { accessToken } = await login(formData.username, formData.password);
       setToken(accessToken);
       navigate("/dashboard/bots");
     } catch (error) {

@@ -24,7 +24,7 @@ export const SearchProvider = ({ children }) => {
   const [fetchSearchResults, isSearching, error] = useApiRequest(
     async (locOffset = 1) => {
       return await searchMessages(botId, searchQuery, locOffset);
-    },
+    }
   );
 
   useEffect(() => {

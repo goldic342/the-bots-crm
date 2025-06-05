@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 const useInfiniteScroll = (
   { isLoading, onLoadMore, useEffectDropCondition = false },
-  options = { threshold: 0.1 },
+  options = { threshold: 0.1 }
 ) => {
   // FIXME: well.... it works (kinda) sometimes double-fetching. need fix (delay not working)
   const observerRef = useRef(null);

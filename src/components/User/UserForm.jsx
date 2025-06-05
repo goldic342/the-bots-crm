@@ -31,7 +31,7 @@ const UserForm = ({
     let errors = {};
     let isAnyFieldFilled = false;
 
-    Object.keys(formData).forEach((key) => {
+    Object.keys(formData).forEach(key => {
       const value = formData[key]?.trim();
       if (value.length > 0) {
         isAnyFieldFilled = true;
@@ -73,7 +73,7 @@ const UserForm = ({
           <Input
             placeholder="Username"
             value={formData.username}
-            onChange={(e) =>
+            onChange={e =>
               setFormData({ ...formData, username: e.target.value })
             }
             isInvalid={!!formErrors.username}
@@ -88,7 +88,7 @@ const UserForm = ({
           <Input
             placeholder="Имя"
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={e => setFormData({ ...formData, name: e.target.value })}
             isInvalid={!!formErrors.name}
           />
           {formErrors.name && (
@@ -102,7 +102,7 @@ const UserForm = ({
             defaultShow={true}
             size="md"
             value={formData.password}
-            onChange={(e) =>
+            onChange={e =>
               setFormData({ ...formData, password: e.target.value })
             }
             isInvalid={!!formErrors.password}

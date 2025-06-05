@@ -22,20 +22,20 @@ export const AudioProvider = ({ children }) => {
   const [currentAudioId, setCurrentAudioId] = useState(null);
 
   const register = useCallback((id, ref, time) => {
-    setQueue((prev) => {
-      if (prev.some((item) => item.id === id)) return prev;
+    setQueue(prev => {
+      if (prev.some(item => item.id === id)) return prev;
       return [...prev, { id, time }].sort((a, b) => a.time - b.time);
     });
     audioRefs.current[id] = ref;
   }, []);
 
-  const unregister = useCallback((id) => {
-    setQueue((prev) => prev.filter((item) => item.id !== id));
+  const unregister = useCallback(id => {
+    setQueue(prev => prev.filter(item => item.id !== id));
     delete audioRefs.current[id];
   }, []);
 
   const playAudio = useCallback(
-    (id) => {
+    id => {
       if (currentAudioId !== null) {
         // Pause and reset old audio ref
         const oldRef = audioRefs.current[currentAudioId]?.current;
@@ -51,10 +51,10 @@ export const AudioProvider = ({ children }) => {
         setCurrentAudioId(id);
       }
     },
-    [currentAudioId],
+    [currentAudioId]
   );
 
-  const pauseAudio = useCallback((id) => {
+  const pauseAudio = useCallback(id => {
     const ref = audioRefs.current[id]?.current;
     if (ref) {
       ref.pause();
@@ -65,7 +65,7 @@ export const AudioProvider = ({ children }) => {
   const playNext = useCallback(() => {
     if (!queue.length) return;
 
-    const currentIndex = queue.findIndex((item) => item.id === currentAudioId);
+    const currentIndex = queue.findIndex(item => item.id === currentAudioId);
     setCurrentAudioId(null);
     if (currentIndex === -1 || currentIndex === queue.length - 1) return;
 

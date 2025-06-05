@@ -16,7 +16,7 @@ const PasswordInput = ({
         type={show ? "text" : "password"}
         placeholder="Пароль"
         size={size}
-        onChange={(e) => onChange(e)}
+        onChange={e => onChange(e)}
         {...props}
       />
       <InputRightElement width="4.5rem">

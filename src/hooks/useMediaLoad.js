@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-const useMediaLoad = (src) => {
+const useMediaLoad = src => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
   const mediaRef = useRef(null);

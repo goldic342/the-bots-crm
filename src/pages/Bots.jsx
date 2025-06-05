@@ -23,8 +23,8 @@ const Bots = () => {
     fetchData();
   }, []);
 
-  const handleSelectBot = (botId) => {
-    setBot(bots.find((b) => b.id == botId));
+  const handleSelectBot = botId => {
+    setBot(bots.find(b => b.id == botId));
     navigate(`/dashboard/bots/${botId}`);
   };
 

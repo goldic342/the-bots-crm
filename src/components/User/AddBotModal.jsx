@@ -25,15 +25,15 @@ import { X } from "lucide-react";
 
 const AddBotModal = ({ isOpen, onClose, selectedUser, onAddBot }) => {
   const [AddBotReq, isAdding, addError] = useApiRequest(
-    async (userId, botId) => await addBot(userId, botId),
+    async (userId, botId) => await addBot(userId, botId)
   );
 
   const [RemoveBotReq, isRemoving, removeError] = useApiRequest(
-    async (userId, botId) => await removeBot(userId, botId),
+    async (userId, botId) => await removeBot(userId, botId)
   );
 
   const [fetchBots, isFetchingBots, fetchError] = useApiRequest(getBots);
-  const [fetchUserBots] = useApiRequest((userId) => getUserBots(userId));
+  const [fetchUserBots] = useApiRequest(userId => getUserBots(userId));
 
   const [currentUserBots, setCurrentUserBots] = useState([]);
   const [availableBots, setAvailableBots] = useState([]);
@@ -48,10 +48,8 @@ const AddBotModal = ({ isOpen, onClose, selectedUser, onAddBot }) => {
     const allBots = allBotsRes?.bots || [];
     const userBots = userBotsRes?.bots || [];
 
-    const userBotIds = userBots.map((bot) => bot.id);
-    const unassignedBots = allBots.filter(
-      (bot) => !userBotIds.includes(bot.id),
-    );
+    const userBotIds = userBots.map(bot => bot.id);
+    const unassignedBots = allBots.filter(bot => !userBotIds.includes(bot.id));
 
     setCurrentUserBots(userBots);
     setAvailableBots(unassignedBots);
@@ -73,7 +71,7 @@ const AddBotModal = ({ isOpen, onClose, selectedUser, onAddBot }) => {
     setSelectedBotId("");
   };
 
-  const handleRemoveBot = async (botId) => {
+  const handleRemoveBot = async botId => {
     await RemoveBotReq(selectedUser.id, botId);
     if (removeError) return;
 
@@ -109,7 +107,7 @@ const AddBotModal = ({ isOpen, onClose, selectedUser, onAddBot }) => {
                 <Box maxH="150px" overflowY="auto" pl={1}>
                   {currentUserBots.length > 0 ? (
                     <List spacing={2}>
-                      {currentUserBots.map((bot) => (
+                      {currentUserBots.map(bot => (
                         <ListItem key={bot.id}>
                           <HStack justify="space-between">
                             <Text fontSize="sm">{bot.name}</Text>
@@ -143,10 +141,10 @@ const AddBotModal = ({ isOpen, onClose, selectedUser, onAddBot }) => {
                   <Select
                     placeholder="Выберите бота"
                     value={selectedBotId}
-                    onChange={(e) => setSelectedBotId(e.target.value)}
+                    onChange={e => setSelectedBotId(e.target.value)}
                     size="sm"
                   >
-                    {availableBots.map((bot) => (
+                    {availableBots.map(bot => (
                       <option key={bot.id} value={bot.id}>
                         {bot.name}
                       </option>

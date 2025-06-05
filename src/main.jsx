@@ -12,6 +12,6 @@ createRoot(document.getElementById("root")).render(
       router={router}
       future={{ v7_startTransition: true, v7_relativeSplatPath: true }} // remove warnings
     ></RouterProvider>
-  </ChakraProvider>,
+  </ChakraProvider>
   //</StrictMode>,
 );

@@ -19,7 +19,7 @@ const ChatAlbumBubble = ({ message }) => {
   const hasMore = urls.length > maxDisplayCount;
   const visibleItems = urls.slice(
     0,
-    hasMore ? maxDisplayCount - 1 : maxDisplayCount,
+    hasMore ? maxDisplayCount - 1 : maxDisplayCount
   );
 
   const handleClick = () => {

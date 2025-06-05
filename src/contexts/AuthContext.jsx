@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
 
   // Attach the token to every outgoing API request
   useLayoutEffect(() => {
-    const authInterceptor = api.interceptors.request.use((config) => {
+    const authInterceptor = api.interceptors.request.use(config => {
       if (token && !config._retry) {
         config.headers.Authorization = `${TokenType} ${token}`;
       }
@@ -92,8 +92,8 @@ export const AuthProvider = ({ children }) => {
     let refreshQueue = [];
 
     const refreshInterceptor = api.interceptors.response.use(
-      (response) => response,
-      async (error) => {
+      response => response,
+      async error => {
         if (
           error.response?.status === UnauthorizedStatusCode &&
           error.response?.data?.detail === UnauthorizedMessage
@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }) => {
               error.config.headers.Authorization = `${TokenType} ${newAccessToken}`;
 
               // Process queued requests with the new token
-              refreshQueue.forEach((cb) => cb(newAccessToken));
+              refreshQueue.forEach(cb => cb(newAccessToken));
               refreshQueue = [];
 
               return api(error.config);
@@ -119,8 +119,8 @@ export const AuthProvider = ({ children }) => {
             }
           } else {
             // Queue any API calls while token is refreshing
-            return new Promise((resolve) => {
-              refreshQueue.push((newAccessToken) => {
+            return new Promise(resolve => {
+              refreshQueue.push(newAccessToken => {
                 error.config.headers.Authorization = `${TokenType} ${newAccessToken}`;
                 resolve(api(error.config));
               });
@@ -128,7 +128,7 @@ export const AuthProvider = ({ children }) => {
           }
         }
         return Promise.reject(error);
-      },
+      }
     );
 
     return () => {

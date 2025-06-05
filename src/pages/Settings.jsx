@@ -35,7 +35,7 @@ const Settings = () => {
 
   const toast = useToast();
 
-  const handleLogout = async (e) => {
+  const handleLogout = async e => {
     e.preventDefault();
 
     await logout();
@@ -71,7 +71,7 @@ const Settings = () => {
       justify="center"
       bgGradient={useColorModeValue(
         "linear(to-br, blue.50, gray.100)",
-        "linear(to-br, gray.900, blue.900)",
+        "linear(to-br, gray.900, blue.900)"
       )}
     >
       <Box

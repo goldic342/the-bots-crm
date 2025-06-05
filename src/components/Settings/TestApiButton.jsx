@@ -6,7 +6,7 @@ import { useEffect } from "react";
 const TestApiButton = () => {
   const toast = useToast();
   const [testApi, isLoading, error] = useApiRequest(
-    async () => await getMe(true),
+    async () => await getMe(true)
   );
 
   const handleClick = async () => {

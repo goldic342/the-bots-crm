@@ -34,12 +34,12 @@ const Users = () => {
   const [fetchUsers, isLoading, error] = useApiRequest(getUsers);
   const [createUserRequest, isCreatingUser, createUserError] = useApiRequest(
     async () =>
-      await createUser(formData.username, formData.password, formData.name),
+      await createUser(formData.username, formData.password, formData.name)
   );
 
   const bgGradient = useColorModeValue(
     "linear(to-tr, white, gray.50, blue.50)",
-    "linear(to-tr, gray.800, gray.800, blue.900)",
+    "linear(to-tr, gray.800, gray.800, blue.900)"
   );
   const cardBg = useColorModeValue("white", "gray.800");
   const cardBorder = useColorModeValue("gray.200", "gray.600");
@@ -52,34 +52,34 @@ const Users = () => {
     setFormData({ username: "", password: "", name: "" });
   };
 
-  const handleEditUser = (user) => {
-    setUsers((prev) => ({
+  const handleEditUser = user => {
+    setUsers(prev => ({
       ...prev,
-      users: prev.users.map((u) =>
+      users: prev.users.map(u =>
         u.id !== user.id
           ? u
-          : { ...u, username: user.username, name: user.name },
+          : { ...u, username: user.username, name: user.name }
       ),
     }));
   };
 
-  const handleDeleteUser = (user) => {
-    setUsers((prev) => ({
+  const handleDeleteUser = user => {
+    setUsers(prev => ({
       ...prev,
-      users: prev.users.filter((u) => u.id !== user.id),
+      users: prev.users.filter(u => u.id !== user.id),
     }));
   };
 
   const handleAddBot = (user, botId) => {
-    setUsers((prev) => ({
+    setUsers(prev => ({
       ...prev,
-      users: prev.users.map((u) =>
+      users: prev.users.map(u =>
         u.id !== user.id
           ? u
           : {
               ...u,
               botsIds: [...(u.botsIds || []), botId],
-            },
+            }
       ),
     }));
   };

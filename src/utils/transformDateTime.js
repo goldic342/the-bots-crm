@@ -1,7 +1,7 @@
 export const transformDateTime = (
   dateStr,
   onlyTime = false,
-  fullDateTime = false,
+  fullDateTime = false
 ) => {
   //If it's today – only show HH:MM
   //If it’s this week – show weekday name (вт, ср, etc)

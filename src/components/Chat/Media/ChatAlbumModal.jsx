@@ -20,12 +20,12 @@ const ChatAlbumModal = ({ isOpen, onClose, items, createdAt }) => {
 
   const currentItem = items[currentIndex];
   const handleNext = () =>
-    setCurrentIndex((prev) => (prev === items.length - 1 ? 0 : prev + 1));
+    setCurrentIndex(prev => (prev === items.length - 1 ? 0 : prev + 1));
   const handlePrev = () =>
-    setCurrentIndex((prev) => (prev === 0 ? items.length - 1 : prev - 1));
+    setCurrentIndex(prev => (prev === 0 ? items.length - 1 : prev - 1));
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = event => {
       // Vim metioned btw
       if (event.key === "ArrowRight" || event.key === "l") {
         handleNext();
@@ -145,7 +145,7 @@ const ChatAlbumModal = ({ isOpen, onClose, items, createdAt }) => {
                 return (
                   <Box
                     key={idx}
-                    ref={(el) => (thumbnailRefs.current[idx] = el)}
+                    ref={el => (thumbnailRefs.current[idx] = el)}
                     border={
                       isActive ? "2px solid white" : "2px solid transparent"
                     }
@@ -192,7 +192,7 @@ ChatAlbumModal.propTypes = {
     PropTypes.shape({
       type: PropTypes.oneOf(["image", "video"]).isRequired,
       src: PropTypes.string.isRequired,
-    }),
+    })
   ).isRequired,
   createdAt: PropTypes.string,
 };

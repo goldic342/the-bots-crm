@@ -10,11 +10,11 @@ const SidebarItem = ({ name, icon, link, iconOnly = false, ...props }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const activeColor = useColorModeValue(
     "var(--chakra-colors-primary-600)",
-    "var(--chakra-colors-primary-300)",
+    "var(--chakra-colors-primary-300)"
   );
   const activeBg = useColorModeValue(
     "var(--chakra-colors-primary-100)",
-    "var(--chakra-colors-primary-700)",
+    "var(--chakra-colors-primary-700)"
   );
 
   return (

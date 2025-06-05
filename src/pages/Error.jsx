@@ -47,7 +47,7 @@ const Error = () => {
 
   const bgGradient = useColorModeValue(
     "linear(to-br, gray.50, blue.50)",
-    "linear(to-br, gray.900, blue.900)",
+    "linear(to-br, gray.900, blue.900)"
   );
 
   const textColor = useColorModeValue("gray.800", "gray.100");

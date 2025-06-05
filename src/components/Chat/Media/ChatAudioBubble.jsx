@@ -56,7 +56,7 @@ const ChatAudioBubble = ({ message }) => {
 
   const primaryRaw = useColorModeValue(
     "var(--chakra-colors-primary-500)",
-    "var(--chakra-colors-primary-400)",
+    "var(--chakra-colors-primary-400)"
   );
   const { primary } = useColors();
   const iconColor = isOwn ? primaryRaw : "white";
@@ -67,7 +67,7 @@ const ChatAudioBubble = ({ message }) => {
     isSeekingRef.current = isSeeking;
   }, [isSeeking]);
 
-  const formatTime = (time) => {
+  const formatTime = time => {
     if (isNaN(time)) return "0:00";
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
@@ -112,7 +112,7 @@ const ChatAudioBubble = ({ message }) => {
     };
   }, [updateProgress, message.id, audioRef, playNext]);
 
-  const handleSeekCommit = (value) => {
+  const handleSeekCommit = value => {
     if (!audioRef.current) return;
     const newTime = (value / 100) * audioRef.current.duration;
     audioRef.current.currentTime = newTime;
@@ -152,7 +152,7 @@ const ChatAudioBubble = ({ message }) => {
             max={100}
             w={92}
             onChangeStart={() => setIsSeeking(true)}
-            onChange={(v) => setProgress(v)}
+            onChange={v => setProgress(v)}
             onChangeEnd={handleSeekCommit}
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
@@ -168,7 +168,7 @@ const ChatAudioBubble = ({ message }) => {
               placement="top"
               isOpen={showTooltip}
               label={formatTime(
-                (progress / 100) * (audioRef.current?.duration || 0),
+                (progress / 100) * (audioRef.current?.duration || 0)
               )}
             >
               <SliderThumb />

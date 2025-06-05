@@ -119,10 +119,7 @@ const DashboardRoot = () => {
   );
 
   // Mobile Sidebar: Combine primary and settings items in one bottom bar.
-  const mobileSidebarItems = [
-    ...primarySidebarItems,
-    settingsSidebarItem,
-  ];
+  const mobileSidebarItems = [...primarySidebarItems, settingsSidebarItem];
 
   const MobileSidebar = () => (
     <Flex

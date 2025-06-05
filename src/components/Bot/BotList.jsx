@@ -21,8 +21,8 @@ const BotsList = ({ bots, onSelectBot, isLoading, error }) => {
       return;
     }
 
-    const foundBots = bots.filter((b) =>
-      b.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    const foundBots = bots.filter(b =>
+      b.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setSearchResult(foundBots);
   }, [searchQuery, bots]);
@@ -54,7 +54,7 @@ const BotsList = ({ bots, onSelectBot, isLoading, error }) => {
         <Box w="full">
           <Input
             placeholder="Поиск ботов..."
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={e => setSearchQuery(e.target.value)}
             value={searchQuery}
           />
         </Box>
@@ -72,7 +72,7 @@ const BotsList = ({ bots, onSelectBot, isLoading, error }) => {
             Ничего не найдено :(
           </Text>
         ) : (
-          searchResult.map((b) => (
+          searchResult.map(b => (
             <BotItem key={b.id} bot={b} onClick={() => onSelectBot(b.id)} />
           ))
         )}

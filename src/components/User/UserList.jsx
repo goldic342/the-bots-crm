@@ -32,17 +32,17 @@ const UserList = ({
 
   const users = usersData?.users ?? [];
 
-  const handleDeleteClick = (user) => {
+  const handleDeleteClick = user => {
     setSelectedUser(user);
     onOpen();
   };
 
-  const handleEditClick = (user) => {
+  const handleEditClick = user => {
     setSelectedUser(user);
     setIsEditOpen(true);
   };
 
-  const handleAddBotClick = (user) => {
+  const handleAddBotClick = user => {
     setSelectedUser(user);
     setIsAddBotOpen(true);
   };
@@ -105,7 +105,7 @@ const UserList = ({
   return (
     <Box w="full">
       <VStack spacing={4} w="full">
-        {users.map((user) => (
+        {users.map(user => (
           <UserItem
             key={user.id}
             user={user}

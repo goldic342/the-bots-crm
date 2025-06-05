@@ -12,7 +12,7 @@ const SearchBar = () => {
       <Input
         placeholder="Поиск сообщений..."
         value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        onChange={e => setSearchQuery(e.target.value)}
         autoFocus
       />
     </InputGroup>

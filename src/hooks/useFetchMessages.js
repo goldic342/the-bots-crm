@@ -9,7 +9,7 @@ export const useFetchMessages = () => {
   const [getMessages, isLoadingMessages, messagesError] = useApiRequest(
     async (locOffset = 1, limit = MESSAGES_LIMIT) => {
       return await fetchMessages(leadId, botId, locOffset, limit);
-    },
+    }
   );
 
   return [getMessages, isLoadingMessages, messagesError];

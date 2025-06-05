@@ -33,17 +33,17 @@ const theme = extendTheme({
 
   components: {
     Button: {
-      baseStyle: (props) => ({
+      baseStyle: props => ({
         fontWeight: "bold",
         borderRadius: "md",
       }),
       variants: {
-        solid: (props) => ({
+        solid: props => ({
           bg: mode("primary.500", "primary.600")(props),
           color: "white",
           _hover: { bg: mode("primary.600", "primary.300")(props) },
         }),
-        outline: (props) => ({
+        outline: props => ({
           borderColor: mode("primary.300", "primary.500")(props),
           fontWeight: "semibold",
           color: mode("primary.500", "primary.400")(props),
@@ -60,19 +60,19 @@ const theme = extendTheme({
       },
     },
     Text: {
-      baseStyle: (props) => ({
+      baseStyle: props => ({
         color: mode("gray.700", "gray.200")(props),
       }),
     },
     Heading: {
-      baseStyle: (props) => ({
+      baseStyle: props => ({
         fontWeight: "bold",
         color: mode("gray.900", "whiteAlpha.900")(props),
       }),
     },
     Input: {
       variants: {
-        standard: (props) => ({
+        standard: props => ({
           field: {
             borderWidth: "1px",
             bg: mode("normal", "gray.700")(props),
@@ -80,7 +80,7 @@ const theme = extendTheme({
             _focus: { borderColor: "primary.500", boxShadow: "outline" },
           },
         }),
-        blackBorder: (props) => ({
+        blackBorder: props => ({
           field: {
             borderColor: mode("black", "whiteAlpha.500")(props),
             borderWidth: "2px",

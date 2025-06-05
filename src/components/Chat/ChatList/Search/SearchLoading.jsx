@@ -44,7 +44,7 @@ const SearchLoading = ({ error }) => {
 
     const timeout = setTimeout(
       changeMessage,
-      Math.random() * (5000 - 2000) + 2000,
+      Math.random() * (5000 - 2000) + 2000
     );
 
     return () => clearTimeout(timeout);

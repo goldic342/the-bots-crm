@@ -12,7 +12,7 @@ export const createUser = async (username, password, name) => {
   return response.data;
 };
 
-export const deleteUser = async (userId) => {
+export const deleteUser = async userId => {
   const response = await api.delete(`/users/${userId}`);
   return response.data;
 };
