@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { Paperclip, Mail } from "lucide-react";
 import { useRef, useState } from "react";
-import TemplateList from "./Templates/TemplateList";
+import TemplateListPopOver from "./Templates/TemplateListPopOver";
 import PropTypes from "prop-types";
 
 const ChatInputMenu = ({
@@ -114,7 +114,7 @@ const ChatInputMenu = ({
               aria-label="Template"
             />
 
-            <TemplateList
+            <TemplateListPopOver
               open={open}
               templatesRef={templatesRef}
               setText={setText}

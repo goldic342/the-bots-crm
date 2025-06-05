@@ -9,84 +9,37 @@ import {
   HStack,
   IconButton,
   Input,
-  Skeleton,
   Text,
   Tooltip,
   useToast,
 } from "@chakra-ui/react";
 import { Plus, X } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import useApiRequest from "../../../hooks/useApiRequest";
-import InlineItemsList from "../../ui/InlineItemsList";
-
-import {
-  removeTemplate as removeFetch,
-  createTemplate as createFetch,
-  getTemplates as loadFetch,
-} from "../../../api/templates";
-import { useParams } from "react-router-dom";
+import { useRef, useState } from "react";
+import TemplateList from "./TemplateList";
+import { useTemplates } from "../../../contexts/TemplatesContext";
 
 const TemplateDrawer = ({ isOpen, onClose }) => {
-  const { botId } = useParams();
   const toast = useToast();
-  const initialRef = useRef(null);
-
-  const [templates, setTemplates] = useState([]);
+  const inputRef = useRef(null);
   const [text, setText] = useState("");
 
-  const [loadTemplates, loading, loadingError] = useApiRequest(async () => {
-    const result = await loadFetch(botId);
-    setTemplates(result.templates);
-  });
+  const { templates, addTemplate, removeTemplate, loading, error } =
+    useTemplates();
 
-  const [createReq, creating, creatingError] = useApiRequest(async newText => {
-    const newItem = await createFetch(botId, newText);
-    setTemplates(prev => [newItem, ...prev]);
-    setText("");
-    initialRef.current?.focus();
-  });
-
-  const [deleteReq, deleting, deletingError] = useApiRequest(async id => {
-    await removeFetch(botId, id);
-    setTemplates(prev => prev.filter(t => t.id !== id));
-  });
-
-  useEffect(() => {
-    if (isOpen) loadTemplates();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!creatingError && !deletingError && !loadingError) return;
+  if (error) {
     toast({
-      title: `Не удалось ${
-        creatingError
-          ? "создать"
-          : deletingError
-            ? "удалить"
-            : "загрузить шаблоны"
-      }`,
+      title: "Не удалось выполнить операцию с шаблонами",
       status: "error",
       position: "bottom-right",
       duration: 3000,
     });
-  }, [creatingError, deletingError, loadingError, toast]);
+  }
 
-  const handleCreate = () => {
-    if (!text.trim()) return;
-    createReq(text.trim());
-  };
-
-  const items = useMemo(
-    () =>
-      templates.map(t => ({
-        id: t.id,
-        label: t.text,
-        icon: X,
-        onClick: () => deleteReq(t.id),
-      })),
-    [templates, deleteReq]
-  );
+  const handleCreate = () =>
+    addTemplate(text).then(() => {
+      setText("");
+      inputRef.current?.focus();
+    });
 
   return (
     <Drawer
@@ -94,11 +47,12 @@ const TemplateDrawer = ({ isOpen, onClose }) => {
       placement="right"
       onClose={onClose}
       size="lg"
-      initialFocusRef={initialRef}
+      initialFocusRef={inputRef}
     >
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
+
         <DrawerHeader borderBottomWidth="1px">
           Шаблоны ответов
           <Text fontSize="sm" color="gray.500" mt={1}>
@@ -107,6 +61,7 @@ const TemplateDrawer = ({ isOpen, onClose }) => {
         </DrawerHeader>
 
         <DrawerBody pt={4} overflowY="auto" maxH="calc(100vh - 160px)">
+          {/* add-new form */}
           <HStack
             mb={4}
             as="form"
@@ -116,16 +71,13 @@ const TemplateDrawer = ({ isOpen, onClose }) => {
             }}
           >
             <Input
-              ref={initialRef}
+              ref={inputRef}
               placeholder="Новый шаблон"
               value={text}
               onChange={e => setText(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === "Escape") setText("");
-              }}
+              onKeyDown={e => e.key === "Escape" && setText("")}
               size="md"
               borderRadius="md"
-              isDisabled={creating}
             />
             <Tooltip label="Создать шаблон" hasArrow>
               <IconButton
@@ -134,20 +86,17 @@ const TemplateDrawer = ({ isOpen, onClose }) => {
                 size="md"
                 type="submit"
                 isDisabled={!text.trim()}
-                isLoading={creating}
+                isLoading={loading}
               />
             </Tooltip>
           </HStack>
 
-          <Box pr={1}>
-            {loading ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} h="38px" mb={2} borderRadius="md" />
-              ))
-            ) : (
-              <InlineItemsList items={items} contentMaxH="120px" />
-            )}
-          </Box>
+          <TemplateList
+            templates={templates}
+            Icon={X}
+            onIconClick={t => removeTemplate(t.id)}
+            loading={loading}
+          />
         </DrawerBody>
       </DrawerContent>
     </Drawer>

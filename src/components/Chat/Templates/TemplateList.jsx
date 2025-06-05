@@ -1,66 +1,57 @@
-import { Fade, Flex, HStack, Text, useColorModeValue } from "@chakra-ui/react";
-import TemplateItem from "./TemplateItem";
+import { Box, Skeleton } from "@chakra-ui/react";
+import { useEffect, useMemo } from "react";
+import InlineItemsList from "../../ui/InlineItemsList";
 import useApiRequest from "../../../hooks/useApiRequest";
+import { getTemplates as loadFetch } from "../../../api/templates";
+import { useTemplates } from "../../../contexts/TemplatesContext";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getTemplates } from "../../../api/templates";
-import SpinnerLoader from "../../ui/SpinnerLoader";
 
-const TemplateList = ({ open, templatesRef, setText }) => {
+/**
+ * Fetch-and-render list of templates.
+ *
+ * Props:
+ *   botId        – required, used for API calls
+ *   Icon         – icon component shown on every row
+ *   onIconClick  – (id) => void, handler for icon press
+ */
+const TemplateList = ({ Icon, onIconClick }) => {
+  const { templates, setTemplates } = useTemplates();
   const { botId } = useParams();
-  const [templates, setTemplates] = useState([]);
 
-  const [fetchTemplates, isLoading, error] = useApiRequest(async botId => {
-    return await getTemplates(botId);
+  /* pull from server once per mount (or when botId changes) */
+  const [load, loading] = useApiRequest(async () => {
+    const { templates: serverTemplates } = await loadFetch(botId);
+    setTemplates(serverTemplates);
   });
 
   useEffect(() => {
-    const fetchTemps = async () => {
-      const res = await fetchTemplates(botId);
-      setTemplates(res.templates);
-    };
-    fetchTemps();
+    load(botId);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [botId]);
 
+  /* adapt data for InlineItemsList */
+  const items = useMemo(
+    () =>
+      templates.map(t => ({
+        id: t.id,
+        label: t.text,
+        icon: Icon,
+        onClick: () => onIconClick?.(t),
+      })),
+    [templates, Icon, onIconClick]
+  );
+
   return (
-    <Fade in={open} unmountOnExit>
-      <Flex
-        position={"absolute"}
-        left={"130%"}
-        ref={templatesRef}
-        maxH={96}
-        minW={{ base: "80vw", md: "44vw", lg: "40vw" }}
-        overflowY={"auto"}
-        bottom={4}
-        flexDir="column"
-        bg={useColorModeValue("white", "gray.700")}
-        borderRadius="md"
-        boxShadow="md"
-        zIndex={10}
-        p={4}
-        pl={2}
-        gap={2}
-      >
-        {isLoading && (
-          <HStack>
-            <SpinnerLoader size="md" h={10} w={"fit-content"} />
-            <Text>Загружаем...</Text>
-          </HStack>
-        )}
-        {error && <Text color="red.500">Ошибка при загрузке шаблонов</Text>}
-
-        {!isLoading && !error && templates.length === 0 && (
-          <Text>Шаблонов нет.</Text>
-        )}
-
-        {!isLoading &&
-          !error &&
-          templates.map((t, id) => (
-            <TemplateItem template={t} setText={setText} key={id} />
-          ))}
-      </Flex>
-    </Fade>
+    <Box pr={1}>
+      {loading ? (
+        Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} h="38px" mb={2} borderRadius="md" />
+        ))
+      ) : (
+        <InlineItemsList items={items} contentMaxH="120px" />
+      )}
+    </Box>
   );
 };
 
