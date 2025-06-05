@@ -10,38 +10,65 @@ export const useChats = () => {
   return ctx;
 };
 
-/**
- * Owns the chats list per bot (optionally per folder), the **currently open**
- * chat, and helpers that mutate chat metadata.  Message bodies themselves are
- * stored in MessagesContext.
- */
 export const ChatsProvider = ({ children }) => {
   // { [botId]: { [folderKey]: Chat[] } }
   const [chats, setChats] = useState({});
   const [currentChat, setCurrentChat] = useState(null);
 
-  /* Context cooperation */
   const { currentFolder, getFolderKey } = useFolders();
-  const {
-    ensureMessagesLoaded,
-    addMessage, // prefer calling this from outside if needed
-    addMessages,
-  } = useMessages();
-
-  /* ─── CRUD & helpers ─────────────────────────────── */
+  const { ensureMessagesLoaded, addMessage, addMessages } = useMessages();
 
   const addChats = useCallback(
-    (botId, newChats, folderId, mode = "add") => {
+    (botId, newChats, folderId, mode = "add", pos = "end") => {
       const folderKey = getFolderKey(folderId);
       setChats(prev => {
         const botFolders = prev[botId] || {};
         const folderChats = botFolders[folderKey] || [];
 
+        let updatedChats;
+        if (mode === "add") {
+          updatedChats =
+            pos === "start"
+              ? [...newChats, ...folderChats]
+              : [...folderChats, ...newChats];
+        } else {
+          updatedChats = [...newChats];
+        }
+
         return {
           ...prev,
           [botId]: {
             ...botFolders,
-            [folderKey]: [...(mode === "add" ? folderChats : []), ...newChats],
+            [folderKey]: updatedChats,
+          },
+        };
+      });
+    },
+    [getFolderKey]
+  );
+
+  const moveChatToStart = useCallback(
+    (chatId, botId, folderId) => {
+      const folderKey = getFolderKey(folderId);
+      setChats(prev => {
+        const botFolders = prev[botId] || {};
+        const folderChats = botFolders[folderKey] || [];
+
+        const index = folderChats.findIndex(c => c.id === chatId);
+        if (index === -1) return prev;
+
+        const chat = folderChats[index];
+        const updatedChats = [
+          chat,
+          ...folderChats.slice(0, index),
+          ...folderChats.slice(index + 1),
+        ];
+
+        return {
+          ...prev,
+          [botId]: {
+            ...botFolders,
+            [folderKey]: updatedChats,
           },
         };
       });
@@ -67,6 +94,19 @@ export const ChatsProvider = ({ children }) => {
       });
     },
     [getFolderKey]
+  );
+
+  const replaceChatContents = useCallback(
+    (chatId, botId, folderId, newChatData) => {
+      mutateOneChat(chatId, botId, folderId, oldChat => ({
+        ...oldChat,
+        ...newChatData,
+        // Preserve
+        id: oldChat.id,
+        botId: oldChat.botId,
+      }));
+    },
+    [mutateOneChat]
   );
 
   const updateChatNewStatus = useCallback(
@@ -143,6 +183,8 @@ export const ChatsProvider = ({ children }) => {
         removeChat,
         updateChatNewStatus,
         setLastMessage,
+        replaceChatContents,
+        moveChatToStart,
 
         // Expose message helpers so consumers only need one hook
         addMessage,

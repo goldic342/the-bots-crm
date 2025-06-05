@@ -26,7 +26,6 @@ const ChatItem = ({ chat, isActive, onClick }) => {
   const messageColor = useColorModeValue("gray.600", "gray.300");
 
   const isDisabled = chat.status !== "active";
-  const unreadCount = chat.updates?.length || 0;
 
   return (
     <Box
@@ -48,7 +47,7 @@ const ChatItem = ({ chat, isActive, onClick }) => {
             <Text fontWeight="bold">{chat.lead.name}</Text>
             <Spacer />
             <HStack align="center" spacing={2}>
-              {unreadCount > 0 && (
+              {chat.totalUnreadMessages > 0 && (
                 <Badge
                   ml={2}
                   colorScheme="red"
@@ -59,7 +58,7 @@ const ChatItem = ({ chat, isActive, onClick }) => {
                   px={2}
                   fontSize="xs"
                 >
-                  {unreadCount}
+                  {chat.totalUnreadMessages}
                 </Badge>
               )}
               {isDisabled && (

@@ -34,8 +34,8 @@ export const ChatMessage = PropTypes.shape(ChatMessageObject);
 export const ChatItem = PropTypes.shape({
   botId: PropTypes.number.isRequired,
   lead: ChatLead.isRequired,
-  updates: PropTypes.arrayOf(PropTypes.number), // Only for internal use - message ids. Not from API
   status: PropTypes.string.isRequired,
+  totalUnreadMessages: PropTypes.number.isRequired,
   lastMessage: ChatMessage,
 });
 

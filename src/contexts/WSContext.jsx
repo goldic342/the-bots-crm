@@ -9,7 +9,6 @@ import {
 import { useChats } from "./ChatsContext";
 import { useAuth } from "./AuthContext";
 import camelcaseKeysDeep from "camelcase-keys-deep";
-import { getChatInfo } from "../api/chats";
 import { useBot } from "./botContext";
 import { useRefBridge } from "../hooks/useRefBridge";
 import { useMessages } from "./MessagesContext";
@@ -26,7 +25,7 @@ export const useWS = () => {
 
 export const WSProvider = ({ children }) => {
   const { addMessage, markMessagesAsReadUI } = useMessages();
-  const { chats, addChatUpdates, addChats, updateChatNewStatus } = useChats();
+  const { chats, addChats, moveChatToStart, replaceChatContents } = useChats();
   const { token } = useAuth();
   const { bot } = useBot();
   const [isConnected, setIsConnected] = useState(false);
@@ -47,7 +46,7 @@ export const WSProvider = ({ children }) => {
       setIsConnected(true);
     };
 
-    socket.onclose = event => {
+    socket.onclose = () => {
       setIsConnected(false);
     };
 
@@ -65,25 +64,33 @@ export const WSProvider = ({ children }) => {
           return;
         }
 
-        if (data?.type === "new_message") {
+        if (data?.event === "new_message") {
           const ccData = camelcaseKeysDeep(data); // cc - camelcase
-          const leadId = ccData.lead?.id;
+          const newChat = ccData.chat;
+          const chatId = newChat.id;
 
-          if (!chatsRef.current.some(c => c.lead.id === leadId)) {
-            const newChat = await getChatInfo(leadId, bot.id);
-            addChats([{ ...newChat, isNewChat: true }]);
+          const folderIds = [];
+
+          for (const [fId, fChats] of Object.entries(
+            chatsRef.current[bot.id]
+          )) {
+            if (fChats.some(c => c.id === chatId)) folderIds.push(fId);
+          }
+
+          if (folderIds.length === 0) {
+            addChats(bot.id, [newChat], 0, "add", "start");
           } else {
-            updateChatNewStatus(leadId);
+            folderIds.forEach(fId => {
+              // In each folder mutate the Chat
+              replaceChatContents(chatId, bot.id, fId, newChat);
+              moveChatToStart(chatId, bot.id, fId);
+            });
           }
 
-          if (ccData.message.direction === "incoming") {
-            addChatUpdates(leadId, [ccData.message.id]);
-          }
-
-          addMessage(leadId, camelcaseKeysDeep(ccData.message));
+          addMessage(chatId, newChat.lastMessage);
         }
 
-        if (data?.type === "mark_message_as_read") {
+        if (data?.event === "mark_message_as_read") {
           const ccData = camelcaseKeysDeep(data);
           const leadId = ccData.lead?.id;
           markMessagesAsReadUI(leadId, [ccData.messageIds]);

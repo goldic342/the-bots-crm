@@ -13,7 +13,7 @@ const BotSettingsModal = ({ isOpen, onClose }) => {
     bot.phoneNumber && {
       id: "phone",
       label: "Телефон",
-      value: bot.phoneNumber,
+      value: bot.phoneNumber ? bot.phoneNumber : "Нет",
       copyable: true,
     },
     { id: "type", label: "Тип", value: bot.type },
