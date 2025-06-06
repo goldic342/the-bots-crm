@@ -82,7 +82,13 @@ export const WSProvider = ({ children }) => {
             );
 
           if (!chatExists) {
-            addChats(bot.id, [newChat], 0, "add", "start");
+            addChats(
+              bot.id,
+              [{ ...newChat, isNewChat: true }],
+              0,
+              "add",
+              "start"
+            );
           } else {
             mutateAllChatInstances(chatId, bot.id, (oldChat, folderId) => {
               moveChatToStart(chatId, bot.id, folderId);
