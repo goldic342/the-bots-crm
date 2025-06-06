@@ -51,7 +51,8 @@ export const WSProvider = ({ children }) => {
       setIsConnected(true);
     };
 
-    socket.onclose = () => {
+    socket.onclose = event => {
+      console.log(event);
       setIsConnected(false);
     };
 
@@ -84,20 +85,17 @@ export const WSProvider = ({ children }) => {
           if (!chatExists) {
             addChats(bot.id, [newChat], 0, "add", "start");
           } else {
-            mutateAllChatInstances(
-              chatId,
-              bot.id,
-              (_, __, folderId, oldChat) => {
-                moveChatToStart(chatId, bot.id, folderId);
-                return {
-                  ...oldChat,
-                  ...newChat,
-                  // Preserve
-                  id: oldChat.id,
-                  botId: oldChat.botId,
-                };
-              }
-            );
+            mutateAllChatInstances(chatId, bot.id, (oldChat, folderId) => {
+              moveChatToStart(chatId, bot.id, folderId);
+              return {
+                ...oldChat,
+                ...newChat,
+
+                // Preserve
+                id: oldChat.id,
+                botId: oldChat.botId,
+              };
+            });
           }
 
           addMessage(chatId, newChat.lastMessage);

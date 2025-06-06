@@ -19,9 +19,7 @@ const DetermineChatBubble = ({ message }) => {
 
   if (text && !content) return <ChatBubble message={message} />;
 
-  const BubbleComponent = content?.fileType
-    ? bubbleComponents[content.fileType]
-    : null;
+  const BubbleComponent = content?.type ? bubbleComponents[content.type] : null;
 
   return BubbleComponent ? <BubbleComponent message={message} /> : null;
 };

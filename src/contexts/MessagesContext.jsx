@@ -95,7 +95,7 @@ export const MessagesProvider = ({ children }) => {
 
       Object.entries(grouped).forEach(async ([cid, ids]) => {
         try {
-          await markMessagesAsRead(cid, ids);
+          await markMessagesAsRead(Number(cid), ids);
         } catch (error) {
           console.error(
             `Failed to mark message as read. ChatId: ${cid}, Message ids: ${ids}, error: ${error}`
