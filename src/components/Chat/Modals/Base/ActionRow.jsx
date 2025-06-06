@@ -2,9 +2,10 @@ import { HStack, Text, useColorModeValue } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 
 const ActionRow = ({ icon: Icon, label, onClick }) => (
-  // FIXME: Hover is not usable for some reason
+  // WARNING: Hover is not usable for some reason
   <HStack
     w="full"
+    as={"button"}
     px={2}
     py={1}
     borderRadius="md"
