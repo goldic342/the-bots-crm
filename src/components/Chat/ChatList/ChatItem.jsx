@@ -40,11 +40,16 @@ const ChatItem = ({ chat, isActive, onClick }) => {
       position="relative"
     >
       <Flex align="center">
-        <Avatar name={chat.lead.name} src={chat.lead.photo} size="md" mr={3} />
+        <Avatar
+          name={chat?.lead?.name}
+          src={chat?.lead?.photo}
+          size="md"
+          mr={3}
+        />
 
         <Box flex="1">
           <Flex align="center">
-            <Text fontWeight="bold">{chat.lead.name}</Text>
+            <Text fontWeight="bold">{chat?.lead?.name}</Text>
             <Spacer />
             <HStack align="center" spacing={2}>
               {chat.totalUnreadMessages > 0 && (

@@ -27,6 +27,7 @@ const ChatInterface = () => {
   const toast = useToast();
 
   const [sendingMessages, setSendingMessages] = useState(new Set());
+  const [lockFetch, setLockFetch] = useState(false);
 
   const { isFetched, setIsFetched, scrollToId } = useSearch();
   const [offset, setOffset] = useState(MESSAGES_OFFSET + 1);
@@ -38,16 +39,30 @@ const ChatInterface = () => {
 
   useEffect(() => {
     if (!isCorrectChatSelected) {
+      setLockFetch(true);
       selectChat(chatId, botId, folderId);
+      setLockFetch(false);
     }
   }, [chatId, isCorrectChatSelected, botId, folderId, selectChat]);
 
   useEffect(() => {
-    if (!scrollToId || isFetched || !isLoaded || isLoadingMessages) return;
+    if (isFetched || !scrollToId) return;
+    setLockFetch(true);
+
+    const list = messages[chatId];
+    if (list && list.some(m => m.id === scrollToId)) {
+      setIsFetched(true);
+    }
+  }, [messages, chatId, scrollToId, isFetched, setIsFetched, botId, folderId]);
+
+  useEffect(() => {
+    if (!scrollToId || isFetched || !isLoaded || isLoadingMessages || lockFetch)
+      return;
 
     const fetchData = async () => {
       const newMessages = await getMessages(offset);
-      if (newMessages.count === 0) {
+
+      if (newMessages.total === 0) {
         toast({
           title: "Ошибка при поиске сообщения.",
           description: "Не удалось найти сообщение в списке.",
@@ -82,16 +97,9 @@ const ChatInterface = () => {
     setIsFetched,
     botId,
     folderId,
+    messages,
+    lockFetch,
   ]);
-
-  useEffect(() => {
-    if (isFetched || !scrollToId) return;
-
-    const list = messages[chatId];
-    if (list && list.some(m => m.id === scrollToId)) {
-      setIsFetched(true);
-    }
-  }, [messages, chatId, scrollToId, isFetched, setIsFetched, botId, folderId]);
 
   const handleSendMessage = async (text, replyMessageId = 0, file) => {
     const tempId = Date.now();

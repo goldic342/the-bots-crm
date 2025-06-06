@@ -96,30 +96,41 @@ export const ChatsProvider = ({ children }) => {
     [getFolderKey]
   );
 
-  const mutateAllChatInstances = useCallback((chatId, botId, mutator) => {
-    setChats(prev => {
-      const botChats = prev[botId];
-      if (!botChats) return prev;
+  const getChatFolderIds = useCallback(
+    (chatId, botId) => {
+      const botChats = chats[botId];
+      if (!botChats) return [];
 
-      // collect folders that contain that chat
-      const folderIds = Object.entries(botChats)
-        .filter(([_, fChats]) => fChats.some(c => c.id === chatId))
-        .map(([fId]) => fId);
+      return Object.entries(botChats)
+        .filter(([_, folderChats]) =>
+          folderChats.some(chat => chat.id === chatId)
+        )
+        .map(([folderKey]) => folderKey);
+    },
+    [chats]
+  );
 
-      if (!folderIds.length) return prev;
+  const mutateAllChatInstances = useCallback(
+    (chatId, botId, mutator) => {
+      const folderKeys = getChatFolderIds(chatId, botId);
+      if (!folderKeys.length) return;
 
-      const next = { ...prev };
-      folderIds.forEach(folderKey => {
-        next[botId] = {
-          ...next[botId],
-          [folderKey]: next[botId][folderKey].map(c =>
-            c.id === chatId ? mutator(c, folderKey) : c
-          ),
-        };
+      setChats(prev => {
+        const next = { ...prev };
+        folderKeys.forEach(folderKey => {
+          next[botId] = {
+            ...next[botId],
+            [folderKey]: next[botId][folderKey].map(c =>
+              c.id === chatId ? mutator(c, folderKey) : c
+            ),
+          };
+        });
+        return next;
       });
-      return next;
-    });
-  }, []);
+    },
+    [getChatFolderIds]
+  );
+
   const updateChatNewStatus = useCallback(
     (chatId, botId, folderId, value = true) =>
       mutateOneChat(chatId, botId, folderId, chat => ({
@@ -185,6 +196,7 @@ export const ChatsProvider = ({ children }) => {
         updateChatNewStatus,
         moveChatToStart,
         mutateAllChatInstances,
+        getChatFolderIds,
 
         // Expose message helpers so consumers only need one hook
         addMessage,

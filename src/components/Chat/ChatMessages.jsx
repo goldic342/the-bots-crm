@@ -76,7 +76,7 @@ const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET + 1 }) => {
 
     addMessages(chatId, botId, folderId, newMessages.messages);
 
-    if ((newMessages.count ?? 0) < MESSAGES_LIMIT) {
+    if ((newMessages.total ?? 0) < MESSAGES_LIMIT) {
       setIsVisible(false);
       stopObserving();
       return;

@@ -22,7 +22,7 @@ export const SearchProvider = ({ children }) => {
   const [isFetched, setIsFetched] = useState(false); // Represents if message already fetched in memory (state)
 
   const [fetchSearchResults, isSearching, error] = useApiRequest(
-    async (locOffset = 1) => {
+    async (locOffset = 0) => {
       return await searchMessages(botId, searchQuery, locOffset);
     }
   );

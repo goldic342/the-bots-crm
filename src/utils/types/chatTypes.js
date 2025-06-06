@@ -41,5 +41,5 @@ export const ChatItem = PropTypes.shape({
 
 export const ChatResponse = PropTypes.shape({
   chats: PropTypes.arrayOf(ChatItem).isRequired,
-  count: PropTypes.number.isRequired,
+  total: PropTypes.number.isRequired,
 });

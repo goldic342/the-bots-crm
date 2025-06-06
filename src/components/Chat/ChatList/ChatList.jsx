@@ -64,7 +64,7 @@ const ChatList = () => {
 
     addChats(botId, newChats.chats, offset, "add");
 
-    if ((newChats.count ?? 0) < CHATS_LIMIT) {
+    if ((newChats.total ?? 0) < CHATS_LIMIT) {
       stopObserving();
       setIsVisible(false);
     }

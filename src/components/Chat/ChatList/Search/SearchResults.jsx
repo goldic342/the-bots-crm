@@ -11,6 +11,7 @@ import {
 import ChatItem from "../ChatItem";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMessages } from "../../../../contexts/MessagesContext";
+import { useChats } from "../../../../contexts/ChatsContext";
 
 const SearchResults = () => {
   const {
@@ -23,20 +24,19 @@ const SearchResults = () => {
     setIsFetched,
   } = useSearch();
   const { botId } = useParams();
+  const { getChatFolderIds } = useChats();
   const navigate = useNavigate();
   const { checkMessageExists } = useMessages();
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const safeSearchResults = {
-    count: searchResults.count ?? 0,
-    messages: Array.isArray(searchResults.messages)
-      ? searchResults.messages
-      : [],
+    count: searchResults.total ?? 0,
+    chats: Array.isArray(searchResults.chats) ? searchResults.chats : [],
   };
 
   const [offset, setOffset] = useState(SEARCH_MESSAGES_OFFSET + 1);
   const loadMoreResults = async () => {
-    if (safeSearchResults.count < SEARCH_MESSAGES_LIMIT) {
+    if (safeSearchResults.total < SEARCH_MESSAGES_LIMIT) {
       stopObserving();
       setIsVisible(false);
       return;
@@ -46,7 +46,7 @@ const SearchResults = () => {
     const newResults = await fetchSearchResults(offset);
     setIsLoadingMore(false);
 
-    if (!newResults || (newResults.count ?? 0) < SEARCH_MESSAGES_LIMIT) {
+    if (!newResults || (newResults.total ?? 0) < SEARCH_MESSAGES_LIMIT) {
       stopObserving();
       setIsVisible(false);
       return;
@@ -55,8 +55,8 @@ const SearchResults = () => {
     setOffset(prev => prev + SEARCH_MESSAGES_OFFSET);
     setSearchResults(prev => {
       return {
-        count: prev.count + newResults.count,
-        messages: [...prev.messages, ...newResults.messages],
+        count: prev.total + newResults.total,
+        chats: [...prev.chats, ...newResults.chats],
       };
     });
   };
@@ -65,20 +65,22 @@ const SearchResults = () => {
     isLoading: isSearching,
     onLoadMore: loadMoreResults,
     useEffectDropCondition:
-      isLoadingMore || safeSearchResults.count < SEARCH_MESSAGES_LIMIT,
+      isLoadingMore || safeSearchResults.total < SEARCH_MESSAGES_LIMIT,
   });
 
-  const handleClick = (message, lead) => {
+  const handleClick = (message, chatId) => {
     setScrollToId(message.id);
 
-    if (checkMessageExists(lead.id, message.id)) {
+    if (checkMessageExists(chatId, message.id)) {
       setIsFetched(true);
     } else {
       setIsFetched(false);
     }
 
-    navigate(`/dashboard/bots/${botId}/chat/${lead.id}`);
+    const chatFolders = getChatFolderIds(chatId, botId);
+    navigate(`/dashboard/bots/${botId}/${chatFolders[0]}/${chatId}`);
   };
+
   return (
     <VStack align="stretch" spacing={2}>
       {isSearching && !isLoadingMore ? (
@@ -91,27 +93,19 @@ const SearchResults = () => {
         </LoaderMessage>
       )}
 
-      {!isSearching && !error && safeSearchResults.count === 0 ? (
+      {!isSearching && !error && safeSearchResults.total === 0 ? (
         <LoaderMessage h={{ base: "20vh", md: "94vh" }}>
           Похоже ничего нет...
         </LoaderMessage>
       ) : null}
 
       {(!isSearching && !error) || (isLoadingMore && isSearching)
-        ? safeSearchResults.messages.map(data => {
-            const message = data.message;
-            const lead = data.lead;
+        ? safeSearchResults.chats.map(c => {
             return (
               <ChatItem
-                key={`${message.id}:${lead.id}`}
-                chat={{
-                  botId: Number(botId), // PropTypes requires Number
-                  lead,
-                  updates: [],
-                  status: "active",
-                  lastMessage: message,
-                }}
-                onClick={() => handleClick(message, lead)}
+                key={`${c.lastMessage.id}:${c.id}`}
+                chat={c}
+                onClick={() => handleClick(c.lastMessage, c.id)}
               />
             );
           })
