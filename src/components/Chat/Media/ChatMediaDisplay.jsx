@@ -43,7 +43,7 @@ const ChatMediaDisplay = ({ media, onClick }) => {
             ) : (
               <Box position="relative" w="full" h="full" onClick={onClick}>
                 <Image
-                  src={media.thumbnail}
+                  src={media.previewUrl}
                   alt="video-thumbnail"
                   objectFit="cover"
                   w="full"
@@ -92,7 +92,7 @@ ChatMediaDisplay.propTypes = {
     type: PropTypes.oneOf(["image", "video"]).isRequired,
     src: PropTypes.string.isRequired,
     text: PropTypes.string,
-    thumbnail: PropTypes.string, // only for videos
+    previewUrl: PropTypes.string, // only for videos
     isOwn: PropTypes.bool.isRequired,
   }).isRequired,
 

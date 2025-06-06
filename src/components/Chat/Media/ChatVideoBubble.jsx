@@ -12,7 +12,7 @@ const ChatVideoBubble = ({ message }) => {
     type: message.content.type,
     src: content.url,
     text,
-    thumbnail: thumbnailPlaceholder,
+    previewUrl: thumbnailPlaceholder,
     isOwn: message.isOwn === "outgoing",
   };
 

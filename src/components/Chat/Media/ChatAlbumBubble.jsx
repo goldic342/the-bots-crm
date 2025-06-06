@@ -39,7 +39,7 @@ const ChatAlbumBubble = ({ message }) => {
         >
           {shouldLoad &&
             visibleItems.map((item, idx) => {
-              const src = item.type === "img" ? item.src : item.thumbnail;
+              const src = item.type === "img" ? item.src : item.previewUrl;
               return (
                 <Box key={idx} position="relative">
                   {!loadedMedia[src] && <Skeleton height="100%" width="100%" />}
@@ -72,7 +72,7 @@ const ChatAlbumBubble = ({ message }) => {
                 src={
                   urls[maxDisplayCount - 1].type === "img"
                     ? urls[maxDisplayCount - 1].src
-                    : urls[maxDisplayCount - 1].thumbnail
+                    : urls[maxDisplayCount - 1].previewUrl
                 }
                 alt="album-item"
                 width="100%"

@@ -141,7 +141,7 @@ const ChatAlbumModal = ({ isOpen, onClose, items, createdAt }) => {
             >
               {items.map((item, idx) => {
                 const isActive = idx === currentIndex;
-                const src = item.type === "image" ? item.src : item.thumbnail;
+                const src = item.type === "image" ? item.src : item.previewUrl;
                 return (
                   <Box
                     key={idx}
