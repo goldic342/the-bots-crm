@@ -17,7 +17,7 @@ import { useSearch } from "../../contexts/SearchContext.jsx";
 import { useFetchMessages } from "../../hooks/useFetchMessages.js";
 import { useMessages } from "../../contexts/MessagesContext.jsx";
 
-const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET + 1 }) => {
+const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET }) => {
   const chatContainerRef = useRef(null);
   const isFirstRender = useRef(true);
 

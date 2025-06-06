@@ -7,7 +7,7 @@ export const useFetchMessages = () => {
   const { chatId } = useParams();
 
   const [getMessages, isLoadingMessages, messagesError] = useApiRequest(
-    async (locOffset = 1, limit = MESSAGES_LIMIT) => {
+    async (locOffset = 0, limit = MESSAGES_LIMIT) => {
       return await fetchMessages(chatId, locOffset, limit);
     }
   );

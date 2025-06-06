@@ -30,7 +30,7 @@ const ChatInterface = () => {
   const [lockFetch, setLockFetch] = useState(false);
 
   const { isFetched, setIsFetched, scrollToId } = useSearch();
-  const [offset, setOffset] = useState(MESSAGES_OFFSET + 1);
+  const [offset, setOffset] = useState(MESSAGES_OFFSET);
   const [getMessages, isLoadingMessages, messagesError] = useFetchMessages();
 
   const isCorrectChatSelected = currentChat?.id === Number(chatId);

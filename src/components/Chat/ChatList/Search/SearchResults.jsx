@@ -34,7 +34,7 @@ const SearchResults = () => {
     chats: Array.isArray(searchResults.chats) ? searchResults.chats : [],
   };
 
-  const [offset, setOffset] = useState(SEARCH_MESSAGES_OFFSET + 1);
+  const [offset, setOffset] = useState(SEARCH_MESSAGES_OFFSET);
   const loadMoreResults = async () => {
     if (safeSearchResults.total < SEARCH_MESSAGES_LIMIT) {
       stopObserving();
