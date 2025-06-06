@@ -99,3 +99,13 @@ export const searchMessages = async (
 
   return response.data;
 };
+
+export const addChatToFolder = async (chatId, folderId) => {
+  const response = await api.post(`/chats/${chatId}/folders/${folderId}`);
+  return response.data;
+};
+
+export const removeChatFromFolder = async (chatId, folderId) => {
+  const response = await api.delete(`/chats/${chatId}/folders/${folderId}`);
+  return response.data;
+};

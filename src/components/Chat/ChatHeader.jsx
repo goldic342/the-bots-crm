@@ -54,6 +54,7 @@ const ChatHeader = ({ onBack }) => {
       </VStack>
 
       <Avatar
+        as={"button"}
         src={chat.lead?.photo}
         name={chat.lead.name}
         size="sm"
