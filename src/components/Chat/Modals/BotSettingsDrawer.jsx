@@ -46,9 +46,10 @@ const BotSettingsDrawer = ({ isOpen, onClose }) => {
     });
 
   useEffect(() => {
+    if (!isOpen) return;
     fetchBotTodayUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isLoadingUsersToday) return;
