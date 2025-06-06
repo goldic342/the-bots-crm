@@ -19,8 +19,11 @@ const InlineItemsList = ({
   items,
   contentMaxH = "120px",
   noItemsText = "Элементов нет.",
+  itemBg = null,
 }) => {
-  const itemBg = useColorModeValue("gray.100", "gray.800");
+  if (!itemBg) {
+    itemBg = useColorModeValue("gray.100", "gray.800");
+  }
 
   if (!items || items.length === 0) {
     return (
@@ -77,6 +80,8 @@ InlineItemsList.propTypes = {
       onClick: PropTypes.func,
     })
   ).isRequired,
+  noItemsText: PropTypes.string,
+  itemBg: PropTypes.string,
   contentMaxH: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 

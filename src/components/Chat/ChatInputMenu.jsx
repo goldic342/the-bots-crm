@@ -118,6 +118,7 @@ const ChatInputMenu = ({
               open={open}
               templatesRef={templatesRef}
               setText={setText}
+              onClose={() => setOpen(false)}
             />
           </Box>
         </Tooltip>

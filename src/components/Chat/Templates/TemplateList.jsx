@@ -14,7 +14,7 @@ import { useParams } from "react-router-dom";
  *   Icon         – icon component shown on every row
  *   onIconClick  – (id) => void, handler for icon press
  */
-const TemplateList = ({ Icon, onIconClick }) => {
+const TemplateList = ({ Icon, onIconClick, ...props }) => {
   const { templates, setTemplates } = useTemplates();
   const { botId } = useParams();
 
@@ -53,6 +53,7 @@ const TemplateList = ({ Icon, onIconClick }) => {
           items={items}
           contentMaxH="120px"
           noItemsText={"Шаблонов нет."}
+          {...props}
         />
       )}
     </Box>

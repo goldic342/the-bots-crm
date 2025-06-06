@@ -2,8 +2,10 @@ import { Fade, Flex, useColorModeValue } from "@chakra-ui/react";
 import TemplateList from "./TemplateList";
 import { Check } from "lucide-react";
 
-const TemplateListPopOver = ({ open, templatesRef, setText }) => {
+const TemplateListPopOver = ({ open, templatesRef, setText, onClose }) => {
   const handleTemplateClick = template => setText(template.text);
+
+  const itemBg = useColorModeValue("gray.100", "gray.700");
 
   return (
     <Fade in={open} unmountOnExit>
@@ -12,7 +14,9 @@ const TemplateListPopOver = ({ open, templatesRef, setText }) => {
         left="130%"
         ref={templatesRef}
         maxH={96}
+        w={"100%"}
         minW={{ base: "80vw", md: "44vw", lg: "40vw" }}
+        maxW={{ base: "80vw", md: "44vw", lg: "40vw" }}
         overflowY="auto"
         bottom={4}
         flexDir="column"
@@ -24,7 +28,14 @@ const TemplateListPopOver = ({ open, templatesRef, setText }) => {
         pl={2}
         gap={2}
       >
-        <TemplateList Icon={Check} onIconClick={handleTemplateClick} />
+        <TemplateList
+          Icon={Check}
+          onIconClick={t => {
+            handleTemplateClick(t);
+            onClose();
+          }}
+          itemBg={itemBg}
+        />
       </Flex>
     </Fade>
   );
