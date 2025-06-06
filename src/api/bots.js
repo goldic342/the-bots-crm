@@ -33,3 +33,8 @@ export const removeFolder = async folderId => {
   const response = await api.delete(`/bots/folders/${folderId}`);
   return response.data;
 };
+
+export const getTodayUsers = async botId => {
+  const response = await api.get(`/bots/${botId}/users_today`);
+  return response.data;
+};
