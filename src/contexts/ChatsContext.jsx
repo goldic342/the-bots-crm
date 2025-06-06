@@ -96,41 +96,47 @@ export const ChatsProvider = ({ children }) => {
     [getFolderKey]
   );
 
-  const getChatFolderIds = useCallback(
-    (chatId, botId) => {
-      const botChats = chats[botId];
-      if (!botChats) return [];
+  const getChatFolderIds = useCallback((chatId, botId, chats) => {
+    const botChats = chats[botId];
+    if (!botChats) return [];
 
-      return Object.entries(botChats)
+    return (
+      Object.entries(botChats)
+        // eslint-disable-next-line no-unused-vars
+        .filter(([_, folderChats]) =>
+          folderChats.some(chat => chat.id === chatId)
+        )
+        .map(([folderKey]) => folderKey)
+    );
+  }, []);
+
+  const mutateAllChatInstances = useCallback((chatId, botId, mutator) => {
+    setChats(prev => {
+      const botChats = prev[botId];
+      if (!botChats) return prev;
+
+      const folderKeys = Object.entries(botChats)
+        // eslint-disable-next-line no-unused-vars
         .filter(([_, folderChats]) =>
           folderChats.some(chat => chat.id === chatId)
         )
         .map(([folderKey]) => folderKey);
-    },
-    [chats]
-  );
 
-  const mutateAllChatInstances = useCallback(
-    (chatId, botId, mutator) => {
-      const folderKeys = getChatFolderIds(chatId, botId);
-      if (!folderKeys.length) return;
+      if (!folderKeys.length) return prev;
 
-      setChats(prev => {
-        const next = { ...prev };
-        folderKeys.forEach(folderKey => {
-          next[botId] = {
-            ...next[botId],
-            [folderKey]: next[botId][folderKey].map(c =>
-              c.id === chatId ? mutator(c, folderKey) : c
-            ),
-          };
-        });
-        return next;
+      const next = { ...prev };
+      folderKeys.forEach(folderKey => {
+        next[botId] = {
+          ...next[botId],
+          [folderKey]: next[botId][folderKey].map(c =>
+            c.id === chatId ? mutator(c, folderKey) : c
+          ),
+        };
       });
-    },
-    [getChatFolderIds]
-  );
 
+      return next;
+    });
+  }, []);
   const updateChatNewStatus = useCallback(
     (chatId, botId, folderId, value = true) =>
       mutateOneChat(chatId, botId, folderId, chat => ({
