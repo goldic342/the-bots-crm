@@ -1,5 +1,4 @@
 import {
-  Box,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -9,7 +8,6 @@ import {
   HStack,
   IconButton,
   Input,
-  Skeleton,
   Text,
   Tooltip,
   useToast,
@@ -24,7 +22,7 @@ import {
   createFolder,
   removeFolder as removeFolderReq,
 } from "../../../../api/bots";
-import InlineItemsList from "../../../ui/InlineItemsList";
+import FolderInlineList from "./FolderInlineList";
 
 const FolderDrawer = ({ isOpen, onClose }) => {
   const toast = useToast();
@@ -134,20 +132,10 @@ const FolderDrawer = ({ isOpen, onClose }) => {
               />
             </Tooltip>
           </HStack>
-
-          <Box pr={1}>
-            {!folders[botId]?.length === 0 ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} h="38px" mb={2} borderRadius="md" />
-              ))
-            ) : (
-              <InlineItemsList
-                items={items}
-                contentMaxH="120px"
-                noItemsText={"Папок нет."}
-              />
-            )}
-          </Box>
+          <FolderInlineList
+            Icon={X}
+            onIconClick={folder => deleteReq(folder.id)}
+          />
         </DrawerBody>
       </DrawerContent>
     </Drawer>
