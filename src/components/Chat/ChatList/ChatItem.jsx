@@ -27,8 +27,6 @@ const ChatItem = ({ chat, isActive, onClick }) => {
 
   const isDisabled = chat.status !== "active";
 
-  console.log("Message string:", messageToString(chat.lastMessage));
-
   return (
     <Box
       as="a"

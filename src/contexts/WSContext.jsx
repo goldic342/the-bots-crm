@@ -69,15 +69,27 @@ export const WSProvider = ({ children }) => {
           return;
         }
 
-        if (data?.event === "new_message") {
-          console.log("New message event received:", data);
+        if (data?.event === "mark_message_as_read") {
+          const ccData = camelcaseKeysDeep(data);
+          const update = ccData.data;
+          const chatId = update.chatId;
 
+          editFolder(bot.id, 0, update.totalUnreadMessagesBot);
+
+          mutateAllChatInstances(chatId, bot.id, oldChat => {
+            return {
+              ...oldChat,
+              totalUnreadMessages: update.totalUnreadMessagesChat,
+            };
+          });
+
+          markMessagesAsReadUI(chatId, update.ids);
+        }
+
+        if (data?.event === "new_message") {
           const ccData = camelcaseKeysDeep(data); // Convert keys to camelCase recursively
           const newChat = ccData.chat;
           const chatId = newChat.id;
-
-          console.log("CamelCased Data:", ccData);
-          console.log("New Chat ID:", chatId);
 
           const botChats = chatsRef.current[bot.id];
           const chatExists =
@@ -87,10 +99,6 @@ export const WSProvider = ({ children }) => {
             );
 
           if (!chatExists) {
-            console.log(
-              `Chat with ID ${chatId} does not exist for bot ${bot.id}, adding to start of list`
-            );
-
             addChats(
               bot.id,
               [{ ...newChat, isNewChat: true }],
@@ -98,20 +106,8 @@ export const WSProvider = ({ children }) => {
               "add",
               "start"
             );
-
-            console.log("Chat added to start of list:", newChat);
           } else {
-            console.log(
-              `Chat with ID ${chatId} already exists. Updating all instances for bot ${bot.id}`
-            );
-
             mutateAllChatInstances(chatId, bot.id, (oldChat, folderId) => {
-              console.log(
-                `Mutating chat instance. Folder ID: ${folderId}, Chat ID: ${chatId}, Bot ID: ${bot.id}`
-              );
-              console.log("Old Chat:", oldChat);
-              console.log("New Chat:", newChat);
-
               moveChatToStart(chatId, bot.id, folderId);
 
               const updatedChat = {
@@ -123,33 +119,11 @@ export const WSProvider = ({ children }) => {
                 botId: oldChat.botId,
               };
 
-              console.log("Updated Chat:", updatedChat);
               return updatedChat;
             });
           }
 
-          console.log(
-            `Adding last message to chat ${chatId}:`,
-            newChat.lastMessage
-          );
           addMessage(chatId, newChat.lastMessage);
-        }
-
-        if (data?.event === "mark_message_as_read") {
-          const ccData = camelcaseKeysDeep(data);
-          const update = ccData.data;
-          const chatId = update.chatId;
-
-          editFolder(bot.id, 0, update.totalUnreadMessagesBot);
-
-          mutateAllChatInstances(chatId, bot.id, (_, __, ___, oldChat) => {
-            return {
-              ...oldChat,
-              totalUnreadMessages: update.totalUnreadMessagesChat,
-            };
-          });
-
-          markMessagesAsReadUI(chatId, update.ids);
         }
       } catch (error) {
         console.error(

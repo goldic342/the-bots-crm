@@ -1,4 +1,7 @@
-export const messageToString = ({ text, content }) => {
+export const messageToString = message => {
+  const text = message?.text;
+  const content = message?.content;
+
   if (text && !content) return text;
 
   const fileTypeMap = {
@@ -9,5 +12,5 @@ export const messageToString = ({ text, content }) => {
     file: "Файл",
   };
 
-  return content?.type ? fileTypeMap[content.type] || null : null;
+  return content?.type ? fileTypeMap[content?.type] || null : null;
 };
