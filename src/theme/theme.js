@@ -1,4 +1,4 @@
-import { extendTheme } from "@chakra-ui/react";
+import { color, extendTheme } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
 
 // Configure initial color mode and system preference
@@ -33,10 +33,10 @@ const theme = extendTheme({
 
   components: {
     Button: {
-      baseStyle: props => ({
+      baseStyle: {
         fontWeight: "bold",
         borderRadius: "md",
-      }),
+      },
       variants: {
         solid: props => ({
           bg: mode("primary.500", "primary.600")(props),
@@ -52,6 +52,7 @@ const theme = extendTheme({
         }),
         alert: {
           bg: "red.500",
+          color: "white",
           _hover: { bg: "red.300" },
         },
       },
