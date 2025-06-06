@@ -24,14 +24,14 @@ export const MessagesProvider = ({ children }) => {
   const [readQueue, setReadQueue] = useState(new Set());
 
   const ensureMessagesLoaded = useCallback(
-    async chatId => {
-      if (messages[chatId]) return;
+    async chat => {
+      if (!chat || (!chat.isNewChat && messages[chat?.id])) return;
 
-      const fetched = await fetchMessages(chatId);
+      const fetched = await fetchMessages(chat.id);
       // API returns newest-first; UI wants oldest-first
       setMessages(prev => ({
         ...prev,
-        [chatId]: fetched.messages.reverse(),
+        [chat.id]: fetched.messages.reverse(),
       }));
     },
     [messages]
@@ -71,7 +71,7 @@ export const MessagesProvider = ({ children }) => {
     (chatId, messageIds) =>
       setMessages(prev => ({
         ...prev,
-        [chatId]: (prev[chatId] || []).map(m =>
+        [chatId]: prev[chatId].map(m =>
           messageIds.includes(m.id) ? { ...m, isRead: true } : m
         ),
       })),

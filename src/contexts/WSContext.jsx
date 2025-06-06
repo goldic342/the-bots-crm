@@ -102,8 +102,8 @@ export const WSProvider = ({ children }) => {
 
         if (data?.event === "mark_message_as_read") {
           const ccData = camelcaseKeysDeep(data);
-          const chatId = ccData.chatId;
           const update = ccData.data;
+          const chatId = update.chatId;
 
           editFolder(bot.id, 0, update.totalUnreadMessagesBot);
 

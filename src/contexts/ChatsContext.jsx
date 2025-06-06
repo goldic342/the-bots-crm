@@ -148,7 +148,7 @@ export const ChatsProvider = ({ children }) => {
       );
       if (!chat) return;
 
-      await ensureMessagesLoaded(chatId);
+      await ensureMessagesLoaded(chat);
       updateChatNewStatus(chatId, botId, folderId, false);
       setCurrentChat(chat);
     },
