@@ -9,7 +9,7 @@ const ChatVideoBubble = ({ message }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const thumbnailPlaceholder = "https://placehold.co/600x400?text=Видео";
   const media = {
-    type: message.content.fileType,
+    type: message.content.type,
     src: content.url,
     text,
     thumbnail: thumbnailPlaceholder,

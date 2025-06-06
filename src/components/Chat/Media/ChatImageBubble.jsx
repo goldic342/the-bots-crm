@@ -8,7 +8,7 @@ const ChatImageBubble = ({ message }) => {
   const { content, createdAt, text } = message;
   const [isModalOpen, setModalOpen] = useState(false);
   const media = {
-    type: message.content.fileType,
+    type: message.content.type,
     src: content.url,
     text,
     isOwn: message.isOwn === "outgoing",

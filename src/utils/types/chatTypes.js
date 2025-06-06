@@ -10,7 +10,7 @@ export const ChatLead = PropTypes.shape({
 });
 
 export const MessageContent = PropTypes.shape({
-  fileType: PropTypes.oneOf(["image", "video", "file", "voice", "audio"]),
+  type: PropTypes.oneOf(["image", "video", "file", "voice", "audio"]),
   url: PropTypes.string,
 });
 

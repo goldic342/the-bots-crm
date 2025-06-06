@@ -52,7 +52,6 @@ export const WSProvider = ({ children }) => {
     };
 
     socket.onclose = event => {
-      console.log(event);
       setIsConnected(false);
     };
 

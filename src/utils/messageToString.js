@@ -9,5 +9,5 @@ export const messageToString = ({ text, content }) => {
     file: "Файл",
   };
 
-  return content?.fileType ? fileTypeMap[content.fileType] || null : null;
+  return content?.type ? fileTypeMap[content.type] || null : null;
 };

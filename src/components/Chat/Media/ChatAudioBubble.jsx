@@ -177,7 +177,7 @@ const ChatAudioBubble = ({ message }) => {
 
           <Flex justify="space-between">
             <HStack>
-              {content.fileType === "audio" && (
+              {content.type === "audio" && (
                 <Icon as={Music} opacity={0.6} size={10} />
               )}
 
