@@ -48,8 +48,12 @@ const Users = () => {
   const accentColor = useColorModeValue("blue.500", "blue.300");
 
   const handleCreateUser = async () => {
-    await createUserRequest();
+    const newUser = await createUserRequest();
     setFormData({ username: "", password: "", name: "" });
+    setUsers(prev => ({
+      ...prev,
+      users: [...prev.users, newUser],
+    }));
   };
 
   const handleEditUser = user => {
