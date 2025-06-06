@@ -32,6 +32,7 @@ const FolderList = () => {
   }, [botId, setCurrentFolder, allChatsFolder, currentFolder]);
 
   useEffect(() => {
+    if (!botId) return;
     const fetchData = async () => {
       const response = await fetchFolders(botId);
       if (response?.folders) {
