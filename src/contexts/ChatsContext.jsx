@@ -155,15 +155,20 @@ export const ChatsProvider = ({ children }) => {
       if (!chat) return;
 
       await ensureMessagesLoaded(chat);
-      updateChatNewStatus(chatId, botId, folderId, false);
+      mutateAllChatInstances(chatId, botId, oldChat => {
+        return {
+          ...oldChat,
+          isNewChat: false,
+        };
+      });
       setCurrentChat(chat);
     },
     [
+      mutateAllChatInstances,
       chats,
       currentFolder,
       ensureMessagesLoaded,
       getFolderKey,
-      updateChatNewStatus,
     ]
   );
 

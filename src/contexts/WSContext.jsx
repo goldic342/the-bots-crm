@@ -117,6 +117,7 @@ export const WSProvider = ({ children }) => {
                 // Preserve certain fields from the old chat
                 id: oldChat.id,
                 botId: oldChat.botId,
+                isNewChat: true,
               };
 
               return updatedChat;
