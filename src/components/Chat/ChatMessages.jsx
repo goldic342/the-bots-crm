@@ -57,6 +57,7 @@ const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET }) => {
    */
   async function loadMoreMessages() {
     if (!chatContainerRef.current) return;
+
     if (messages.length < MESSAGES_LIMIT) {
       setIsVisible(false);
       stopObserving();
@@ -68,13 +69,13 @@ const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET }) => {
 
     const newMessages = await getMessages(offset);
 
-    if (!newMessages || !newMessages.messages?.length) {
+    if (!newMessages || !newMessages?.messages?.length) {
       setIsVisible(false);
       stopObserving();
       return;
     }
 
-    addMessages(chatId, botId, folderId, newMessages.messages);
+    addMessages(chatId, newMessages.messages);
 
     if ((newMessages.total ?? 0) < MESSAGES_LIMIT) {
       setIsVisible(false);
