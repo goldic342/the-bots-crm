@@ -26,7 +26,6 @@ const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET }) => {
 
   const { scrollToId } = useSearch();
 
-  const [offset, setOffset] = useState(startOffset);
   const [getMessages, isLoadingMessages, messagesError] = useFetchMessages();
 
   const { lastElementRef, stopObserving, setIsVisible } = useInfiniteScroll({
@@ -55,6 +54,7 @@ const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET }) => {
    * 2) Fetching and adding the new messages.
    * 3) After rendering, measure new scroll height and adjust scrollTop accordingly.
    */
+
   async function loadMoreMessages() {
     if (!chatContainerRef.current) return;
 
@@ -67,9 +67,10 @@ const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET }) => {
     const oldScrollHeight = chatContainerRef.current.scrollHeight;
     const oldScrollTop = chatContainerRef.current.scrollTop;
 
-    const newMessages = await getMessages(offset);
+    // Derive offset directly from current number of messages
+    const newMessages = await getMessages(messages.length);
 
-    if (!newMessages || !newMessages?.messages?.length) {
+    if (!newMessages || !newMessages.messages?.length) {
       setIsVisible(false);
       stopObserving();
       return;
@@ -77,20 +78,17 @@ const ChatMessages = ({ messages, startOffset = MESSAGES_OFFSET }) => {
 
     addMessages(chatId, newMessages.messages);
 
+    // If total count indicates no more pages, stop observing
     if ((newMessages.total ?? 0) < MESSAGES_LIMIT) {
       setIsVisible(false);
       stopObserving();
       return;
     }
 
-    setOffset(prev => prev + MESSAGES_OFFSET);
-
-    // 3) Wait for next render cycle; then restore scroll position
-    // Using setTimeout(0) is a simple trick to wait until the DOM has updated
+    // Wait until DOM updates and restore scroll position
     setTimeout(() => {
       if (!chatContainerRef.current) return;
       const newScrollHeight = chatContainerRef.current.scrollHeight;
-      // Adjust scrollTop so user sees the same spot in the conversation
       chatContainerRef.current.scrollTop =
         oldScrollTop + (newScrollHeight - oldScrollHeight);
     }, 0);

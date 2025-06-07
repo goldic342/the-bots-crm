@@ -37,7 +37,7 @@ const ChatList = () => {
   useEffect(() => {
     if (!botId || currentFolder == null || currentFolder.id == null) return;
 
-    const fetchChats = async () => {
+    const fetchLocChats = async () => {
       setOffset(CHATS_OFFSET);
 
       const result = await fetchInitialChats(currentFolder.id);
@@ -46,7 +46,7 @@ const ChatList = () => {
       }
     };
 
-    fetchChats();
+    fetchLocChats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [botId, currentFolder?.id, addChats]);
 
