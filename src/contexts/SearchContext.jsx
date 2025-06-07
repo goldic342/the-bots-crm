@@ -32,7 +32,6 @@ export const SearchProvider = ({ children }) => {
 
   useEffect(() => {
     if (!searchQuery.trim()) {
-      console.log("Empty query, return");
       setSearchResults({});
       return;
     }
@@ -40,7 +39,6 @@ export const SearchProvider = ({ children }) => {
     if (isSearching) return;
 
     const delayDebounce = setTimeout(async () => {
-      console.log("debounce call");
       const results = await fetchSearchResults();
       setSearchResults(results || {});
     }, 500); // Debounced API call

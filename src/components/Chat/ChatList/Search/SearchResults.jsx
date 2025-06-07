@@ -47,7 +47,6 @@ const SearchResults = () => {
   }, [isSearching, safeSearchResults.total]);
 
   const loadMoreResults = async () => {
-    console.log("loadMore, pass total check");
     if (safeSearchResults.total < SEARCH_MESSAGES_LIMIT) {
       stopObserving();
       setIsVisible(false);
