@@ -56,13 +56,14 @@ const ChatList = () => {
 
   const loadMoreChats = async () => {
     const newChats = await fetchChats(currentFolder.id, offset);
+
     if (!newChats?.chats?.length) {
       stopObserving();
       setIsVisible(false);
       return;
     }
 
-    addChats(botId, newChats.chats, offset, "add");
+    addChats(botId, newChats.chats, currentFolder.id, "add");
 
     if ((newChats.total ?? 0) < CHATS_LIMIT) {
       stopObserving();
