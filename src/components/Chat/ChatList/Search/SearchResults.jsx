@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { VStack, Box } from "@chakra-ui/react";
 import SpinnerLoader from "../../../ui/SpinnerLoader";
 import LoaderMessage from "../../../ui/LoaderMessage";
@@ -15,38 +15,48 @@ import { useChats } from "../../../../contexts/ChatsContext";
 
 const SearchResults = () => {
   const {
-    fetchSearchResults,
+    searchQuery,
     isSearching,
     setSearchResults,
     error,
-    searchResults = {},
+    searchResults,
     setScrollToId,
     setIsFetched,
+    loadMoreSearchResults,
+    isLoadingMore,
+    loadingMoreError,
   } = useSearch();
   const { botId } = useParams();
   const { getChatFolderIds } = useChats();
   const navigate = useNavigate();
   const { checkMessageExists } = useMessages();
 
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasInitial, setHasInitial] = useState(false);
+
   const safeSearchResults = {
-    count: searchResults.total ?? 0,
+    total: searchResults.total ?? 0,
     chats: Array.isArray(searchResults.chats) ? searchResults.chats : [],
   };
 
   const [offset, setOffset] = useState(SEARCH_MESSAGES_OFFSET);
+
+  useEffect(() => {
+    if (!isSearching && safeSearchResults.total > 0) {
+      setHasInitial(true);
+    }
+  }, [isSearching, safeSearchResults.total]);
+
   const loadMoreResults = async () => {
+    console.log("loadMore, pass total check");
     if (safeSearchResults.total < SEARCH_MESSAGES_LIMIT) {
       stopObserving();
       setIsVisible(false);
       return;
     }
 
-    setIsLoadingMore(true);
-    const newResults = await fetchSearchResults(offset);
-    setIsLoadingMore(false);
+    const newResults = await loadMoreSearchResults(offset);
 
-    if (!newResults || (newResults.total ?? 0) < SEARCH_MESSAGES_LIMIT) {
+    if (!newResults || (newResults?.total ?? 0) < SEARCH_MESSAGES_LIMIT) {
       stopObserving();
       setIsVisible(false);
       return;
@@ -62,10 +72,13 @@ const SearchResults = () => {
   };
 
   const { lastElementRef, stopObserving, setIsVisible } = useInfiniteScroll({
-    isLoading: isSearching,
+    isLoading: isSearching || !hasInitial,
     onLoadMore: loadMoreResults,
     useEffectDropCondition:
-      isLoadingMore || safeSearchResults.total < SEARCH_MESSAGES_LIMIT,
+      searchQuery.trim().length === 0 ||
+      isLoadingMore ||
+      loadingMoreError ||
+      safeSearchResults?.total < SEARCH_MESSAGES_LIMIT,
   });
 
   const handleClick = (message, chatId) => {

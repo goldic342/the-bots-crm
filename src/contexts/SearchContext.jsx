@@ -21,21 +21,26 @@ export const SearchProvider = ({ children }) => {
   const [scrollToId, setScrollToId] = useState(0); // Id of message that needed to be scrolled to
   const [isFetched, setIsFetched] = useState(false); // Represents if message already fetched in memory (state)
 
-  const [fetchSearchResults, isSearching, error] = useApiRequest(
-    async (locOffset = 0) => {
+  const [fetchSearchResults, isSearching, error] = useApiRequest(async () => {
+    return await searchMessages(botId, searchQuery);
+  });
+
+  const [loadMoreSearchResults, isLoadingMore, loadingMoreError] =
+    useApiRequest(async (locOffset = 0) => {
       return await searchMessages(botId, searchQuery, locOffset);
-    }
-  );
+    });
 
   useEffect(() => {
     if (!searchQuery.trim()) {
-      setSearchResults([]);
+      console.log("Empty query, return");
+      setSearchResults({});
       return;
     }
 
     if (isSearching) return;
 
     const delayDebounce = setTimeout(async () => {
+      console.log("debounce call");
       const results = await fetchSearchResults();
       setSearchResults(results || {});
     }, 500); // Debounced API call
@@ -58,6 +63,9 @@ export const SearchProvider = ({ children }) => {
         setScrollToId,
         isFetched,
         setIsFetched,
+        loadMoreSearchResults,
+        isLoadingMore,
+        loadingMoreError,
       }}
     >
       {children}
