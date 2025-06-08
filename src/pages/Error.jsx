@@ -11,7 +11,7 @@ import {
   ScaleFade,
 } from "@chakra-ui/react";
 import { useNavigate, useRouteError } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Error = () => {
   const navigate = useNavigate();
@@ -19,6 +19,7 @@ const Error = () => {
 
   const [clickCount, setClickCount] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
+  const [statusText, setStatusText] = useState("");
 
   const handleReveal = () => {
     const newCount = clickCount + 1;
@@ -27,20 +28,8 @@ const Error = () => {
       setShowDetails(true);
     }
   };
-
-  const errorMessages = [
-    "Что-то пошло не так.",
-    "Вселенная дала сбой.",
-    "Кажется, это не должно было произойти.",
-    "Эта страница убежала за хлебом и не вернулась.",
-    "Ваш клик вызвал парадокс. Извините.",
-    "Хьюстон, у нас проблема.",
-  ];
-
   const status = error?.status || "Ошибка";
-  const statusText =
-    error?.statusText ||
-    errorMessages[Math.floor(Math.random() * errorMessages.length)];
+
   const message = error?.message || "Нет дополнительной информации.";
   const stack = error?.stack || "Стек вызовов недоступен.";
   const data = error?.data;
@@ -53,6 +42,23 @@ const Error = () => {
   const textColor = useColorModeValue("gray.800", "gray.100");
   const mutedColor = useColorModeValue("gray.600", "gray.400");
   const detailBg = useColorModeValue("gray.100", "gray.800");
+
+  useEffect(() => {
+    if (statusText) return;
+    const errorMessages = [
+      "Что-то пошло не так.",
+      "Вселенная дала сбой.",
+      "Кажется, это не должно было произойти.",
+      "Эта страница убежала за хлебом и не вернулась.",
+      "Ваш клик вызвал парадокс. Извините.",
+      "Хьюстон, у нас проблема.",
+    ];
+
+    setStatusText(
+      error?.statusText ||
+        errorMessages[Math.floor(Math.random() * errorMessages.length)]
+    );
+  }, [error, setStatusText, statusText]);
 
   return (
     <Box
