@@ -41,7 +41,6 @@ const BotSettingsDrawer = ({ isOpen, onClose }) => {
   const [fetchBotTodayUsers, isLoadingUsersToday, usersTodayError] =
     useApiRequest(async () => {
       const resp = await getTodayUsers(bot.id);
-      if (!resp?.count) return;
       setUsersToday(resp.count);
     });
 
