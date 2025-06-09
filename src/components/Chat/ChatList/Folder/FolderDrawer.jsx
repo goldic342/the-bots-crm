@@ -23,6 +23,7 @@ import {
   removeFolder as removeFolderReq,
 } from "../../../../api/bots";
 import FolderInlineList from "./FolderInlineList";
+import ConfirmationModal from "../../../ui/ConfirmationModal";
 
 const FolderDrawer = ({ isOpen, onClose }) => {
   const toast = useToast();
@@ -33,10 +34,11 @@ const FolderDrawer = ({ isOpen, onClose }) => {
   const { folders, addFolders, removeFolder, currentFolder, setCurrentFolder } =
     useFolders();
 
-  // ensure folders are refreshed when needed (you may adapt this if you have real refresh logic)
   useEntityManager({ refresh: () => {} }, []);
 
   const [newName, setNewName] = useState("");
+  const [folderToDelete, setFolderToDelete] = useState(null); // <--- new state for modal
+
   const [createReq, creating, creatingError] = useApiRequest(async name => {
     const res = await createFolder(botId, name);
     addFolders(botId, [res]);
@@ -44,7 +46,6 @@ const FolderDrawer = ({ isOpen, onClose }) => {
     initialRef.current?.focus();
   });
 
-  /* Delete folder */
   const [deleteReq, deleting, deletingError] = useApiRequest(async id => {
     await removeFolderReq(id);
     removeFolder(botId, id);
@@ -62,7 +63,6 @@ const FolderDrawer = ({ isOpen, onClose }) => {
     });
   }, [creatingError, deletingError, toast]);
 
-  /* Adapt for InlineItemsList */
   const items = useMemo(() => {
     const list = folders[botId] || [];
     return list.map(folder => ({
@@ -73,72 +73,102 @@ const FolderDrawer = ({ isOpen, onClose }) => {
           ? ` (${folder.totalUnreadMessages})`
           : ""),
       icon: X,
-      onClick: () => deleteReq(folder.id),
+      onClick: () => setFolderToDelete(folder), // <--- trigger modal
     }));
-  }, [folders, botId, deleteReq]);
+  }, [folders, botId]);
 
   const handleCreate = () => {
     if (!newName.trim()) return;
     createReq(newName.trim());
   };
 
-  return (
-    <Drawer
-      isOpen={isOpen}
-      placement="right"
-      onClose={onClose}
-      size="lg"
-      initialFocusRef={initialRef}
-    >
-      <DrawerOverlay />
-      <DrawerContent>
-        <DrawerCloseButton />
-        <DrawerHeader borderBottomWidth="1px">
-          Папки чатов
-          <Text fontSize="sm" color="gray.500" mt={1}>
-            Управляйте своими папками: создавайте, удаляйте и настраивайте.
-          </Text>
-        </DrawerHeader>
+  const confirmDelete = async () => {
+    if (!folderToDelete) return;
+    await deleteReq(folderToDelete.id);
+    setFolderToDelete(null);
+  };
 
-        <DrawerBody pt={4} overflowY="auto" maxH="calc(100vh - 160px)">
-          <HStack
-            mb={4}
-            as="form"
-            onSubmit={e => {
-              e.preventDefault();
-              handleCreate();
-            }}
-          >
-            <Input
-              ref={initialRef}
-              placeholder="Новая папка"
-              value={newName}
-              onChange={e => setNewName(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === "Escape") setNewName("");
+  return (
+    <>
+      <Drawer
+        isOpen={isOpen}
+        placement="right"
+        onClose={onClose}
+        size="lg"
+        initialFocusRef={initialRef}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader borderBottomWidth="1px">
+            Папки чатов
+            <Text fontSize="sm" color="gray.500" mt={1}>
+              Управляйте своими папками: создавайте, удаляйте и настраивайте.
+            </Text>
+          </DrawerHeader>
+
+          <DrawerBody pt={4} overflowY="auto" maxH="calc(100vh - 160px)">
+            <HStack
+              mb={4}
+              as="form"
+              onSubmit={e => {
+                e.preventDefault();
+                handleCreate();
               }}
-              size="md"
-              borderRadius="md"
-              isDisabled={creating}
-            />
-            <Tooltip label="Создать папку" hasArrow>
-              <IconButton
-                aria-label="Создать папку"
-                icon={<Plus size={18} />}
+            >
+              <Input
+                ref={initialRef}
+                placeholder="Новая папка"
+                value={newName}
+                onChange={e => setNewName(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === "Escape") setNewName("");
+                }}
                 size="md"
-                type="submit"
-                isDisabled={!newName.trim()}
-                isLoading={creating}
+                borderRadius="md"
+                isDisabled={creating}
               />
-            </Tooltip>
-          </HStack>
-          <FolderInlineList
-            Icon={X}
-            onIconClick={folder => deleteReq(folder.id)}
-          />
-        </DrawerBody>
-      </DrawerContent>
-    </Drawer>
+              <Tooltip label="Создать папку" hasArrow>
+                <IconButton
+                  aria-label="Создать папку"
+                  icon={<Plus size={18} />}
+                  size="md"
+                  type="submit"
+                  isDisabled={!newName.trim()}
+                  isLoading={creating}
+                />
+              </Tooltip>
+            </HStack>
+            <FolderInlineList
+              Icon={X}
+              onIconClick={folder => setFolderToDelete(folder)} // <--- modal trigger
+            />
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+
+      {/* Reusable confirmation modal */}
+      <ConfirmationModal
+        isOpen={!!folderToDelete}
+        onClose={() => setFolderToDelete(null)}
+        title="Удалить папку"
+        body={
+          <Text>
+            Вы уверены, что хотите удалить папку{" "}
+            <Text as="span" fontWeight="bold" color="red.300">
+              {folderToDelete?.name}
+            </Text>
+            ?
+          </Text>
+        }
+        confirmLabel="Удалить"
+        cancelLabel="Отменить"
+        onConfirm={confirmDelete}
+        isLoading={deleting}
+        error={deletingError}
+        confirmVariant="alert"
+      />
+    </>
   );
 };
 

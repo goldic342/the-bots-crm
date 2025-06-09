@@ -1,17 +1,9 @@
-import {
-  Button,
-  Modal,
-  Text,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  HStack,
-} from "@chakra-ui/react";
+// components/DeleteModal.js
 import PropTypes from "prop-types";
+import { Text, HStack } from "@chakra-ui/react";
 import { deleteUser } from "../../api/users";
 import useApiRequest from "../../hooks/useApiRequest";
+import ConfirmationModal from "../ui/ConfirmationModal";
 
 const DeleteModal = ({ isOpen, onClose, selectedUser, onDelete }) => {
   const [deleteUserReq, isLoading, error] = useApiRequest(async id => {
@@ -25,41 +17,32 @@ const DeleteModal = ({ isOpen, onClose, selectedUser, onDelete }) => {
     onDelete(selectedUser);
     onClose();
   };
+
+  const modalBody = (
+    <HStack>
+      <Text>Вы уверены что хотите удалить</Text>
+      <Text fontWeight="bold" color="red.300">
+        {selectedUser?.name}
+      </Text>
+    </HStack>
+  );
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Подтвердите удаление</ModalHeader>
-        <ModalBody>
-          <HStack>
-            <Text>Вы уверены что хотите удалить</Text>
-            <Text fontWeight={"bold"} color={"red.300"}>
-              {selectedUser?.name}
-            </Text>
-          </HStack>
-          {error && <Text color={"red.500"}>{error}</Text>}
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            colorScheme="gray"
-            onClick={onClose}
-            mr={3}
-            isDisabled={isLoading}
-          >
-            Отменить
-          </Button>
-          <Button
-            variant={"alert"}
-            onClick={handleDelete}
-            isLoading={isLoading}
-          >
-            Удалить
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <ConfirmationModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Подтвердите удаление"
+      body={modalBody}
+      confirmLabel="Удалить"
+      cancelLabel="Отменить"
+      onConfirm={handleDelete}
+      isLoading={isLoading}
+      error={error}
+      confirmVariant="alert"
+    />
   );
 };
+
 DeleteModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
