@@ -27,7 +27,7 @@ const SearchResults = () => {
     loadingMoreError,
   } = useSearch();
   const { botId } = useParams();
-  const { getChatFolderIds } = useChats();
+  const { getChatFolderIds, chats } = useChats();
   const navigate = useNavigate();
   const { checkMessageExists } = useMessages();
 
@@ -89,7 +89,7 @@ const SearchResults = () => {
       setIsFetched(false);
     }
 
-    const chatFolders = getChatFolderIds(chatId, botId);
+    const chatFolders = getChatFolderIds(chatId, botId, chats);
     navigate(`/dashboard/bots/${botId}/${chatFolders[0]}/${chatId}`);
   };
 
