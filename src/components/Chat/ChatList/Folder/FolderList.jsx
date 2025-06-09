@@ -28,15 +28,16 @@ const FolderList = () => {
 
   useEffect(() => {
     if (currentFolder) return;
+    addFolders(botId, [allChatsFolder], "set");
     setCurrentFolder(allChatsFolder);
-  }, [botId, setCurrentFolder, allChatsFolder, currentFolder]);
+  }, [botId, setCurrentFolder, allChatsFolder, currentFolder, addFolders]);
 
   useEffect(() => {
     if (!botId) return;
     const fetchData = async () => {
       const response = await fetchFolders(botId);
       if (response?.folders) {
-        addFolders(botId, response.folders, "set");
+        addFolders(botId, response.folders, "add");
       }
     };
 
@@ -80,15 +81,19 @@ const FolderList = () => {
         scrollbarWidth: "thin",
       }}
     >
-      <FolderItem key={allChatsFolder.id} folder={allChatsFolder} />
+      <FolderItem
+        key={allChatsFolder.id}
+        folder={folders[botId][0] || allChatsFolder}
+      />
 
       {isLoading
         ? Array.from({ length: 3 }).map((_, i) => (
             <Skeleton key={i} width="100px" height="35px" borderRadius="md" />
           ))
-        : folders[botId]?.map(folder => (
-            <FolderItem key={folder.id} folder={folder} />
-          ))}
+        : folders[botId]?.map(folder => {
+            if (folder.id === 0) return;
+            return <FolderItem key={folder.id} folder={folder} />;
+          })}
     </Flex>
   );
 };

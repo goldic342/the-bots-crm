@@ -147,7 +147,6 @@ const FolderDrawer = ({ isOpen, onClose }) => {
         </DrawerContent>
       </Drawer>
 
-      {/* Reusable confirmation modal */}
       <ConfirmationModal
         isOpen={!!folderToDelete}
         onClose={() => setFolderToDelete(null)}

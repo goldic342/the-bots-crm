@@ -26,8 +26,13 @@ export const useWS = () => {
 
 export const WSProvider = ({ children }) => {
   const { addMessage, markMessagesAsReadUI } = useMessages();
-  const { chats, addChats, moveChatToStart, mutateAllChatInstances } =
-    useChats();
+  const {
+    chats,
+    addChats,
+    moveChatToStart,
+    mutateAllChatInstances,
+    getChatFolderIds,
+  } = useChats();
   const { changeUnread } = useFolders();
   const { token } = useAuth();
   const { bot } = useBot();
@@ -112,9 +117,7 @@ export const WSProvider = ({ children }) => {
               "start"
             );
           } else {
-            mutateAllChatInstances(chatId, bot.id, (oldChat, folderId) => {
-              moveChatToStart(chatId, bot.id, folderId);
-
+            mutateAllChatInstances(chatId, bot.id, oldChat => {
               const updatedChat = {
                 ...oldChat,
                 ...newChat,
@@ -127,6 +130,12 @@ export const WSProvider = ({ children }) => {
 
               return updatedChat;
             });
+
+            getChatFolderIds(chatId, bot.id, chatsRef.current).forEach(
+              folderId => {
+                moveChatToStart(chatId, bot.id, folderId);
+              }
+            );
           }
 
           addMessage(chatId, newChat.lastMessage);

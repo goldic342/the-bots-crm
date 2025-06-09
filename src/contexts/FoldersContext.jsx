@@ -40,20 +40,23 @@ export const FoldersProvider = ({ children }) => {
 
   const changeUnread = useCallback(
     (botId, folderId, totalUnread, mode = "set") => {
-      setFolders(prev => ({
-        ...prev,
-        [botId]: (prev[botId] || []).map(f =>
-          folderId === f.id
-            ? {
-                ...f,
-                totalUnreadMessages:
-                  mode === "set"
-                    ? totalUnread
-                    : f.totalUnreadMessages + totalUnread,
-              }
-            : f
-        ),
-      }));
+      setFolders(prev => {
+        console.log("Update unread", totalUnread, prev);
+        return {
+          ...prev,
+          [botId]: (prev[botId] || []).map(f =>
+            folderId === f.id
+              ? {
+                  ...f,
+                  totalUnreadMessages:
+                    mode === "set"
+                      ? totalUnread
+                      : f.totalUnreadMessages + totalUnread,
+                }
+              : f
+          ),
+        };
+      });
     },
     []
   );
@@ -66,7 +69,7 @@ export const FoldersProvider = ({ children }) => {
         setCurrentFolder,
         addFolders,
         removeFolder,
-        editFolder: changeUnread,
+        changeUnread,
         getFolderKey,
       }}
     >

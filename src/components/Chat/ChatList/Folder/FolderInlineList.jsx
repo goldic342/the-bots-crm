@@ -24,14 +24,15 @@ const FolderInlineList = ({ Icon, onIconClick }) => {
 
   const items = useMemo(() => {
     const list = folders[botId] ?? [];
-    return list.map(f => ({
-      id: f.id,
-      label: f.name,
-      icon: Icon,
-      onClick: () => onIconClick?.(f),
-    }));
+    return list
+      .filter(f => f.id !== 0)
+      .map(f => ({
+        id: f.id,
+        label: f.name,
+        icon: Icon,
+        onClick: () => onIconClick?.(f),
+      }));
   }, [folders, botId, Icon, onIconClick]);
-
   return (
     <Box pr={1} w={"full"}>
       {loading ? (
