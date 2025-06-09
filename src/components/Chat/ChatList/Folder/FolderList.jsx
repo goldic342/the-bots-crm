@@ -83,7 +83,7 @@ const FolderList = () => {
     >
       <FolderItem
         key={allChatsFolder.id}
-        folder={folders[botId][0] || allChatsFolder}
+        folder={folders[botId]?.[0] ?? allChatsFolder}
       />
 
       {isLoading
