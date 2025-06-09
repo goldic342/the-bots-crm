@@ -12,6 +12,7 @@ const FolderList = () => {
   const botId = bot.id;
   const { currentFolder, setCurrentFolder, addFolders, folders } = useFolders();
 
+  const firstServerFolder = folders[botId]?.[0];
   const allChatsFolder = useMemo(
     () => ({
       id: 0,
@@ -44,7 +45,7 @@ const FolderList = () => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [botId]);
-
+  const folderForHeader = firstServerFolder ?? allChatsFolder;
   useEffect(() => {
     if (error) {
       toast({
@@ -81,10 +82,7 @@ const FolderList = () => {
         scrollbarWidth: "thin",
       }}
     >
-      <FolderItem
-        key={allChatsFolder.id}
-        folder={folders[botId]?.[0] ?? allChatsFolder}
-      />
+      <FolderItem key={allChatsFolder.id} folder={folderForHeader} />
 
       {isLoading
         ? Array.from({ length: 3 }).map((_, i) => (
