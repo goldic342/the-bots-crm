@@ -64,12 +64,11 @@ const SearchResults = () => {
     setOffset(prev => prev + SEARCH_MESSAGES_OFFSET);
     setSearchResults(prev => {
       return {
-        count: prev.total + newResults.total,
+        total: prev.total + newResults.total,
         chats: [...prev.chats, ...newResults.chats],
       };
     });
   };
-
   const { lastElementRef, stopObserving, setIsVisible } = useInfiniteScroll({
     isLoading: isSearching || !hasInitial,
     onLoadMore: loadMoreResults,
