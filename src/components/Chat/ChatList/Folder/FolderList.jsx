@@ -11,17 +11,15 @@ const FolderList = () => {
   const { bot } = useBot();
   const botId = bot.id;
   const { currentFolder, setCurrentFolder, addFolders, folders } = useFolders();
-  const [firstFolder, setFirstFolder] = useState({});
 
-  const allChatsFolder = useMemo(
-    () => ({
-      id: 0,
-      name: "Все чаты",
-      botId: botId,
-      totalUnreadMessages: bot.totalUnreadMessages,
-    }),
-    [botId, bot]
-  );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const allChatsFolder = {
+    id: 0,
+    name: "Все чаты",
+    botId,
+    totalUnreadMessages: bot.totalUnreadMessages,
+  };
+  const headerFolder = folders[botId]?.[0] ?? allChatsFolder;
 
   const [fetchFolders, isLoading, error] = useApiRequest(
     async bId => await getFolders(bId)
@@ -38,7 +36,7 @@ const FolderList = () => {
     const fetchData = async () => {
       const response = await fetchFolders(botId);
       if (response?.folders) {
-        addFolders(botId, response.folders, "add");
+        addFolders(botId, response.folders, "set");
       }
     };
 
@@ -56,10 +54,6 @@ const FolderList = () => {
       });
     }
   }, [error, toast]);
-
-  useEffect(() => {
-    setFirstFolder(folders[botId]?.[0] ?? allChatsFolder);
-  }, [folders, allChatsFolder, botId]);
 
   return (
     <Flex
@@ -85,7 +79,7 @@ const FolderList = () => {
         scrollbarWidth: "thin",
       }}
     >
-      <FolderItem key={allChatsFolder.id} folder={firstFolder} />
+      <FolderItem key={headerFolder.id} folder={headerFolder} />
 
       {isLoading
         ? Array.from({ length: 3 }).map((_, i) => (
