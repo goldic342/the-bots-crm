@@ -36,7 +36,7 @@ const FolderList = () => {
     const fetchData = async () => {
       const response = await fetchFolders(botId);
       if (response?.folders) {
-        addFolders(botId, response.folders, "set");
+        addFolders(botId, [headerFolder, ...response.folders], "set");
       }
     };
 
