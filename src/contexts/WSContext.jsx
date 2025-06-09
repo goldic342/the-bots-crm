@@ -106,7 +106,9 @@ export const WSProvider = ({ children }) => {
               fChats.some(c => c.id === chatId)
             );
 
-          changeUnread(bot.id, 0, 1, "add");
+          if (newChat.lastMessage.direction === "incoming") {
+            changeUnread(bot.id, 0, 1, "add");
+          }
 
           if (!chatExists) {
             addChats(
