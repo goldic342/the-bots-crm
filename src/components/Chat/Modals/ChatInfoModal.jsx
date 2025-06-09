@@ -94,6 +94,7 @@ const ChatInfoModal = ({ open, onClose }) => {
         title="Информация о чате"
         avatarSrc={lead.photo}
         avatarName={lead.name}
+        username={lead.username}
         details={details}
       >
         <VStack px={6} py={2} spacing={3}>
