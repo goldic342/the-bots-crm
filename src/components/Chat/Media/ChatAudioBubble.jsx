@@ -62,6 +62,9 @@ const ChatAudioBubble = ({ message }) => {
   const iconColor = isOwn ? primaryRaw : "white";
   const filledTrack = useColorModeValue("primary.600", "whiteAlpha.800");
   const subText = useColorModeValue("blackAlpha.900", "whiteAlpha.700");
+  const textColor = isOwn
+    ? "white"
+    : useColorModeValue("blackAlpha.700", "whiteAlpha.900");
 
   useEffect(() => {
     isSeekingRef.current = isSeeking;
@@ -133,7 +136,17 @@ const ChatAudioBubble = ({ message }) => {
     <ChatBubbleBase {...message}>
       <chakra.audio src={content.url} ref={audioRef} display="none" />
 
-      <Flex justify="space-between" gap={4}>
+      {message.text && (
+        <Text
+          fontSize="sm"
+          color={isOwn ? "whiteAlpha.900" : textColor}
+          mb={2}
+          wordBreak="break-word"
+        >
+          {message.text}
+        </Text>
+      )}
+      <Flex justify="space-between" gap={4} w={"min-content"}>
         <IconButton
           icon={
             playing ? <Pause color={iconColor} /> : <Play color={iconColor} />
