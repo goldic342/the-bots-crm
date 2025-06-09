@@ -1,6 +1,6 @@
 import { Flex, Skeleton, useToast } from "@chakra-ui/react";
 import useApiRequest from "../../../../hooks/useApiRequest";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getFolders } from "../../../../api/bots";
 import FolderItem from "./FolderItem";
 import { useBot } from "../../../../contexts/botContext";
@@ -11,8 +11,8 @@ const FolderList = () => {
   const { bot } = useBot();
   const botId = bot.id;
   const { currentFolder, setCurrentFolder, addFolders, folders } = useFolders();
+  const [firstFolder, setFirstFolder] = useState({});
 
-  const firstServerFolder = folders[botId]?.[0];
   const allChatsFolder = useMemo(
     () => ({
       id: 0,
@@ -45,7 +45,6 @@ const FolderList = () => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [botId]);
-  const folderForHeader = firstServerFolder ?? allChatsFolder;
   useEffect(() => {
     if (error) {
       toast({
@@ -57,6 +56,10 @@ const FolderList = () => {
       });
     }
   }, [error, toast]);
+
+  useEffect(() => {
+    setFirstFolder(folders[botId]?.[0] ?? allChatsFolder);
+  }, [folders, allChatsFolder, botId]);
 
   return (
     <Flex
@@ -82,7 +85,7 @@ const FolderList = () => {
         scrollbarWidth: "thin",
       }}
     >
-      <FolderItem key={allChatsFolder.id} folder={folderForHeader} />
+      <FolderItem key={allChatsFolder.id} folder={firstFolder} />
 
       {isLoading
         ? Array.from({ length: 3 }).map((_, i) => (
