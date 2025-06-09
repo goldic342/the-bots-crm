@@ -33,6 +33,7 @@ export const WSProvider = ({ children }) => {
   const { bot } = useBot();
 
   const [isConnected, setIsConnected] = useState(false);
+  const [currentBotId, setCurrentBotId] = useState(0);
 
   const wsRef = useRef(null);
   const chatsRef = useRefBridge(chats);
@@ -40,7 +41,7 @@ export const WSProvider = ({ children }) => {
   useEffect(() => {
     if (!bot.id || !token) return;
     if (bot.status !== "enabled") return;
-    if (isConnected) return;
+    if (currentBotId === bot.id) return;
 
     const url = `${import.meta.env.VITE_WS_BASE_URL}/${bot.id}?token=${token}`;
     const socket = new WebSocket(url);
@@ -48,10 +49,12 @@ export const WSProvider = ({ children }) => {
     wsRef.current = socket;
 
     socket.onopen = () => {
+      setCurrentBotId(bot.id);
       setIsConnected(true);
     };
 
     socket.onclose = event => {
+      setCurrentBotId(0);
       setIsConnected(false);
     };
 
