@@ -15,6 +15,7 @@ export const UnauthorizedMessage = {
   error: "INVALID_TOKEN",
   message: "Токен недействителен.",
 };
+
 export const UnauthorizedStatusCode = 401;
 export const TokenType = "Bearer";
 

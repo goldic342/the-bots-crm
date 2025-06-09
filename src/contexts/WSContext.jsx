@@ -39,8 +39,8 @@ export const WSProvider = ({ children }) => {
 
   useEffect(() => {
     if (!bot.id || !token) return;
-    if (isConnected) return;
     if (bot.status !== "enabled") return;
+    if (isConnected) return;
 
     const url = `${import.meta.env.VITE_WS_BASE_URL}/${bot.id}?token=${token}`;
     const socket = new WebSocket(url);
@@ -74,7 +74,9 @@ export const WSProvider = ({ children }) => {
           const update = ccData.data;
           const chatId = update.chatId;
 
-          editFolder(bot.id, 0, update.totalUnreadMessagesBot);
+          editFolder(bot.id, 0, {
+            totalUnreadMessagesBot: update.totalUnreadMessagesBot,
+          });
 
           mutateAllChatInstances(chatId, bot.id, oldChat => {
             return {
