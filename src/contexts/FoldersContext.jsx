@@ -41,7 +41,6 @@ export const FoldersProvider = ({ children }) => {
   const changeUnread = useCallback(
     (botId, folderId, totalUnread, mode = "set") => {
       setFolders(prev => {
-        console.log("Update unread", totalUnread, prev);
         return {
           ...prev,
           [botId]: (prev[botId] || []).map(f =>
