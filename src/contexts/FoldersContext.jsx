@@ -38,16 +38,25 @@ export const FoldersProvider = ({ children }) => {
     []
   );
 
-  const editFolder = useCallback((botId, folderId, newFolderData) => {
-    setFolders(prev => ({
-      ...prev,
-      [botId]: (prev[botId] || []).map(f =>
-        folderId === f.id
-          ? { ...f, ...newFolderData, id: f.id, botId: f.botId }
-          : f
-      ),
-    }));
-  }, []);
+  const changeUnread = useCallback(
+    (botId, folderId, totalUnread, mode = "set") => {
+      setFolders(prev => ({
+        ...prev,
+        [botId]: (prev[botId] || []).map(f =>
+          folderId === f.id
+            ? {
+                ...f,
+                totalUnreadMessages:
+                  mode === "set"
+                    ? totalUnread
+                    : f.totalUnreadMessages + totalUnread,
+              }
+            : f
+        ),
+      }));
+    },
+    []
+  );
 
   return (
     <FoldersContext.Provider
@@ -57,7 +66,7 @@ export const FoldersProvider = ({ children }) => {
         setCurrentFolder,
         addFolders,
         removeFolder,
-        editFolder,
+        editFolder: changeUnread,
         getFolderKey,
       }}
     >

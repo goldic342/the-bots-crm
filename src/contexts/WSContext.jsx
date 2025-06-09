@@ -28,7 +28,7 @@ export const WSProvider = ({ children }) => {
   const { addMessage, markMessagesAsReadUI } = useMessages();
   const { chats, addChats, moveChatToStart, mutateAllChatInstances } =
     useChats();
-  const { editFolder } = useFolders();
+  const { changeUnread } = useFolders();
   const { token } = useAuth();
   const { bot } = useBot();
 
@@ -77,9 +77,7 @@ export const WSProvider = ({ children }) => {
           const update = ccData.data;
           const chatId = update.chatId;
 
-          editFolder(bot.id, 0, {
-            totalUnreadMessagesBot: update.totalUnreadMessagesBot,
-          });
+          changeUnread(bot.id, 0, update.totalUnreadMessagesBot);
 
           mutateAllChatInstances(chatId, bot.id, oldChat => {
             return {
@@ -102,6 +100,8 @@ export const WSProvider = ({ children }) => {
             Object.values(botChats).some(fChats =>
               fChats.some(c => c.id === chatId)
             );
+
+          changeUnread(bot.id, 0, 1, "add");
 
           if (!chatExists) {
             addChats(
