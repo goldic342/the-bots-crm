@@ -23,8 +23,8 @@ export const getChats = async (
   return response.data;
 };
 
-export const getChatInfo = async (leadId, botId) => {
-  const response = await api.get(`/chats/${botId}/${leadId}`);
+export const getChatInfo = async chatId => {
+  const response = await api.get(`/chats/${chatId}`);
   return response.data;
 };
 

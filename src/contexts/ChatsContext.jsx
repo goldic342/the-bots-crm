@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useState } from "react";
 import { useFolders } from "./FoldersContext";
 import { useMessages } from "./MessagesContext";
+import { getChatInfo } from "../api/chats";
 
 const ChatsContext = createContext(undefined);
 
@@ -158,12 +159,15 @@ export const ChatsProvider = ({ children }) => {
   );
 
   const selectChat = useCallback(
-    async (chatId, botId, folderId = currentFolder) => {
+    async (chatId, botId, folderId = currentFolder, chatInfo) => {
       const folderKey = getFolderKey(folderId);
-      const chat = chats?.[botId]?.[folderKey]?.find(
+      let chat = chats?.[botId]?.[folderKey]?.find(
         c => c.id === Number(chatId)
       );
-      if (!chat) return;
+
+      if (!chat) {
+        chat = await getChatInfo(chatId);
+      }
 
       await ensureMessagesLoaded(chat);
       mutateAllChatInstances(chatId, botId, oldChat => {
