@@ -77,9 +77,9 @@ const ChatListInterface = () => {
           <SearchBar />
         ) : (
           <Flex align="center" gap={2} flex="1">
-            <Tooltip label={bot.name}>
+            <Tooltip label={bot?.name}>
               <Text fontSize="xl" fontWeight="bold">
-                {bot.name.slice(0, botNameLength) || "Чаты"}
+                {bot?.name?.slice(0, botNameLength) || "Чаты"}
               </Text>
             </Tooltip>
 

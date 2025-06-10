@@ -21,26 +21,29 @@ export const ChatsProvider = ({ children }) => {
   const addChats = useCallback(
     (botId, newChats, folderId, mode = "add", pos = "end") => {
       const folderKey = getFolderKey(folderId);
+
       setChats(prev => {
         const botFolders = prev[botId] || {};
         const folderChats = botFolders[folderKey] || [];
 
-        // Create a Set of existing chat IDs for fast lookup
-        const existingIds = new Set(folderChats.map(chat => chat.id));
-
-        // Filter out new chats that already exist
-        const uniqueNewChats = newChats.filter(
-          chat => !existingIds.has(chat.id)
-        );
+        // Only build the duplicate filter when we actually need it
+        const chatsToUse =
+          mode === "set"
+            ? newChats // keep everything (duplicates allowed)
+            : (() => {
+                const existingIds = new Set(folderChats.map(c => c.id));
+                return newChats.filter(c => !existingIds.has(c.id));
+              })();
 
         let updatedChats;
         if (mode === "add") {
           updatedChats =
             pos === "start"
-              ? [...uniqueNewChats, ...folderChats]
-              : [...folderChats, ...uniqueNewChats];
+              ? [...chatsToUse, ...folderChats]
+              : [...folderChats, ...chatsToUse];
         } else {
-          updatedChats = [...uniqueNewChats];
+          // “set” replaces the list entirely
+          updatedChats = [...chatsToUse];
         }
 
         return {
@@ -54,6 +57,7 @@ export const ChatsProvider = ({ children }) => {
     },
     [getFolderKey]
   );
+
   const moveChatToStart = useCallback(
     (chatId, botId, folderId) => {
       const folderKey = getFolderKey(folderId);
