@@ -71,7 +71,7 @@ export const MessagesProvider = ({ children }) => {
     (chatId, messageIds) =>
       setMessages(prev => ({
         ...prev,
-        [chatId]: prev[chatId].map(m =>
+        [chatId]: (prev[chatId] || []).map(m =>
           messageIds.includes(m.id) ? { ...m, isRead: true } : m
         ),
       })),

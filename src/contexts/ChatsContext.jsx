@@ -25,14 +25,22 @@ export const ChatsProvider = ({ children }) => {
         const botFolders = prev[botId] || {};
         const folderChats = botFolders[folderKey] || [];
 
+        // Create a Set of existing chat IDs for fast lookup
+        const existingIds = new Set(folderChats.map(chat => chat.id));
+
+        // Filter out new chats that already exist
+        const uniqueNewChats = newChats.filter(
+          chat => !existingIds.has(chat.id)
+        );
+
         let updatedChats;
         if (mode === "add") {
           updatedChats =
             pos === "start"
-              ? [...newChats, ...folderChats]
-              : [...folderChats, ...newChats];
+              ? [...uniqueNewChats, ...folderChats]
+              : [...folderChats, ...uniqueNewChats];
         } else {
-          updatedChats = [...newChats];
+          updatedChats = [...uniqueNewChats];
         }
 
         return {
@@ -46,7 +54,6 @@ export const ChatsProvider = ({ children }) => {
     },
     [getFolderKey]
   );
-
   const moveChatToStart = useCallback(
     (chatId, botId, folderId) => {
       const folderKey = getFolderKey(folderId);
