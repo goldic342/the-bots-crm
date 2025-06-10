@@ -63,9 +63,11 @@ const SearchResults = () => {
 
     setOffset(prev => prev + SEARCH_MESSAGES_OFFSET);
     setSearchResults(prev => {
+      const existingIds = new Set(prev.chats.map(c => c.id));
+      const uniqueNew = newResults.chats.filter(c => !existingIds.has(c.id));
       return {
-        total: prev.total + newResults.total,
-        chats: [...prev.chats, ...newResults.chats],
+        total: prev.total + uniqueNew.length,
+        chats: [...prev.chats, ...uniqueNew],
       };
     });
   };
@@ -88,8 +90,7 @@ const SearchResults = () => {
       setIsFetched(false);
     }
 
-    const chatFolders = getChatFolderIds(chatId, botId, chats);
-    navigate(`/dashboard/bots/${botId}/${chatFolders[0]}/${chatId}`);
+    navigate(`/dashboard/bots/${botId}/0/${chatId}`);
   };
 
   return (
