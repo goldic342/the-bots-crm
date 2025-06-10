@@ -5,7 +5,7 @@ const onReplyClick = PropTypes.func;
 export const ChatLead = PropTypes.shape({
   id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired,
+  username: PropTypes.string,
   photo: PropTypes.string,
 });
 

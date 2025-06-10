@@ -139,7 +139,7 @@ InfoDrawerBase.propTypes = {
   onClose: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   avatarSrc: PropTypes.string,
-  avatarName: PropTypes.string.isRequired,
+  avatarName: PropTypes.string,
   username: PropTypes.string,
 
   details: PropTypes.arrayOf(
