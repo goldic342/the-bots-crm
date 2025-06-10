@@ -6,6 +6,7 @@ import {
   Tooltip,
   Spacer,
   IconButton,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -47,6 +48,8 @@ const ChatListInterface = () => {
     fetchBot();
   }, [bot, botId, setBot]);
 
+  const botNameLength = useBreakpointValue({ md: 5, lg: 10 });
+
   return (
     <Flex
       h={{ base: "max-content", md: "100vh" }}
@@ -74,9 +77,12 @@ const ChatListInterface = () => {
           <SearchBar />
         ) : (
           <Flex align="center" gap={2} flex="1">
-            <Text fontSize="xl" fontWeight="bold">
-              {bot.name || "Чаты"}
-            </Text>
+            <Tooltip label={bot.name}>
+              <Text fontSize="xl" fontWeight="bold">
+                {bot.name.slice(0, botNameLength) || "Чаты"}
+              </Text>
+            </Tooltip>
+
             <Tooltip label="Статус подключения к WebSocket">
               <Box w={2} h={2} borderRadius="full" bg={statusColor} />
             </Tooltip>
