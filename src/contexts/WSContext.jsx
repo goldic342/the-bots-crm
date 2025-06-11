@@ -35,7 +35,7 @@ export const WSProvider = ({ children }) => {
   } = useChats();
   const { changeUnread } = useFolders();
   const { token } = useAuth();
-  const { bot } = useBot();
+  const { bot, setBot } = useBot();
 
   const [isConnected, setIsConnected] = useState(false);
   const [currentBotId, setCurrentBotId] = useState(0);
@@ -77,12 +77,26 @@ export const WSProvider = ({ children }) => {
           return;
         }
 
+        if (data?.event === "bot_status") {
+          const ccData = camelcaseKeysDeep(data);
+
+          setBot(prev => ({
+            ...prev,
+            botId: prev.id,
+            ...ccData?.data,
+          }));
+        }
+
         if (data?.event === "mark_message_as_read") {
           const ccData = camelcaseKeysDeep(data);
           const update = ccData.data;
           const chatId = update.chatId;
 
           changeUnread(bot.id, 0, update.totalUnreadMessagesBot);
+
+          update.folders.forEach(f => {
+            changeUnread(bot.id, f.id, f.totalUnreadMessages);
+          });
 
           mutateAllChatInstances(chatId, bot.id, oldChat => {
             return {
@@ -108,6 +122,10 @@ export const WSProvider = ({ children }) => {
 
           if (newChat.lastMessage.direction === "incoming") {
             changeUnread(bot.id, 0, 1, "add");
+
+            ccData.folders.forEach(f => {
+              changeUnread(bot.id, f.id, f.totalUnreadMessages);
+            });
           }
 
           if (!chatExists) {
@@ -161,7 +179,7 @@ export const WSProvider = ({ children }) => {
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, bot?.id]);
+  }, [token, bot, setBot]);
 
   const contextValue = useMemo(
     () => ({
