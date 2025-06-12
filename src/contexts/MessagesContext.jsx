@@ -7,6 +7,7 @@ import {
 } from "react";
 import { fetchMessages, markMessagesAsRead } from "../api/chats";
 import { MESSAGE_READ_DELAY_MS } from "../constants";
+import { useFolders } from "./FoldersContext";
 
 const MessagesContext = createContext(undefined);
 
@@ -22,6 +23,12 @@ export const MessagesProvider = ({ children }) => {
   const [messages, setMessages] = useState({});
   const [replyToMessage, setReplyToMessage] = useState(null);
   const [readQueue, setReadQueue] = useState(new Set());
+  const { prevFolderId, currentFolder } = useFolders();
+
+  useEffect(() => {
+    if (prevFolderId === currentFolder?.id) return;
+    setMessages({});
+  }, [prevFolderId, currentFolder?.id, setMessages]);
 
   const ensureMessagesLoaded = useCallback(
     async chat => {
