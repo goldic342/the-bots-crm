@@ -30,3 +30,6 @@ export const SEARCH_MESSAGES_LIMIT = 100;
 
 export const MESSAGES_MAX_LIMIT = 500;
 export const MESSAGES_MAX_OFFSET = 500;
+
+export const MAX_RECONNECTS = 3;
+export const RECONNECT_DELAY = 1500;

@@ -12,7 +12,9 @@ import camelcaseKeysDeep from "camelcase-keys-deep";
 import { useBot } from "./botContext";
 import { useRefBridge } from "../hooks/useRefBridge";
 import { useMessages } from "./MessagesContext";
+import { useNavigate } from "react-router-dom";
 import { useFolders } from "./FoldersContext";
+import { MAX_RECONNECTS, RECONNECT_DELAY } from "../constants";
 
 const WSContext = createContext(undefined);
 
@@ -36,6 +38,8 @@ export const WSProvider = ({ children }) => {
   const { changeUnread } = useFolders();
   const { token } = useAuth();
   const { bot, setBot } = useBot();
+  const navigate = useNavigate();
+  const reconnectRef = useRef(0);
 
   const [isConnected, setIsConnected] = useState(false);
   const [currentBotId, setCurrentBotId] = useState(0);
@@ -45,130 +49,140 @@ export const WSProvider = ({ children }) => {
 
   useEffect(() => {
     if (!bot.id || !token) return;
-    if (bot.status !== "enabled") return;
     if (currentBotId === bot.id) return;
+    console.log("Current bot id check passed");
 
-    const url = `${import.meta.env.VITE_WS_BASE_URL}/${bot.id}?token=${token}`;
-    const socket = new WebSocket(url);
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) return;
+    console.log("Socker already opened check pass");
 
-    wsRef.current = socket;
+    const openSocket = () => {
+      console.log("Opening WS");
+      const url = `${import.meta.env.VITE_WS_BASE_URL}/${bot.id}?token=${token}`;
+      const socket = new WebSocket(url);
+      wsRef.current = socket;
 
-    socket.onopen = () => {
-      setCurrentBotId(bot.id);
-      setIsConnected(true);
-    };
+      socket.onopen = () => {
+        console.log("Socket opened");
+        reconnectRef.current = 0;
+        setIsConnected(true);
+        setCurrentBotId(bot.id); // ← updates guard
+      };
 
-    socket.onclose = event => {
-      setCurrentBotId(0);
-      setIsConnected(false);
-    };
+      const scheduleReconnect = () => {
+        console.log("Scheduling recconect");
+        setIsConnected(false);
+        if (reconnectRef.current < MAX_RECONNECTS) {
+          console.log("Increase reconnect attempts");
+          reconnectRef.current += 1;
+          setTimeout(openSocket, RECONNECT_DELAY);
+        } else {
+          console.log("Navigating to /");
+          navigate("/"); // ← hard-fail after 3 tries
+        }
+      };
 
-    socket.onmessage = async event => {
-      try {
-        let data = event.data;
+      socket.onerror = scheduleReconnect;
+      socket.onclose = scheduleReconnect;
+
+      socket.onmessage = async event => {
         try {
-          data = JSON.parse(event.data);
-        } catch {
-          // Fallback if data is already a string
-        }
+          let data = event.data;
+          try {
+            data = JSON.parse(event.data);
+          } catch {
+            // Fallback if data is already a string
+          }
 
-        if (data === "ping") {
-          socket.send("pong");
-          return;
-        }
+          if (data === "ping") {
+            socket.send("pong");
+            return;
+          }
 
-        if (data?.event === "bot_status") {
-          const ccData = camelcaseKeysDeep(data);
+          if (data?.event === "mark_message_as_read") {
+            const ccData = camelcaseKeysDeep(data);
+            const update = ccData.data;
+            const chatId = update.chatId;
 
-          setBot(prev => ({
-            ...prev,
-            botId: prev.id,
-            ...ccData?.data,
-          }));
-        }
-
-        if (data?.event === "mark_message_as_read") {
-          const ccData = camelcaseKeysDeep(data);
-          const update = ccData.data;
-          const chatId = update.chatId;
-
-          changeUnread(bot.id, 0, update.totalUnreadMessagesBot);
-
-          ccData.folders.forEach(f => {
-            changeUnread(bot.id, f.id, f.totalUnreadMessages);
-          });
-
-          mutateAllChatInstances(chatId, bot.id, oldChat => {
-            return {
-              ...oldChat,
-              totalUnreadMessages: update.totalUnreadMessagesChat,
-            };
-          });
-
-          markMessagesAsReadUI(chatId, update.ids);
-        }
-
-        if (data?.event === "new_message") {
-          const ccData = camelcaseKeysDeep(data); // Convert keys to camelCase recursively
-          const newChat = ccData.chat;
-          const chatId = newChat.id;
-
-          const botChats = chatsRef.current[bot.id];
-          const chatExists =
-            botChats &&
-            Object.values(botChats).some(fChats =>
-              fChats.some(c => c.id === chatId)
-            );
-
-          if (newChat.lastMessage.direction === "incoming") {
-            changeUnread(bot.id, 0, 1, "add");
+            changeUnread(bot.id, 0, update.totalUnreadMessagesBot);
 
             ccData.folders.forEach(f => {
               changeUnread(bot.id, f.id, f.totalUnreadMessages);
             });
-          }
 
-          if (!chatExists) {
-            addChats(
-              bot.id,
-              [{ ...newChat, isNewChat: true }],
-              0,
-              "add",
-              "start"
-            );
-          } else {
             mutateAllChatInstances(chatId, bot.id, oldChat => {
-              const updatedChat = {
+              return {
                 ...oldChat,
-                ...newChat,
-
-                // Preserve certain fields from the old chat
-                id: oldChat.id,
-                botId: oldChat.botId,
-                isNewChat: true,
+                totalUnreadMessages: update.totalUnreadMessagesChat,
               };
-
-              return updatedChat;
             });
 
-            getChatFolderIds(chatId, bot.id, chatsRef.current).forEach(
-              folderId => {
-                moveChatToStart(chatId, bot.id, folderId);
-              }
-            );
+            markMessagesAsReadUI(chatId, update.ids);
           }
 
-          addMessage(chatId, newChat.lastMessage);
+          if (data?.event === "new_message") {
+            const ccData = camelcaseKeysDeep(data); // Convert keys to camelCase recursively
+            const newChat = ccData.chat;
+            const chatId = newChat.id;
+
+            const botChats = chatsRef.current[bot.id];
+            const chatExists =
+              botChats &&
+              Object.values(botChats).some(fChats =>
+                fChats.some(c => c.id === chatId)
+              );
+
+            if (newChat.lastMessage.direction === "incoming") {
+              changeUnread(bot.id, 0, 1, "add");
+
+              ccData.folders.forEach(f => {
+                changeUnread(bot.id, f.id, f.totalUnreadMessages);
+              });
+            }
+
+            if (!chatExists) {
+              addChats(
+                bot.id,
+                [{ ...newChat, isNewChat: true }],
+                0,
+                "add",
+                "start"
+              );
+            } else {
+              mutateAllChatInstances(chatId, bot.id, oldChat => {
+                const updatedChat = {
+                  ...oldChat,
+                  ...newChat,
+
+                  // Preserve certain fields from the old chat
+                  id: oldChat.id,
+                  botId: oldChat.botId,
+                  isNewChat: true,
+                };
+
+                return updatedChat;
+              });
+
+              getChatFolderIds(chatId, bot.id, chatsRef.current).forEach(
+                folderId => {
+                  moveChatToStart(chatId, bot.id, folderId);
+                }
+              );
+            }
+
+            addMessage(chatId, newChat.lastMessage);
+          }
+        } catch (error) {
+          console.error(
+            "WebSocket message error:",
+            error,
+            "Raw data:",
+            event.data
+          );
         }
-      } catch (error) {
-        console.error(
-          "WebSocket message error:",
-          error,
-          "Raw data:",
-          event.data
-        );
-      }
+      };
     };
+
+    openSocket();
 
     return () => {
       if (wsRef.current) {
