@@ -41,10 +41,6 @@ export const ChatsProvider = ({ children }) => {
       setChats(prev => {
         const botFolders = prev[botId] || {};
         const folderChats = botFolders[folderKey] || [];
-
-        /* -----------------------------------------------------------
-         * 1  Collect IDs that are already marked as "new" anywhere
-         * ----------------------------------------------------------- */
         const newChatIdSet = new Set(
           Object.values(botFolders) // every folder in this bot
             .flat() // flatten to one big array
@@ -52,9 +48,6 @@ export const ChatsProvider = ({ children }) => {
             .map(c => c.id) // grab the IDs
         );
 
-        /* -----------------------------------------------------------
-         * 2  Normalise incoming chats: if *any* copy is new => mark true
-         * ----------------------------------------------------------- */
         const normalisedIncoming = newChats.map(c => {
           if (c.isNewChat || newChatIdSet.has(c.id)) {
             return { ...c, isNewChat: true }; // clone + ensure flag
@@ -62,9 +55,6 @@ export const ChatsProvider = ({ children }) => {
           return c; // untouched copy
         });
 
-        /* -----------------------------------------------------------
-         * 3  Apply your existing duplicate / add / set logic
-         * ----------------------------------------------------------- */
         const chatsToUse =
           mode === "set"
             ? normalisedIncoming
