@@ -111,6 +111,7 @@ export const MessagesProvider = ({ children }) => {
     <MessagesContext.Provider
       value={{
         messages,
+        setMessages,
         replyToMessage,
         setReplyToMessage,
         ensureMessagesLoaded,

@@ -1,7 +1,14 @@
-import { createContext, useCallback, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useFolders } from "./FoldersContext";
 import { useMessages } from "./MessagesContext";
 import { getChatInfo } from "../api/chats";
+import { useParams } from "react-router-dom";
 
 const ChatsContext = createContext(undefined);
 
@@ -13,11 +20,19 @@ export const useChats = () => {
 
 export const ChatsProvider = ({ children }) => {
   // { [botId]: { [folderKey]: Chat[] } }
+  const { botId } = useParams();
   const [chats, setChats] = useState({});
   const [currentChat, setCurrentChat] = useState(null);
 
   const { currentFolder, getFolderKey } = useFolders();
-  const { ensureMessagesLoaded, addMessage, addMessages } = useMessages();
+  const { ensureMessagesLoaded, addMessage, addMessages, setMessages } =
+    useMessages();
+
+  useEffect(() => {
+    if (botId) return;
+    setChats({});
+    setMessages({});
+  }, [botId, setMessages]);
 
   const addChats = useCallback(
     (botId, newChats, folderId, mode = "add", pos = "end") => {

@@ -133,7 +133,6 @@ const ChatInterface = () => {
   const bg = useColorModeValue("white", "gray.800");
   const isSending = sendingMessages.size > 0;
 
-  console.log(isSearching, isLoaded);
   if (isSearching) {
     return (
       <AbsoluteWrapper isMobile={isMobile} bg={bg}>
