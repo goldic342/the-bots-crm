@@ -94,7 +94,7 @@ export const WSProvider = ({ children }) => {
 
           changeUnread(bot.id, 0, update.totalUnreadMessagesBot);
 
-          update.folders.forEach(f => {
+          ccData.folders.forEach(f => {
             changeUnread(bot.id, f.id, f.totalUnreadMessages);
           });
 
