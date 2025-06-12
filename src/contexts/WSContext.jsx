@@ -50,33 +50,26 @@ export const WSProvider = ({ children }) => {
   useEffect(() => {
     if (!bot.id || !token) return;
     if (currentBotId === bot.id) return;
-    console.log("Current bot id check passed");
 
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) return;
-    console.log("Socker already opened check pass");
 
     const openSocket = () => {
-      console.log("Opening WS");
       const url = `${import.meta.env.VITE_WS_BASE_URL}/${bot.id}?token=${token}`;
       const socket = new WebSocket(url);
       wsRef.current = socket;
 
       socket.onopen = () => {
-        console.log("Socket opened");
         reconnectRef.current = 0;
         setIsConnected(true);
         setCurrentBotId(bot.id); // ← updates guard
       };
 
       const scheduleReconnect = () => {
-        console.log("Scheduling recconect");
         setIsConnected(false);
         if (reconnectRef.current < MAX_RECONNECTS) {
-          console.log("Increase reconnect attempts");
           reconnectRef.current += 1;
           setTimeout(openSocket, RECONNECT_DELAY);
         } else {
-          console.log("Navigating to /");
           navigate("/"); // ← hard-fail after 3 tries
         }
       };

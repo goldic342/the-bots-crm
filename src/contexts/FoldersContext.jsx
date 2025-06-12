@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { useMessages } from "./MessagesContext";
+import { createContext, useCallback, useContext, useState } from "react";
 
 const FoldersContext = createContext(undefined);
 
@@ -19,16 +12,7 @@ export const useFolders = () => {
 export const FoldersProvider = ({ children }) => {
   // Shape: { [botId]: Folder[] }
   const [folders, setFolders] = useState({});
-  const [currentFolder, setCurrentFolderState] = useState(null);
-  const [prevFolderId, setPrevFolderId] = useState(null);
-
-  const setCurrentFolder = useCallback(
-    f => {
-      setPrevFolderId(currentFolder?.id);
-      setCurrentFolderState(f);
-    },
-    [currentFolder]
-  );
+  const [currentFolder, setCurrentFolder] = useState(null);
 
   /** For backwards compatibility with code that still expects “0 for null” */
   const getFolderKey = useCallback(
@@ -86,7 +70,6 @@ export const FoldersProvider = ({ children }) => {
         removeFolder,
         changeUnread,
         getFolderKey,
-        prevFolderId,
       }}
     >
       {children}

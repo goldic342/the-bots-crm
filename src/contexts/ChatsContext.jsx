@@ -42,25 +42,43 @@ export const ChatsProvider = ({ children }) => {
         const botFolders = prev[botId] || {};
         const folderChats = botFolders[folderKey] || [];
 
-        // Only build the duplicate filter when we actually need it
+        /* -----------------------------------------------------------
+         * 1  Collect IDs that are already marked as "new" anywhere
+         * ----------------------------------------------------------- */
+        const newChatIdSet = new Set(
+          Object.values(botFolders) // every folder in this bot
+            .flat() // flatten to one big array
+            .filter(c => c.isNewChat) // only those flagged as new
+            .map(c => c.id) // grab the IDs
+        );
+
+        /* -----------------------------------------------------------
+         * 2  Normalise incoming chats: if *any* copy is new => mark true
+         * ----------------------------------------------------------- */
+        const normalisedIncoming = newChats.map(c => {
+          if (c.isNewChat || newChatIdSet.has(c.id)) {
+            return { ...c, isNewChat: true }; // clone + ensure flag
+          }
+          return c; // untouched copy
+        });
+
+        /* -----------------------------------------------------------
+         * 3  Apply your existing duplicate / add / set logic
+         * ----------------------------------------------------------- */
         const chatsToUse =
           mode === "set"
-            ? newChats // keep everything (duplicates allowed)
+            ? normalisedIncoming
             : (() => {
                 const existingIds = new Set(folderChats.map(c => c.id));
-                return newChats.filter(c => !existingIds.has(c.id));
+                return normalisedIncoming.filter(c => !existingIds.has(c.id));
               })();
 
-        let updatedChats;
-        if (mode === "add") {
-          updatedChats =
-            pos === "start"
+        const updatedChats =
+          mode === "add"
+            ? pos === "start"
               ? [...chatsToUse, ...folderChats]
-              : [...folderChats, ...chatsToUse];
-        } else {
-          // “set” replaces the list entirely
-          updatedChats = [...chatsToUse];
-        }
+              : [...folderChats, ...chatsToUse]
+            : [...chatsToUse]; // "set" replaces the list entirely
 
         return {
           ...prev,
